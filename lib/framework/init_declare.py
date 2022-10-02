@@ -67,7 +67,7 @@ def read_yaml(filepath):
 
     import yaml
 
-    yaml.reader.Reader.NON_PRINTABLE = re.compile('[^\t\n\r -�-\U0010ffff]
+    yaml.reader.Reader.NON_PRINTABLE = re.compile('[^\t\n\r -�-\U0010ffff]')
     #with open(filepath, encoding='utf8') as file:
     with open(filepath, 'rb') as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
