@@ -1,20 +1,16 @@
-# -*- coding: utf-8 -*-
-#########################################################
-# python
+import json
 import os
 import sys
-from datetime  import datetime, timedelta
-import json
 import traceback
+from datetime import datetime, timedelta
 
-# third-party
-from flask import redirect, render_template, Response, request, jsonify, send_from_directory
-from flask_login import login_user, logout_user, current_user, login_required
+import system
+from flask import (Response, jsonify, redirect, render_template, request,
+                   send_from_directory)
+from flask_login import current_user, login_required, login_user, logout_user
 
 # sjva 공용
-from framework import F, check_api, app, db, VERSION, logger, path_data
-import system
-
+from framework import VERSION, F 
 
 
 @F.app.route('/global/ajax/<sub>', methods=['GET', 'POST'])
@@ -47,11 +43,11 @@ def global_ajax(sub):
             import flaskcode
             return jsonify(True)
         except:
-            return jsonify(True)
+            return jsonify(False)
 
 
 
-@app.route('/robots.txt')
+@F.app.route('/robots.txt')
 def robot_to_root():
     return send_from_directory('', 'static/file/robots.txt')
 
@@ -76,33 +72,33 @@ def robot_to_root():
 
 
 
-@app.route("/")
-@app.route("/None")
-@app.route("/home")
+@F.app.route("/")
+@F.app.route("/None")
+@F.app.route("/home")
 def home():
     return redirect('/system/home')
 
 
-@app.route("/version")
+@F.app.route("/version")
 def get_version():
     return VERSION
 
-@app.route("/open/<path:path>")
+@F.app.route("/open/<path:path>")
 @login_required
 def open_file(path):
     return send_from_directory('/', path)
 
 
-@app.route("/file/<path:path>")
-@check_api
+@F.app.route("/file/<path:path>")
+@F.check_api
 def file2(path):
-    logger.debug('file2 :%s', path)
+    F.logger.debug('file2 :%s', path)
     return send_from_directory('/', path)
 
 
 
 
-@app.route("/up", methods=['GET', 'POST'])
+@F.app.route("/up", methods=['GET', 'POST'])
 def upload():
     # curl -F file=@downloader_video.tar https://dev.soju6jan.com/up
     # 
@@ -111,11 +107,11 @@ def upload():
             f = request.files['file']
             from werkzeug import secure_filename
             tmp = secure_filename(f.filename)
-            logger.debug('upload : %s', tmp)
-            f.save(os.path.join(path_data, 'upload', tmp))
+            F.logger.debug('upload : %s', tmp)
+            f.save(os.path.join(F.path_data, 'upload', tmp))
             return jsonify('success')
     except Exception as exception:
-        logger.error('Exception:%s', exception)
-        logger.error(traceback.format_exc())
+        F.logger.error('Exception:%s', exception)
+        F.logger.error(traceback.format_exc())
         return jsonify('fail')
 

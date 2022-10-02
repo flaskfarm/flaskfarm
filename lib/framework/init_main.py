@@ -257,7 +257,6 @@ class Framework:
             # 아주 안좋은 구조..
             # celery user_options으로 configfilepath를 받은 후 처리해야하나, 로그파일 경로 등에서 데이터 폴더 위치를 미리 사용하는 경우가 많다.
             # sys.argv에서 데이터 경로를 바로 가져와서 사용.
-
             self.config['arg_repeat'] = 0
             self.config['arg_config'] = sys.argv[-1].split('=')[-1]
             #self.config['arg_config'] = 
@@ -268,14 +267,13 @@ class Framework:
         if self.config['arg_config'] == '.':
             #self.config['config_filepath'] = os.path.join(self.path_app_root, 'config.yaml')
             self.config['config_filepath'] = os.path.join(self.config['path_working'], 'config.yaml')
-
-            if not os.path.exists(self.config['config_filepath']):
-                shutil.copy(
-                    os.path.join(self.path_app_root, 'files', 'config.yaml.template'),
-                    self.config['config_filepath']
-                )
         else:
             self.config['config_filepath'] = self.config['arg_config']
+        if not os.path.exists(self.config['config_filepath']):
+            shutil.copy(
+                os.path.join(self.path_app_root, 'files', 'config.yaml.template'),
+                self.config['config_filepath']
+            )
 
         #os.environ['FLASK_FARM_CONFIG_FILEPATH'] = self.config['config_filepath']
         #else:
