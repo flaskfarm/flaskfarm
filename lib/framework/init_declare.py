@@ -64,8 +64,9 @@ class CustomFormatter(logging.Formatter):
 # Suuport를 logger 생성전에 쓰지 않기 위해 중복 선언    
 def read_yaml(filepath):
     import yaml
-    with open(filepath, encoding='utf8') as file:
-    #with open(filepath, 'rb') as file:
+
+    #with open(filepath, encoding='utf8') as file:
+    with open(filepath, 'rb') as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
     return data
 
