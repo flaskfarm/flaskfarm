@@ -1,8 +1,9 @@
 psutil
 pycryptodome
-
 gevent
 gevent-websocket
 celery==4.3.0
 redis
-
+lxml
+pillow
+selenium==3.141.0
