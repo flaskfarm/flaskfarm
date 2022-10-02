@@ -134,3 +134,8 @@ config.yaml
 lib2/
 .vscode/
 memo.txt
+*.zip
+flaskfarm.sh
+export.sh
+run.sh
+pre_start.sh
