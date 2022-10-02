@@ -1,14 +1,13 @@
+import threading
 import traceback
-from pytz import timezone
 from datetime import datetime, timedelta
 from random import randint
+
 from apscheduler.jobstores.base import JobLookupError
 from apscheduler.triggers.cron import CronTrigger
-import traceback, threading
-from datetime import datetime
 from pytz import timezone
-from random import randint
 from support.base.util import pt
+
 
 class Scheduler(object):
     job_list = []

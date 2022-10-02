@@ -1,5 +1,10 @@
-import os, sys, traceback, threading, platform
-from framework import F, d
+import os
+import sys
+import threading
+import traceback
+
+from framework import F
+
 
 class PluginManager:
     plugin_list = {}

@@ -1,6 +1,7 @@
 import re
-from flask_login import current_user
+
 from framework import F
+
 
 def get_menu(full_query):
     match = re.compile(r'\/(?P<menu>.*?)\/manual\/(?P<sub2>.*?)($|\?)').match(full_query)
@@ -19,7 +20,7 @@ def get_menu(full_query):
     if match:
         return match.group('menu'), None , None
     return 'home', None, None
-
+ 
 
 
 def get_theme():

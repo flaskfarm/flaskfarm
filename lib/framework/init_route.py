@@ -1,16 +1,10 @@
-import json
 import os
-import sys
 import traceback
-from datetime import datetime, timedelta
 
-import system
-from flask import (Response, jsonify, redirect, render_template, request,
-                   send_from_directory)
-from flask_login import current_user, login_required, login_user, logout_user
+from flask import jsonify, redirect, request, send_from_directory
+from flask_login import login_required
 
-# sjva 공용
-from framework import VERSION, F 
+from framework import VERSION, F
 
 
 @F.app.route('/global/ajax/<sub>', methods=['GET', 'POST'])

@@ -1,15 +1,23 @@
-import os, sys, traceback, time, logging, logging.handlers, shutil, platform
+import logging
+import logging.handlers
+import os
+import platform
+import shutil
+import sys
+import time
+import traceback
 from datetime import datetime
-from pytz import timezone, utc
+
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_socketio import SocketIO
 from flask_cors import CORS
-from flaskext.markdown import Markdown
 from flask_login import LoginManager, login_required
+from flask_socketio import SocketIO
+from flask_sqlalchemy import SQLAlchemy
+from flaskext.markdown import Markdown
+from pytz import timezone, utc
 
+from .init_declare import CustomFormatter, check_api
 
-from .init_declare import check_api, CustomFormatter
 
 class Framework:
     __instance = None
@@ -63,7 +71,7 @@ class Framework:
         self.db = SQLAlchemy(self.app, session_options={"autoflush": False})
         
         if True or self.config['run_flask']:
-            from .scheduler import Scheduler, Job
+            from .scheduler import Job, Scheduler
             self.scheduler = Scheduler(self)
             self.Job = Job
 
@@ -85,6 +93,7 @@ class Framework:
     def __init_celery(self):
         try:
             from celery import Celery
+
             #if frame.config['use_celery'] == False or platform.system() == 'Windows':
             if self.config['use_celery'] == False:
                 raise Exception('no celery')
@@ -106,6 +115,7 @@ class Framework:
             from celery import bootsteps
             #from celery.bin.base import CeleryOption
             from click import Option
+
             #from celery.bin import Option # 4.3.0
             celery.user_options['worker'].add(
                 Option(('--config_filepath',), help='')
@@ -154,6 +164,7 @@ class Framework:
 
     def initialize_plugin(self): 
         from system.setup import P as SP
+
         from .init_web import jinja_initialize
         jinja_initialize(self.app)
 
@@ -173,8 +184,7 @@ class Framework:
             if self.config.get('port') == None:
                 self.config['port'] = SP.SystemModelSetting.get_int('port')
 
-        from . import log_viewer
-        from . import init_route
+        from . import init_route, log_viewer
 
         self.__make_default_logger()
         self.logger.info('### LAST')
@@ -187,6 +197,7 @@ class Framework:
         if self.config['run_flask'] and self.config.get('use_celery') == True:
             try:
                 from gevent import monkey
+
                 #from gevent import monkey;monkey.patch_all()
                 #print('[MAIN] gevent mokey patch!!')
                 #sys.getfilesystemencoding = lambda: 'UTF-8'
@@ -263,6 +274,7 @@ class Framework:
 
     def __load_config(self):
         from .init_declare import read_yaml
+
         #if self.config['run_flask']:
         if self.config['arg_config'] == '.':
             #self.config['config_filepath'] = os.path.join(self.path_app_root, 'config.yaml')

@@ -1,4 +1,5 @@
-import random, string
+import random
+import string
 
 from .setup import *
 
@@ -23,7 +24,7 @@ class ModuleSetting(PluginModuleBase):
         'plugin_dev_path': os.path.join(F.config['path_data'], 'dev'),
 
         'system_start_time': '',
-    }
+    } 
 
     def __init__(self, P):
         super(ModuleSetting, self).__init__(P, name=name, first_menu='basic')

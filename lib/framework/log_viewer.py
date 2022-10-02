@@ -1,12 +1,17 @@
-﻿import os, traceback, time, threading
+﻿import os
+import threading
+import time
+import traceback
+
 from flask import request
-from framework import F
 from support.base.util import SingletonClass
+
+from framework import F
 
 namespace = 'log'
 
 @F.socketio.on('connect', namespace='/%s' % namespace)
-def socket_connect():
+def socket_connect(): 
     F.logger.debug('log connect')
 
 @F.socketio.on('start', namespace='/%s' % namespace)

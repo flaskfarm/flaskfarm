@@ -1,10 +1,8 @@
-import random, string
+from flask_login import current_user, login_user, logout_user
 
 from .setup import *
-from flask_login import login_user, current_user, logout_user
 
 name = 'route'
-
 
 class ModuleRoute(PluginModuleBase):
     def __init__(self, P):

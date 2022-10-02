@@ -1,10 +1,13 @@
-from .setup import *
 import platform
+
 from support.base.util import SupportUtil
+
+from .setup import *
+
 name = 'home'
 
 class ModuleHome(PluginModuleBase):
-    info_thread = None
+    info_thread = None 
 
     def __init__(self, P):
         super(ModuleHome, self).__init__(P, name=name)

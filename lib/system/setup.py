@@ -34,7 +34,7 @@ __menu = {
     ]
 }
 
-
+ 
 setting = {
     'filepath' : __file__,
     'use_db': True,
@@ -50,9 +50,9 @@ try:
     P = create_plugin_instance(setting)
 
     SystemModelSetting = P.ModelSetting
-    from .mod_setting import ModuleSetting
     from .mod_home import ModuleHome
     from .mod_route import ModuleRoute
+    from .mod_setting import ModuleSetting
     
     P.set_module_list([ModuleSetting, ModuleHome, ModuleRoute])
 

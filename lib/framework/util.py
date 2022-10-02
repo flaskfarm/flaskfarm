@@ -1,22 +1,13 @@
 ﻿
-# -*- coding: utf-8 -*-
-#########################################################
-# python
 import os
-import json
 import traceback
-import platform
-import subprocess
-# third-party
-from sqlalchemy.ext.declarative import DeclarativeMeta
-# sjva 공용
-from framework import app, logger
 
-#########################################################
+from framework import F
+
 
 class Util(object):
     
-
+ 
     @staticmethod
     def db_list_to_dict(db_list):
         """
@@ -52,11 +43,11 @@ class Util(object):
                 paging['next_page'] = False
             paging['current_page'] = current_page
             paging['count'] = count
-            logger.debug('paging : c:%s %s %s %s %s %s', count, paging['total_page'], paging['prev_page'], paging['next_page'] , paging['start_page'], paging['last_page'])
+            F.logger.debug('paging : c:%s %s %s %s %s %s', count, paging['total_page'], paging['prev_page'], paging['next_page'] , paging['start_page'], paging['last_page'])
             return paging
         except Exception as exception:
-            logger.debug('Exception:%s', exception)
-            logger.debug(traceback.format_exc())
+            F.logger.debug('Exception:%s', exception)
+            F.logger.debug(traceback.format_exc())
     
     
 
@@ -95,8 +86,8 @@ class Util(object):
             ret['max_size'] = max_size
             return ret
         except Exception as exception: 
-            logger.error('Exception:%s', exception)
-            logger.error(traceback.format_exc())
+            F.logger.error('Exception:%s', exception)
+            F.logger.error(traceback.format_exc())
 
 
     # 압축할 폴더 경로를 인자로 받음. 폴더명.zip 생성
@@ -116,8 +107,8 @@ class Util(object):
             shutil.rmtree(zip_path)
             return True
         except Exception as exception:
-            logger.error('Exception:%s', exception)
-            logger.error(traceback.format_exc())
+            F.logger.error('Exception:%s', exception)
+            F.logger.error(traceback.format_exc())
         return False
 
 

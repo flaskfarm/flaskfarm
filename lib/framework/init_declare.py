@@ -1,12 +1,13 @@
-from flask import request, abort
 from functools import wraps
-from flask import request
+
+from flask import abort, request
 
 
 def check_api(original_function):
     @wraps(original_function)
     def wrapper_function(*args, **kwargs):  #1
         from framework import F
+
         #logger.debug('CHECK API... {} '.format(original_function.__module__))
         #logger.warning(request.url)
         #logger.warning(request.form)
@@ -31,6 +32,8 @@ def check_api(original_function):
 
 # Suuport를 logger 생성전에 쓰지 않기 위해 중복 선언 
 import logging
+
+
 class CustomFormatter(logging.Formatter):
     """Logging Formatter to add colors and count warning / errors"""
 
@@ -61,8 +64,8 @@ class CustomFormatter(logging.Formatter):
 # Suuport를 logger 생성전에 쓰지 않기 위해 중복 선언    
 def read_yaml(filepath):
     import yaml
-    #with open(filepath, encoding='utf8') as file:
-    with open(filepath, 'rb') as file:
+    with open(filepath, encoding='utf8') as file:
+    #with open(filepath, 'rb') as file:
         data = yaml.load(file, Loader=yaml.FullLoader)
     return data
 

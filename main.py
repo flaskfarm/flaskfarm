@@ -3,8 +3,10 @@
     print('[MAIN] gevent mokey patch!!')
 except:
     print('[MAIN] gevent not installed!!')
+import os
+import sys
+import traceback
 
-import os, sys, traceback
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib'))
 sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib2'))
 
