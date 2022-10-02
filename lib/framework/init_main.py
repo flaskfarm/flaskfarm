@@ -104,9 +104,11 @@ class Framework:
                 timezone='Asia/Seoul'
             )
             from celery import bootsteps
-            from celery.bin import Option
+            #from celery.bin.base import CeleryOption
+            from click import Option
+            #from celery.bin import Option # 4.3.0
             celery.user_options['worker'].add(
-                Option('--config_filepath', action='store', dest='config_filepath', default='.', help='')
+                Option(('--config_filepath',), help='')
             )
             class CustomArgs(bootsteps.Step):
                 def __init__(self, worker, config_filepath=None, **options):

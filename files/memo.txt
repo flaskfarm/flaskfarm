@@ -191,3 +191,26 @@ require_os' : ""
 need_decrypt_code: false
 need_filesize_check': false
 filesize: 0
+
+
+
+
+ curl -Lo flaskfarm.sh https://flaskfarm.github.io/file/ubuntu/flaskfarm.sh
+
+
+ docker run -it --name test-ubuntu ubuntu:22.04 /bin/bash
+
+
+ apt update 
+ apt install -y curl vim
+
+
+
+docker rm -f test-ubuntu
+
+ curl -Lo flaskfarm.sh https://flaskfarm.github.io/file/ubuntu/flaskfarm.sh
+
+chmod 777 ./flaskfarm.sh
+./flaskfarm.sh prepare
+
+./flaskfarm.sh install
