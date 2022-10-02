@@ -1,6 +1,8 @@
-import os, copy, shutil
-from framework import F, d
+import copy
+import os
+import shutil
 from support.base.yaml import SupportYaml
+from framework import F
 
 class MenuManager:
     menu_map = None
