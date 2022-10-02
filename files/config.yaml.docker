@@ -9,5 +9,5 @@ plugin_update: true
 running_type: "docker"
 
 #plugin_loading_only_devpath: true
-#plugin_loading_list: ['command', 'flaskcode']
-#plugin_except_list: ['terminal', 'membership']
+#plugin_loading_list: []
+#plugin_except_list: []
