@@ -1,0 +1,144 @@
+{% macro menu() %}
+<div id="menu_div">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark flex-md-nowrap shadow" role="navigation">
+  <a class="navbar-brand" href="/">{{get_web_title()}}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample01" aria-controls="navbarsExample01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  {% for i in range(1) %}
+  <div class="collapse navbar-collapse w-100" id="navbarsExample01">
+    {% if i == 0 %}
+    <ul class="nav navbar-nav mr-auto">
+    {% else %}
+    <ul class="nav navbar-nav ml-auto">
+    {% endif %}
+    
+    {% set menu = request.full_path | get_menu %}
+    {% set menu_map = get_menu_map() %}
+    {% for category in menu_map %}
+      {% if 'uri' in category and category['uri'].startswith('http') %}
+        <li class="nav-item"> <a class="nav-link" href="{{ category['uri']}}" target="_blank">{{category['name']}}</a></li>
+      {% else %}
+        
+        <!--{{ category }}-->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{category['name']}}</a>
+          
+          <ul class="dropdown-menu">
+
+          {% for category_child in category['list'] %}
+            {% if category_child['uri'] == 'setting' %}
+              <li><a class="dropdown-item" href="#" style="font-size: .850rem; font-weight:bold">{{category_child['name']}}</a>
+                <ul class="submenu dropdown-menu">
+                {% for item in category_child['list'] %}
+                  <li><a class="dropdown-item" href="/{{item['uri']}}" style="font-size: .850rem; font-weight:bold">{{item['name']}}</a></li>
+                {% endfor %}
+                </ul>
+              </li>
+
+
+            {% elif category_child['uri'] == '-' %}
+              <div class="dropdown-divider"></div>
+            {% elif 'uri' in category_child and category_child['uri'].startswith('http') %}
+              {% if 'target' not in category_child or  category_child['target'] == '_blank' %}
+                <a class="dropdown-item" href="{{ category_child['uri'] }}" target="_blank" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+              {% else %}
+              <a class="dropdown-item" href="{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+              {% endif %}
+            {% else %}
+              {% if category_child['uri'] == menu[0] %}
+                <a class="dropdown-item active" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+              {% else %}
+                <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+              {% endif %}
+            {% endif %}
+          {% endfor %} 
+          </ul>
+        </li> 
+      {% endif %}
+    {% endfor %}<!---->
+    </ul>
+  </div>
+  {% endfor %}
+</nav>
+</div>
+{% endmacro %}
+
+
+
+
+
+{% macro menu_module() %}
+  <div id='menu_module_div'>
+  {% set current_menu = request.full_path | get_menu %}
+<!--{{ current_menu }}-->
+  {% set menu_map = get_menu_map() %}
+  {% for category in menu_map %}
+    {% for category_child in category['list'] %}
+      {% if current_menu[0] == category_child['uri'] %}
+        <ul class="nav nav-pills  bg-light shadow text-dark" >
+          <li class="nav-item"><span class="nav-link">{{category['name']}} ➤ {{category_child['name']}}</span></li>
+        {% for module in category_child['list'] %}
+<!--{{ module }}-->
+          {% if current_menu[0] == 'setting' %}
+            {% if current_menu[1] == module['uri'] or (current_menu[2] is not none and current_menu[1] + "/" + current_menu[2] == module['uri']) %}
+              <li class="nav-item"><a class="nav-link active" href="/{{module['uri']}}">{{module['name']}}</a></li>
+            {% else %}
+              <li class="nav-item"><a class="nav-link" href="/{{module['uri']}}">{{module['name']}}</a></li>
+            {% endif %}
+          {% else %}
+            {% if current_menu[1] == module['uri'] or (current_menu[2] is not none and current_menu[1] + "/" + current_menu[2] == module['uri']) %}
+              <li class="nav-item"><a class="nav-link active" href="/{{current_menu[0]}}/{{module['uri']}}">{{module['name']}}</a></li>
+            {% else %}
+              <li class="nav-item"><a class="nav-link" href="/{{current_menu[0]}}/{{module['uri']}}">{{module['name']}}</a></li>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        </ul>
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  </div>
+{% endmacro %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% macro menu_page() %}
+  <div id='menu_page_div'>
+  {% set current_menu = request.full_path | get_menu %}
+  {% set menu_map = get_menu_map() %}
+  {% for category in menu_map %}
+    {% for plugin in category['list'] %}
+      {% if current_menu[0] == plugin['uri'] and 'list' in plugin %}
+        {% for module in plugin['list'] %}
+          {% if module['uri'] == current_menu[1] and 'list' in module%}
+<!--{{ module }}-->
+            <ul class="nav nav-pills bg-light shadow text-dark">
+            {% for page in module['list'] %}
+              {% if current_menu[2] == page['uri'] %}
+                <li class="nav-item"><a class="nav-link active" href="/{{ current_menu[0] }}/{{ current_menu[1] }}/{{ page['uri'] }}">{{page['name']}}</a></li>
+              {% else %}
+                <li class="nav-item"><a class="nav-link" href="/{{ current_menu[0] }}/{{ current_menu[1] }}/{{ page['uri'] }}">{{page['name']}}</a></li>
+              {% endif %}          
+            {% endfor %}
+            </ul>
+            <div class="d-inline-block"></div>
+          {% endif %}  
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  </div>
+{% endmacro %}
+            

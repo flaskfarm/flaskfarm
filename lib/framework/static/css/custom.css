@@ -1,0 +1,104 @@
+body {
+    font-size: .850rem;
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+.alert-minimalist {
+    background-color: rgb(241, 242, 240);
+    border-color: rgba(149, 149, 149, 0.3);
+    border-radius: 3px;
+    color: rgb(149, 149, 149);
+    padding: 10px;
+}
+.alert-minimalist > [data-notify="icon"] {
+    height: 50px;
+    margin-right: 12px;
+}
+.alert-minimalist > [data-notify="title"] {
+    color: rgb(51, 51, 51);
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.alert-minimalist > [data-notify="message"] {
+    font-size: 80%;
+}
+
+
+
+
+textarea {
+    font-family: Courier
+}
+
+
+.loading { position: fixed; left: 45%; top: 50%; background: #00000000; }
+
+.table > tbody > tr.collapse > td {
+background-color: #009fff0d !important;
+}
+.tableRowHover tbody tr:not(.tableRowHoverOff):hover td {
+background-color: #ffff0080 !important;
+}
+
+.table > tbody > tr > td { vertical-align: middle; }
+
+.tab-pane {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0px 0px 5px 5px;
+    padding: 10px;
+}
+
+.btn-toolbar { text-align: center; }​
+.nav-tabs { margin-bottom: 0; }
+.navbar-nav li:hover>.dropdown-menu { display: block; }
+.dropdown-toggle::after { display:none; }
+.set-left  { text-align: left; }
+
+@media (min-width: 768px) {
+    .set-left  { text-align: right; }
+}
+
+.badge-sm {
+    min-width: 1.8em;
+    padding: .25em !important;
+    margin-left: .1em;
+    margin-right: .1em;
+    color: white !important;
+    cursor: pointer;
+}
+
+
+@media all and (min-width: 992px) {
+	.dropdown-menu li{
+		position: relative;
+	}
+	.dropdown-menu .submenu{ 
+		display: none;
+		position: absolute;
+		left:100%; top:-7px;
+	}
+	.dropdown-menu .submenu-left{ 
+		right:100%; left:auto;
+	}
+	.dropdown-menu > li:hover{ background-color: #f1f1f1 }
+	.dropdown-menu > li:hover > .submenu{
+		display: block;
+	}
+}	
+/* ============ desktop view .end// ============ */
+
+/* ============ small devices ============ */
+@media (max-width: 991px) {
+    .dropdown-menu .dropdown-menu{
+        margin-left:0.7rem; margin-right:0.7rem; margin-bottom: .5rem;
+}
+}	

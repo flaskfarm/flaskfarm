@@ -1,0 +1,125 @@
+{% import "macro.html" as macros %}
+
+
+
+{% macro modals() %}
+  <!-- Modal -->
+  <div class="modal fade" id="large_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal_title"></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body" id="modal_body" style="word-break:break-all;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+          <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="normal_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="normal_modal_title"></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body" id="normal_modal_body" style="word-break:break-all;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+          <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="confirm_modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="confirm_title" class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="confirm_body" class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+          <button id="confirm_button" type="button" class="btn btn-primary" data-dismiss="modal">확인</button>
+          <button id="confirm_cancel_button" type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 경로 선택 모달 -->
+  <div class="modal fade" id="select_local_file_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="select_local_file_modal_title">경로 선택</h4>
+        </div>
+        <div class="modal-body" id="modal_body" style="word-break: break-all;">
+          <div class="row" style="padding-top: 10px; padding-bottom:10px; align-items: center;">
+            <div class="col-sm-1 set-left"><strong>Path</strong></div>
+            <div class="col-sm-11">
+              <div class="input-group col-sm-12">
+                <input id="select_local_file_modal_path" name="select_local_file_modal_path" type="text" class="form-control form-control-sm" value="/">
+                <div class="btn-group btn-group-sm flex-wrap mr-2" role="group" style="padding-left:5px; padding-top:0px">
+                  <button id="global_select_local_file_load_btn" class="btn btn-sm btn-outline-success">Load</button>
+                  <button type="button" id='select_local_file_modal_confirm_btn' class="btn btn-success" data-dismiss="modal">선택
+                </div>
+              </div>
+            <div style="padding-left:20px; padding-top:5px;"><em>입력한 경로를 불러옵니다.</em></div>
+          </div>
+        </div>
+          <input type="hidden" id="select_local_file_modal_only_dir" value="true" />
+          <input type="hidden" id="select_local_file_modal_callback" value="" />
+          <div class="list-group" id="select_local_file_modal_list_group">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id='select_local_file_modal_confirm_btn' class="btn btn-success" data-dismiss="modal">선택
+          </button>
+          <button type="button" id='select_local_file_modal_cancel_btn' class="btn btn-default" data-dismiss="modal">닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- 예고편 Player Modal: START -->
+  <div class="modal fade" id="video_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="video_modal_title" style="word-break:break-all;">예고편 재생: </h4>
+        </div>
+        <div class="modal-body" id="modal_body" style="word-break:break-all;">
+          <span id="video_player_body"></span>
+        </div>
+        <!--</div>-->
+        <div class="modal-footer">
+          <button type="button" id='video_close_btn' class="btn btn-default" data-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 예고편 Player Modal: END -->
+
+
+  <!--command modal-->
+  {{ macros.m_modal_start('command_modal', '', 'modal-lg') }}
+    <div>
+      <textarea id="command_modal_textarea" class="col-md-12" rows="30" disabled style="visibility:visible"></textarea>
+    </div>
+  {{ macros.m_modal_end() }}
+  <!--command modal end-->
+  <!-- Modal end -->
+{% endmacro %}
+

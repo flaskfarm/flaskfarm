@@ -1,0 +1,8 @@
+psutil
+pycryptodome
+
+gevent
+gevent-websocket
+celery==4.3.0
+redis
+

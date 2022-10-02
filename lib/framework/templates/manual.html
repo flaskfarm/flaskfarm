@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% filter markdown %}
+{{ data }}
+{% endfilter %}
+
+
+<style type="text/css">
+img{
+
+display: block;
+max-width: 100%;
+
+margin-right: auto;
+}
+
+</style>
+
+<div id="md_div" data-url="{{ arg }}"></div>
+<div id="content_div" data-url="{{ arg }}"></div>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  //$('#main_container').attr('class', 'container-fluid');  
+});
+</script>    
+{% endblock %}
+ 

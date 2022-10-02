@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<script type="text/javascript">
+hideMenu();
+</script>
+
+<div>
+  <h4>
+{% if sub == 'restart' %}
+  시스템 재시작 중입니다. <br>
+  완료시 이전 페이지로 이동합니다.
+
+{% elif sub == 'shutdown' %}
+  시스템이 종료되었습니다.
+{% endif %}
+</h4>
+</div>
+{% if sub == 'restart' %}
+
+<script type="text/javascript">
+var referer = "{{referer}}";
+
+$(document).ready(function() {
+  if (MODULE_NAME == 'restart') {
+    $('#loading').show();
+    setTimeout(function(){
+    }, 2000);
+
+    var protocol = window.location.protocol;
+    var restartSocket = io.connect(window.location.href);
+    
+    restartSocket.on('connect', function(data){
+      console.log('접속 받음')
+      window.location.href = referer;
+    });
+  }
+})
+</script> 
+{% endif %} 
+{% endblock %}

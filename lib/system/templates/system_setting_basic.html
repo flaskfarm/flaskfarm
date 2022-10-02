@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div>
+  {{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장']])}}
+  {{ macros.m_row_start('5') }}
+  {{ macros.m_row_end() }}
+  {{ macros.m_hr() }}
+
+  <form id='setting' name='setting'>
+    {{ macros.setting_input_int('port', 'Port', value=arg['port'], min='1', placeholder='Port', desc=['포트 번호입니다.', '네이티브 설치 혹은 도커  네트워크 타입이 호스트일 경우 반영됩니다.', '도커 브릿지 모드인 경우는 docker run -p 옵션에서 변경하시기 바랍니다.', '경고 : -p 브릿지 모드로 사용중 일 경우 9999번을 변경하지 마세요.']) }}
+    {{ macros.setting_input_text_and_buttons('ddns', 'DDNS', [['ddns_test_btn', '테스트']], value=arg['ddns'], desc=['외부에서 접근시 사용할 DDNS. http:// 나 https:// 로 시작해야합니다.', 'URL생성시 사용합니다.', '테스트 버튼 클릭 후 버전을 확인 할 수 있어야 합니다.']) }}
+    {{ macros.setting_input_text('restart_interval', '자동 재시작 시간', value=arg['restart_interval'], col='3', desc=['자동 재시작 간격(시간단위)이나 Cron 설정을 입력합니다.', '0이면 재시작 안함.']) }}
+    {{ macros.setting_select('log_level', '로그 레벨', [['10', 'DEBUG'],['20', 'INFO'],['30', 'WARNING'],['40', 'ERROR'], ['50', 'CRITICAL'] ], value=arg['log_level'], col='3') }}
+    {{ macros.m_hr() }}
+  </form>
+</div><!--전체-->
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+});
+
+$("body").on('click', '#ddns_test_btn', function(e){ 
+  e.preventDefault();
+  globalSendCommand('ddns_test', $('#ddns').val());
+  
+  ddns = document.getElementById('ddns').value;
+  $.ajax({
+    url: '/' + package_name + '/ajax/ddns_test',
+    type: "POST", 
+    cache: false,
+    data:{ddns:ddns},
+    dataType: "json",
+    success: function (data) {
+      console.log(data)
+      if (data == 'fail') {
+        $.notify('<strong>접속에 실패하였습니다.</strong>', {
+          type: 'warning'
+        });
+      } else {
+        $.notify('<strong>Version:'+ data+'</strong>', {
+          type: 'success'
+        });
+      }
+    }
+  });
+});
+
+
+function setting_save_func(formData, noti) {
+  $.ajax({
+    url: '/' + package_name + '/ajax/setting_save_system',
+    type: "POST", 
+    cache: false,
+    data: formData,
+    dataType: "json",
+    success: function (ret) {
+      if (ret) {
+        if (noti) {
+          $.notify('<strong>설정을 저장하였습니다.</strong>', {
+            type: 'success'
+          });
+        } else {
+          window.location.href = "/"
+        }
+      } else {
+        $.notify('<strong>설정 저장에 실패하였습니다.</strong>', {
+          type: 'warning'
+        });
+      }
+    }
+  });
+}
+
+//설정 저장
+$("#setting_save").click(function(e) {
+  e.preventDefault();
+  var formData = get_formdata('#setting');
+  setting_save_func(formData, true)
+});
+
+//설정 저장
+$("#setting_save2").click(function(e) {
+  e.preventDefault();
+  var formData = get_formdata('#setting2');
+  setting_save_func(formData, false)
+});
+
+$("#setting_save4").click(function(e) {
+  e.preventDefault();
+  var formData = get_formdata('#setting4');
+  setting_save_func(formData, true)
+});
+
+$("#setting_save3").click(function(e) {
+  e.preventDefault();
+  var formData = get_formdata('#setting3');
+  setting_save_func(formData, true)
+  $.notify('<strong>재시작해야 적용됩니다.</strong>', {
+    type: 'success'
+  });
+});
+
+
+
+
+
+
+$("body").on('click', '#command_run_btn', function(e){ 
+  e.preventDefault();
+  command_text = document.getElementById('command_text').value;
+  $.ajax({
+    url: '/' + package_name + '/ajax/command_run',
+    type: "POST", 
+    cache: false,
+    data:{command_text:command_text},
+    dataType: "json",
+    success: function (data) {
+      if (data.ret == 'success') {
+        $.notify('<strong>성공 : '+ data.log +'</strong>', {
+          type: 'success'
+        });
+      } else {
+        $.notify('<strong>실패 : ' + data.log+'</strong>', {
+          type: 'warning'
+        });
+      }
+    }
+  });
+});
+
+
+
+</script>    
+{% endblock %}

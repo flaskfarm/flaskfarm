@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script type="text/javascript">
+  hideMenuModule();
+</script>
+
+<div>
+  <div class="row">
+  <div class="col-sm-12">
+ 
+  <h3>시스템</h3>
+  <hr>
+  {{ macros.info_text_and_buttons('python_version', 'Python', [['globalLinkBtn', '패키지 관리', [('url','/system/python')]]], info['python_version']) }}
+  {{ macros.info_text('platform', 'Platform', info['platform']) }}
+  {{ macros.info_text('processor', 'Processor', info['processor']) }}
+  {{ macros.info_text_and_buttons('version_str', '버전',  [['globalOpenBtn', '업데이트 내역', [('url','https://sjva.me/wiki/public/changelog')]], ['recent_version_btn', '최신버전 확인']], info['version']) }}
+  </div>
+  </div> 
+
+  <div class="d-inline-block"></div>
+  
+  <div class="row">
+  <div class="col-sm-6">
+  <h3>App 환경</h3>
+  <hr>
+  {{ macros.info_text_and_buttons('running_type', '실행타입', [['config_show_btn', 'Config 확인']], info['running_type'] + ' → 비동기 작업 ' + info['use_celery']) }}
+  {{ macros.info_text_and_buttons('config_filepath', 'Config', [['globalEditBtn', '편집', [('file',info['config_filepath'])]]], value=info['config_filepath']) }}
+  {{ macros.info_text('path_app', 'Path App', info['path_app']) }}
+  {{ macros.info_text('path_data', 'Path Data', info['path_data']) }}
+  {{ macros.info_text('path_working', 'Path Working', info['path_working']) }}
+  {{ macros.info_text('time', '실행 시간') }}
+  </div>
+
+  <div class="col-sm-6">
+  <h3>모니터링</h3>
+  <hr>
+  {{ macros.info_text('cpu_percent', 'CPU 사용량') }}
+  {{ macros.info_text('memory', '메모리') }}
+  {{ macros.info_text('disk', '디스크') }}
+  </div>
+  </div>
+
+  <div class="d-inline-block"></div>
+
+  <h3>스케쥴</h3>
+  <div id="scheduler_list_div"></div>
+</div> <!--전체-->
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var socket = io.connect(window.location.href);
+
+  socket.on('start', function(data){
+  });
+
+  socket.on('status', function(data) {
+    make_system(data.system);
+    make_scheduler_list(data.scheduler);
+  });
+});
+
+
+$("body").on('click', '#recent_version_btn', function(e){
+  e.preventDefault();
+  globalSendCommand('recent_version');
+});
+
+
+
+$("body").on('click', '#config_show_btn', function(e){
+  e.preventDefault();
+  globalSendCommand('get_config', null, null, null, 'Config');
+});
+
+
+
+
+function make_system(data) {
+  str = data.version;
+  if (data.version == data.recent_version) {
+    str += text_color(" (최신 버전)", 'blue');
+  } else {
+    str += text_color(" (최신 버전 : " + data.recent_version+')', 'red');
+  }
+  $('#version_str').html(str);
+
+  str = '<table id="result_table" class="table table-sm" style="margin-bottom:0px"   ><thead class=""><tr> \
+  <th style="width:50%;text-align:center;font-size:11px;">시작시간</th> \
+  <th style="width:30%;text-align:center;font-size:11px;">경과</th> \
+  <th style="width:20%;text-align:center;font-size:11px;">재시작</th> \
+  </tr></thead><tbody id="list">';
+  str += '<tr class="chover">';
+  str += '<td scope="col" style="width:50%;text-align:center;">' + data['time'][0] + '</td>';
+  str += '<td scope="col" style="width:30%;text-align:center;">' + data['time'][1] + '</td>';
+  str += '<td scope="col" style="width:20%;text-align:center;">' + data['time'][2] + '</td>';
+  str += '</tr></table>';
+  $('#time').html(str);
+  
+  if (data['memory'] == 'not supported') {
+    str = data['memory'];
+  } else {
+    str = '<table id="result_table" class="table table-sm" style="margin-bottom:0px"><thead class=""><tr> \
+    <th style="width:25%;text-align:center;font-size:11px;">전체</th> \
+    <th style="width:25%;text-align:center;font-size:11px;">사용량</th> \
+    <th style="width:25%;text-align:center;font-size:11px;">남은량</th> \
+    <th style="width:25%;text-align:center;font-size:11px;">%</th> \
+    </tr></thead><tbody id="list">';
+    str += '<tr class="chover">';
+    str += '<td scope="col" style="text-align:center;">' + data['memory'][0] + '</td>';
+    str += '<td scope="col" style="text-align:center;">' + data['memory'][1] + '</td>';
+    str += '<td scope="col" style="text-align:center;">' + data['memory'][2] + '</td>';
+    str += '<td scope="col" style="text-align:center;">' + data['memory'][3] + '</td>';
+    str += '</tr></table>';
+  }
+  $('#memory').html(str);
+
+  if (data['disk'] == 'not supported') {
+    str = data['disk'];
+  } else {
+    str =  '<table id="result_table" class="table table-sm" style="margin-bottom:0px"><thead class=""><tr> \
+    <th style="width:25%;text-align:center;font-size:11px;">전체</th> \
+    <th style="width:25%;text-align:center;font-size:11px;">사용량</th> \
+    <th style="width:25%;text-align:center;font-size:11px;">남은량</th> \
+    <th style="width:25%;text-align:center;font-size:11px;">%</th> \
+    </tr></thead><tbody id="list">';
+    str += '<tr class="chover">';
+    str += '<td scope="col" style="text-align:center;">' + data['disk'][0] + '</td>';
+    str += '<td scope="col" style="text-align:center;">' + data['disk'][1] + '</td>';
+    str += '<td scope="col" style="text-align:center;">' + data['disk'][2] + '</td>';
+    str += '<td scope="col" style="text-align:center;">' + data['disk'][3] + '</td>';
+    str += '</tr></table>';
+    if (data['disk'][4] != '/') {
+      str += '드라이브 ' + data['disk'][4];
+    }
+  }
+  $('#disk').html(str);
+}
+
+
+function make_scheduler_list(data) {
+  str = `
+<table id="result_table" class="table table-sm ">
+  <thead class="">
+    <tr>
+      <th rowspan='2' style="width:10%;text-align:center;vertical-align:middle;">NO</th>
+      <th style="width:10%;text-align:center;vertical-align:middle;">플러그인<br>ID</th>
+      <th style="width:10%;text-align:center;vertical-align:middle;">상태</th>
+      <th style="width:10%;text-align:center;vertical-align:middle;">다음 실행시간</th>
+      <th style="width:10%;text-align:center;vertical-align:middle;">남은 시간</th>
+      <th style="width:10%;text-align:center;vertical-align:middle;">주기</th>
+      <th style="width:10%;text-align:center;vertical-align:middle;">이전소요시간<br>실행횟수</th>
+      <th style="width:20%;text-align:center;vertical-align:middle;">설명</th>
+    </tr>
+  </thead>
+  <tbody id="scheduler_list">`;
+    
+    TD_STR = '<td scope="col" style="width:10%; text-align:center;">';
+    for(var i in data) {
+      if (data[i].is_running) {
+        str += '<tr class="bg-light">';
+      } else {
+        str += '<tr>';
+      }
+      str += '<td scope="col" style="width:5%; text-align:center;">' + (parseInt(i)+1) + '</td>';
+      str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].plugin) + '<br>' + (data[i].id) + '</td>';
+      str += '<td scope="col" style="width:10%; text-align:center;">' + ((data[i].is_running) ?'실행중':'대기중') + '</td>';
+      str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].next_run_time) + '</td>';
+      str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].remain_time) + '</td>';
+
+      str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].interval) + '</td>';
+      str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].running_timedelta) + '<br>' + (data[i].count) +'</td>';
+      str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].description) + '</td>';
+      str += '</tr>';
+    }
+  str += `
+  </tbody>
+</table>`;
+
+  $("#scheduler_list_div").html(str);
+  return;
+
+
+  str = m_row_start(p='0');
+  str += m_col(1, '<strong>NO</strong>');
+  str += m_col(2, '<strong>플러그인 & ID</strong>');
+  //str += m_col(2, '<strong>생성 & 다음 실행</strong>');
+  str += m_col(2, '<strong>다음 실행 (남은시간)</strong>');
+  str += m_col(1, '<strong>이전소요/횟수</strong>');
+  str += m_col(2, '<strong>Interval & Cron</strong>');
+  str += m_col(1, '<strong>상태</strong>');
+  str += m_col(3, '<strong>설 명</strong>');
+  str += m_row_end();
+  str += m_hr();
+
+  for(var i in data) {
+    if (data[i].is_running) {
+      str += m_row_start_color2(0);
+    } else {
+      str += m_row_start(p='0');
+    }
+    
+    str += m_col(1, data[i].no);
+    tmp = '<strong>'+data[i].plugin+'</strong><br>' + data[i].id;
+    str += m_col(2, tmp);
+
+    //tmp = ''+''+'' + data[i].make_time + '<br>';
+    //tmp += ''+''+'' + data[i].next_run_time + '<br>';
+    tmp = ''+''+'' + data[i].next_run_time + '<br>';
+    if (data[i].remain_time != '') {
+      tmp += '('+data[i].remain_time+')';
+    }
+    str += m_col(2, tmp);
+    tmp = ''+''+'' + data[i].running_timedelta + '초 / ';
+    tmp += ''+''+'' + data[i].count + '회';
+    str += m_col(1, tmp);
+    
+    tmp = ''+''+'' + data[i].interval + ' <br>';
+    str += m_col(2, tmp);
+    tmp = ''+''+'' + ((data[i].is_running) ?'실행중':'대기중') + '';
+    if (data[i].run == false) {
+      tmp += '(F)'
+    }
+    str += m_col(1, tmp);
+    str += m_col(3, data[i].description);
+    str += m_row_end();
+    str += m_hr();
+  }
+  document.getElementById("scheduler_list_div").innerHTML = str;
+}
+
+
+</script>    
+{% endblock %}

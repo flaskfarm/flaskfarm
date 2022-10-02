@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+  {{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장']])}}
+  {{ macros.m_row_start('5') }}
+  {{ macros.m_row_end() }}
+  {{ macros.m_hr() }}
+  
+  <form id='setting' name='setting'>  
+    {{ macros.setting_select('theme', '테마 선택', [['Default','Default'], ['Cerulean','Cerulean'], ['Cosmo','Cosmo'], ['Cyborg','Cyborg'], ['Darkly','Darkly'], ['Flatly','Flatly'], ['Journal','Journal'], ['Litera','Litera'], ['Lumen','Lumen'], ['Lux','Lux'], ['Materia','Materia'], ['Minty','Minty'], ['Morph','Morph'],['Pulse','Pulse'], ['Quartz','Quartz'], ['Sandstone','Sandstone'], ['Simplex','Simplex'], ['Sketchy','Sketchy'], ['Slate','Slate'], ['Solar','Solar'], ['Spacelab','Spacelab'], ['Superhero','Superhero'], ['United','United'], ['Vapor','Vapor'], ['Yeti','Yeti'], ['Zephyr','Zephyr']], value=arg['theme'], desc=None, col='6') }}
+    {{ macros.info_text_go('', '테마 제공', 'https://bootswatch.com')}}
+    {{ macros.setting_input_text('web_title', '웹 타이틀', value=arg['web_title']) }}
+        
+    {{ macros.m_hr() }}
+  </form>
+</div> <!--전체-->
+
+<script type="text/javascript">
+
+</script>    
+{% endblock %}
