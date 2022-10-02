@@ -140,3 +140,4 @@ export.sh
 run.sh
 pre_start.sh
 *.code-workspace
+false/

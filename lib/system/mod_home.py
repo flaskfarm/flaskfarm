@@ -25,7 +25,8 @@ class ModuleHome(PluginModuleBase):
         elif command == 'get_config':
             data = {}
             for key, value in F.app.config.items():
-                data[key] = str(value)
+                if key not in ['SECRET_KEY']:
+                    data[key] = str(value)
             ret = {'json':{'Framework':F.config, 'Flask':data}}
             return jsonify(ret)
        
