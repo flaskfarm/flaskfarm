@@ -269,7 +269,13 @@ class Framework:
             # celery user_options으로 configfilepath를 받은 후 처리해야하나, 로그파일 경로 등에서 데이터 폴더 위치를 미리 사용하는 경우가 많다.
             # sys.argv에서 데이터 경로를 바로 가져와서 사용.
             self.config['arg_repeat'] = 0
-            self.config['arg_config'] = sys.argv[-1].split('=')[-1]
+            #self.config['arg_config'] = sys.argv[-1].split('=')[-1]
+            #self.config['arg_config'] = sys.argv[-1].split('=')[-1]
+            for tmp in sys.argv:
+                if tmp.startswith('--config_filepath'):
+                    self.config['arg_config'] = tmp.split('=')[1]
+                    break
+
             #self.config['arg_config'] = 
 
     def __load_config(self):
