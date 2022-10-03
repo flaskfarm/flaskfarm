@@ -100,7 +100,10 @@ class Framework:
             try:
                 redis_port = os.environ['REDIS_PORT']
             except:
-                redis_port = '6379'
+                try:
+                    redis_port = self.config['redis_port']
+                except:
+                    redis_port = '6379'
 
             self.app.config['CELERY_BROKER_URL'] = 'redis://localhost:%s/0' % redis_port
             self.app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:%s/0' % redis_port
