@@ -288,10 +288,16 @@ class Framework:
         else:
             self.config['config_filepath'] = self.config['arg_config']
         if not os.path.exists(self.config['config_filepath']):
-            shutil.copy(
-                os.path.join(self.path_app_root, 'files', 'config.yaml.template'),
-                self.config['config_filepath']
-            )
+            if os.environ.get('RUNNING_TYPE') == 'docker':
+                shutil.copy(
+                    os.path.join(self.path_app_root, 'files', 'config.yaml.docker'),
+                    self.config['config_filepath']
+                )
+            else:                
+                shutil.copy(
+                    os.path.join(self.path_app_root, 'files', 'config.yaml.template'),
+                    self.config['config_filepath']
+                )
 
         #os.environ['FLASK_FARM_CONFIG_FILEPATH'] = self.config['config_filepath']
         #else:
