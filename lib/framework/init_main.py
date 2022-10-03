@@ -295,7 +295,11 @@ class Framework:
         else:
             self.config['config_filepath'] = self.config['arg_config']
         if not os.path.exists(self.config['config_filepath']):
-            if self.config.get('running_type') == 'docker':
+            # celery는 환경변수 사용불가로 native 판단
+            # 도커는 celery가 먼저 진입
+            # 추후에 변경할 것!!!!!!!!!!!!!!!!! TODO
+            #if self.config.get('running_type') == 'docker':
+            if self.config.get('running_type') == 'docker' or os.path.exists('/data'):
                 shutil.copy(
                     os.path.join(self.path_app_root, 'files', 'config.yaml.docker'),
                     self.config['config_filepath']
