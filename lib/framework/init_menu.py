@@ -1,8 +1,10 @@
-import copy
 import os
 import shutil
+
 from support.base.yaml import SupportYaml
+
 from framework import F
+
 
 class MenuManager:
     menu_map = None
@@ -18,21 +20,8 @@ class MenuManager:
         cls.menu_map = SupportYaml.read_yaml(menu_yaml_filepath)
         
 
-        """
-        for cate in cls.menu_map:
-            cate['count'] = 0
-        cls.menu_map.insert(len(cls.menu_map)-1, {
-            'name':'미분류', 'count':0, 'list':[]
-        })
-        cls.menu_map[-1]['count'] = 1
-        F.logger.debug(cls.menu_map)
-        """
-
-
     @classmethod
     def init_menu(cls):
-        #F.logger.debug(d(plugin_menus))
-        #print(plugin_menus)
         cls.__load_menu_yaml()
         from .init_plugin import PluginManager
         plugin_menus = PluginManager.plugin_menus
