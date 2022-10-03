@@ -298,6 +298,9 @@ class Framework:
                     os.path.join(self.path_app_root, 'files', 'config.yaml.template'),
                     self.config['config_filepath']
                 )
+        print((self.config))
+        print(self.config['config_filepath'])
+
 
         #os.environ['FLASK_FARM_CONFIG_FILEPATH'] = self.config['config_filepath']
         #else:
@@ -314,6 +317,7 @@ class Framework:
                 self.config['path_data'] = os.path.join(self.config['path_working'], 'data')
         self.path_data = self.config['path_data']
 
+        
 
     def __make_default_dir(self):
         os.makedirs(self.config['path_data'], exist_ok=True)
