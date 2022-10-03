@@ -292,7 +292,7 @@ class Framework:
         else:
             self.config['config_filepath'] = self.config['arg_config']
         if not os.path.exists(self.config['config_filepath']):
-            if os.config.get('running_type') == 'docker':
+            if self.config.get('running_type') == 'docker':
                 shutil.copy(
                     os.path.join(self.path_app_root, 'files', 'config.yaml.docker'),
                     self.config['config_filepath']
