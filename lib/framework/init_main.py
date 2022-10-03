@@ -222,6 +222,10 @@ class Framework:
                 self.config['path_app'] = self.config['path_app'][0].upper() + self.config['path_app'][1:]
             self.path_app_root = self.config['path_app']
             self.config['path_working'] = os.getcwd()
+            if os.environ.get('RUNNING_TYPE') == 'docker':
+                self.config['running_type'] = 'docker'
+            else:
+                self.config['running_type'] = 'native'
             self.__process_args()
             self.__load_config()
             self.__init_define()
@@ -288,7 +292,7 @@ class Framework:
         else:
             self.config['config_filepath'] = self.config['arg_config']
         if not os.path.exists(self.config['config_filepath']):
-            if os.environ.get('RUNNING_TYPE') == 'docker':
+            if os.config.get('running_type') == 'docker':
                 shutil.copy(
                     os.path.join(self.path_app_root, 'files', 'config.yaml.docker'),
                     self.config['config_filepath']
@@ -308,6 +312,8 @@ class Framework:
         #    self.logger.info(f"CELERY config : {self.config['config_filepath']}")
         data = read_yaml(self.config['config_filepath'])
         for key, value in data.items():
+            if key == 'running_type' and self.config[key] == 'native' and value not in ['termux', 'entware']:
+                continue
             self.config[key] = value
 
         if self.config['path_data'] == '.':
