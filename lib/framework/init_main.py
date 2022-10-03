@@ -192,16 +192,7 @@ class Framework:
 
     def __prepare_starting(self):
         # 여기서 monkey.patch시 너무 늦다고 문제 발생
-        if self.config['run_flask'] and self.config.get('use_celery') == True:
-            try:
-                from gevent import monkey
-
-                #from gevent import monkey;monkey.patch_all()
-                #print('[MAIN] gevent mokey patch!!')
-                #sys.getfilesystemencoding = lambda: 'UTF-8'
-            except:
-                self.config['use_celery'] = False
-                print('[MAIN] gevent not installed!!')
+        pass
         
         
     ###################################################
@@ -220,17 +211,11 @@ class Framework:
                 self.config['path_app'] = self.config['path_app'][0].upper() + self.config['path_app'][1:]
             self.path_app_root = self.config['path_app']
             self.config['path_working'] = os.getcwd()
-            print('aaaaaaaaaaaaaaa')
-            print(os.environ.get('RUNNING_TYPE'))
-            print(sys.argv)
             if os.environ.get('RUNNING_TYPE') == 'docker':
                 self.config['running_type'] = 'docker'
-            
             self.__process_args()
             self.__load_config()
             self.__init_define()
-            
-        
         elif mode == "flask":
             self.app.secret_key = os.urandom(24)
             #self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/db/system.db?check_same_thread=False'
@@ -299,14 +284,6 @@ class Framework:
                     os.path.join(self.path_app_root, 'files', 'config.yaml.template'),
                     self.config['config_filepath']
                 )
-        print((self.config))
-        print(self.config['config_filepath'])
-
-
-        #os.environ['FLASK_FARM_CONFIG_FILEPATH'] = self.config['config_filepath']
-        #else:
-        #    self.config['config_filepath'] = os.environ['FLASK_FARM_CONFIG_FILEPATH']
-        #    self.logger.info(f"CELERY config : {self.config['config_filepath']}")
         data = read_yaml(self.config['config_filepath'])
         for key, value in data.items():
             if key == 'running_type' and value not in ['termux', 'entware']:
