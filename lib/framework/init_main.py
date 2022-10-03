@@ -222,6 +222,9 @@ class Framework:
                 self.config['path_app'] = self.config['path_app'][0].upper() + self.config['path_app'][1:]
             self.path_app_root = self.config['path_app']
             self.config['path_working'] = os.getcwd()
+            print('aaaaaaaaaaaaaaa')
+            print(os.environ.get('RUNNING_TYPE'))
+            print(sys.argv)
             if os.environ.get('RUNNING_TYPE') == 'docker':
                 self.config['running_type'] = 'docker'
             else:
