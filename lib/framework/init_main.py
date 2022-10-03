@@ -113,17 +113,15 @@ class Framework:
                 timezone='Asia/Seoul'
             )
             from celery import bootsteps
-            #from celery.bin.base import CeleryOption
             from click import Option
-
-            #from celery.bin import Option # 4.3.0
-            celery.user_options['worker'].add(
-                Option(('--config_filepath',), help='')
-            )
+            celery.user_options['worker'].add(Option(('--config_filepath',), help=''),)
+            celery.user_options['worker'].add(Option(('--running_type',), help=''),)
             class CustomArgs(bootsteps.Step):
-                def __init__(self, worker, config_filepath=None, **options):
+                def __init__(self, worker, config_filepath=None, running_type=None,  **options):
                     from . import F
-                    F.logger.info("celery config filepath: {config_filepath}")
+                    F.logger.info(f"celery config_filepath: {config_filepath}")
+                    F.logger.info(f"celery running_type: {running_type}")
+                    #F.logger.info(f"celery running_type: {options}")
             celery.steps['worker'].add(CustomArgs)
         except Exception as e:
             self.logger.error('CELERY!!!')
@@ -227,8 +225,7 @@ class Framework:
             print(sys.argv)
             if os.environ.get('RUNNING_TYPE') == 'docker':
                 self.config['running_type'] = 'docker'
-            else:
-                self.config['running_type'] = 'native'
+            
             self.__process_args()
             self.__load_config()
             self.__init_define()
@@ -242,17 +239,8 @@ class Framework:
             self.app.config['TEMPLATES_AUTO_RELOAD'] = True
             self.app.config['JSON_AS_ASCII'] = False
         elif mode == 'system_loading_after':
-            pass
-            #from system import SystemModelSetting
-            """
-            app.config['config']['running_type'] = 'native'
-            if 'SJVA_RUNNING_TYPE' in os.environ:
-                app.config['config']['running_type'] = os.environ['SJVA_RUNNING_TYPE']
-            else:
-                import platform
-                if platform.system() == 'Windows':
-                    app.config['config']['running_type'] = 'windows'
-            """
+            if 'running_type' not in self.config:
+                self.config['running_type'] = 'native'
 
 
     def __init_define(self):
@@ -281,7 +269,9 @@ class Framework:
             for tmp in sys.argv:
                 if tmp.startswith('--config_filepath'):
                     self.config['arg_config'] = tmp.split('=')[1]
-                    break
+                    #break
+                elif tmp.startswith('--running_type'):
+                    self.config['running_type'] = tmp.split('=')[1]
 
             #self.config['arg_config'] = 
 
@@ -299,7 +289,7 @@ class Framework:
             # 도커는 celery가 먼저 진입
             # 추후에 변경할 것!!!!!!!!!!!!!!!!! TODO
             #if self.config.get('running_type') == 'docker':
-            if self.config.get('running_type') == 'docker' or os.path.exists('/data'):
+            if self.config.get('running_type') == 'docker':# or os.path.exists('/data'):
                 shutil.copy(
                     os.path.join(self.path_app_root, 'files', 'config.yaml.docker'),
                     self.config['config_filepath']
@@ -319,7 +309,7 @@ class Framework:
         #    self.logger.info(f"CELERY config : {self.config['config_filepath']}")
         data = read_yaml(self.config['config_filepath'])
         for key, value in data.items():
-            if key == 'running_type' and self.config[key] == 'native' and value not in ['termux', 'entware']:
+            if key == 'running_type' and value not in ['termux', 'entware']:
                 continue
             self.config[key] = value
 
