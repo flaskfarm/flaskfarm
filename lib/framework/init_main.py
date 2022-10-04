@@ -206,9 +206,9 @@ class Framework:
             self.config = {}
             self.config['os'] = platform.system()
             self.config['flag_system_loading'] = False
-            self.config['run_flask'] = True if sys.argv[0].endswith('main.py') else False
+            #self.config['run_flask'] = True if sys.argv[0].endswith('main.py') else False
             self.config['run_celery'] = True if sys.argv[0].find('celery') != -1 else False
-
+            self.config['run_flask'] = not self.config['run_celery']
             self.config['path_app'] = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             if self.config['os'] == 'Windows' and self.config['path_app'][0] != '/':
                 self.config['path_app'] = self.config['path_app'][0].upper() + self.config['path_app'][1:]
