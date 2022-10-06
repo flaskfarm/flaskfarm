@@ -9,23 +9,23 @@ __menu = {
                 {'uri': 'basic', 'name': '기본'},
                 {'uri': 'auth', 'name': '인증'},
                 {'uri': 'web', 'name': '웹'},
-                {'uri': 'env', 'name': '시스템'},
-                {'uri': 'menu', 'name': '메뉴'},
+                {'uri': 'menu', 'name': '메뉴 구성'},                
+                {'uri': 'config', 'name': 'config.yaml 파일'},
+                {'uri': 'export', 'name': 'export.sh 파일'},
                 {'uri': 'notify', 'name': '알림'},
-                {'uri': 'crypt', 'name': '암호화'},
+                
             ],
         },
+        {'uri': 'plugin', 'name': '플러그인'},
         {
-            'uri': 'plugin',
-            'name': '플러그인'
-        },
-        {
-            'uri': 'python',
-            'name': 'Python'
-        },
-        {
-            'uri': 'db',
-            'name': 'DB'
+            'uri': 'tool',
+            'name': '시스템 툴',
+            'list': [
+                {'uri': 'celery', 'name': 'celery 테스트'},
+                {'uri': 'python', 'name': 'Python'},
+                {'uri': 'db', 'name': 'DB'},
+                {'uri': 'crypt', 'name': '암호화'},
+            ]
         },
         {
             'uri': 'log',
@@ -34,7 +34,20 @@ __menu = {
     ]
 }
 
- 
+
+import os
+
+from framework import F
+
+export = os.path.join(F.config['path_app'], 'export.sh')
+if os.path.exists(export) == False:
+    for mod in __menu['list']:
+        if mod['uri'] == 'setting':
+            del mod['list'][5]
+
+
+
+
 setting = {
     'filepath' : __file__,
     'use_db': True,

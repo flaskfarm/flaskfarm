@@ -1,6 +1,8 @@
 import random
 import string
 
+from support.base.file import SupportFile
+
 from .setup import *
 
 name = 'setting'
@@ -16,14 +18,19 @@ class ModuleSetting(PluginModuleBase):
         'web_title': 'Home',
         'use_apikey': 'False',
         'apikey': ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)),
-        
         f'restart_interval': f'{random.randint(0,59)} {random.randint(1,23)} * * *',
-
         'theme' : 'Cerulean',
         'log_level' : '20',
         'plugin_dev_path': os.path.join(F.config['path_data'], 'dev'),
-
         'system_start_time': '',
+        # notify
+        'notify_telegram_use' : 'False',
+        'notify_telegram_token' : '',
+        'notify_telegram_chat_id' : '',
+        'notify_telegram_disable_notification' : 'False',
+        'notify_discord_use' : 'False',
+        'notify_discord_webhook' : '',
+        'notify_advaned_use' : 'False',
     } 
 
     def __init__(self, P):
@@ -33,6 +40,18 @@ class ModuleSetting(PluginModuleBase):
     def process_menu(self, page, req):
         arg = P.ModelSetting.to_dict()
         try:
+            if page == 'config':
+                arg['config.yaml'] = SupportFile.read_file(F.config['config_filepath'])
+                arg['config_filepath'] = F.config['config_filepath']
+            elif page == 'export':
+                arg['export_filepath'] = F.config['export_filepath']
+                if F.config['exist_export']:
+                    arg['export.sh'] = SupportFile.read_file(export)
+                else:
+                    arg['export.sh'] = "export.sh 파일이 없습니다."
+            elif page == 'menu':
+                arg['menu_yaml_filepath'] = F.config['menu_yaml_filepath']
+                arg['menu.yaml'] = SupportFile.read_file(arg['menu_yaml_filepath'])
             return render_template(f'{__package__}_{name}_{page}.html', arg=arg)
         except Exception as e: 
             P.logger.error(f'Exception:{str(e)}')
@@ -40,8 +59,31 @@ class ModuleSetting(PluginModuleBase):
             return render_template('sample.html', title=f"{__package__}/{name}/{page}")
 
     def process_command(self, command, arg1, arg2, arg3, req):
+        ret = {'ret':'success'}
         if command == 'apikey_generate':
             return jsonify(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)))
+        elif command == 'config_save':
+            SupportFile.write_file(F.config['config_filepath'], arg1 )
+            ret['msg'] = '저장하였습니다.'
+        elif command == 'export_save':
+            if F.config['exist_export']:
+                SupportFile.write_file(F.config['export_filepath'], arg1 )
+                ret['msg'] = '저장하였습니다.'
+            else:
+                ret['ret'] = 'warning'
+                ret['msg'] = 'export.sh 파일이 없습니다.'
+        elif command == 'menu_save':
+            SupportFile.write_file(F.config['menu_yaml_filepath'], arg1 )
+            ret['msg'] = '저장하였습니다.'
+            from framework.init_menu import MenuManager
+            MenuManager.init_menu()
+            F.socketio.emit("refresh", {}, namespace='/framework', broadcast=True)
+        elif command == 'notify_test':
+            if arg1 == 'telegram':
+                pass
+
+        return jsonify(ret)
+
             
 
     def plugin_load(self):
@@ -56,6 +98,7 @@ class ModuleSetting(PluginModuleBase):
             self.__set_restart_scheduler()
             self.__set_scheduler_check_scheduler()
             F.get_recent_version()
+
         except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
             P.logger.error(traceback.format_exc())

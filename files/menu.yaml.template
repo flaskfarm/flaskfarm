@@ -1,39 +1,28 @@
 # 카테고리
-
 # uri 가 plugin인 경우 name 값은 대체
 
-- name: "토렌트"
-  list: 
-    - uri: "rss2"
+#- name: "토렌트"
+#  list: 
+#    - uri: "rss"
 
 
-- name: "즐겨찾기"
-  list:
-    - uri: "number_baseball"
+#- name: "기본 기능"
+#  list:
+#    - uri: "terminal"
 #    - uri: "command"
 #    - uri: "flaskfilemanager"
 #    - uri: "flaskcode"
-
-- name: "기본 기능"
-  list:
-    - uri: "terminal"
-    - uri: "command"
-    - uri: "flaskfilemanager"
-    - uri: "flaskcode"
-    - uri: "number_baseball"
+#    - uri: "number_baseball"
 
 
-- name: "링크"
-  list:
-    - uri: "https://app.plex.tv"
-      name: "Plex"
-      target: "_self"
-    - uri: "https://app.plex.tv"
-      name: "Netflix"
+#- name: "링크"
+#  list:
+#    - uri: "https://app.plex.tv"
+#      name: "Plex"
+#      target: "_self"
+#    - uri: "https://www.netflix.com"
+#      name: "Netflix"
 
-
-- name: "Plex"
-  uri: "https://app.plex.tv"
 
 - name: "시스템"
   list:

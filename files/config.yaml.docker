@@ -1,14 +1,11 @@
 path_data: "/data"
-use_gevent: true
-use_celery: true
-redis_port: 46379
-port: 9999
-debug: false
-use_reloader: false
-plugin_update: true
 
-
-
+#use_gevent: true
+#use_celery: true
+#debug: false
+#redis_port: 46379
+#port: 9999
+#plugin_update: false
 #running_type: "docker"
 #plugin_loading_only_devpath: true
 #plugin_loading_list: []

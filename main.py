@@ -12,7 +12,9 @@ sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib
 
 try:
     from framework import frame
-    if __name__ in ['__main__', 'flaskfarm.main']:
+
+    # flaskfarm.main : 패키지로 실행. 패키지로 celry 실행 체크
+    if __name__ in ['__main__', 'flaskfarm.main'] and sys.argv[0].endswith('celery') == False:
         frame.start()
     else:  
         app = frame.app

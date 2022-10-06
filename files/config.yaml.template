@@ -6,39 +6,36 @@ path_data: "."
 #path_data: "/mnt/c/work/FlaskFarm/working"
 
 # gevent 사용여부
-# 거의 항상 true로 사용.
 # 플러그인 개발이나 termux 환경에서의 실행 같이 특수한 경우에만 false로 사용.
 # 실행환경에 gevent 관련 패키지가 설치되어 있지 않는다면 값과 상관 없이 false로 동작.
-# false인 경우 
-use_gevent: true
+#use_gevent: true
 
 
 # celery 사용 여부
-use_celery: true
+#use_celery: true
 
 # redis port
 # celery를 사용하는 경우 사용하는 redis 포트
-redis_port: 6379
+# 환경변수 REDIS_PORT 값이 있는 경우 무시됨.
+#redis_port: 6379
 
 # 포트
 # 생략시 DB 값을 사용.
-port: 9999
+#port: 9999
 
 # 소스 수정시 재로딩
-# 두번 로딩되는 것을 감안하여 코딩해야 함. 기본실행, subporcess 실행
-debug: false
-
-use_reloader: false
+# 두번 로딩되는 것을 감안하여 코딩해야 함.
+#debug: false
 
 # 플러그인 업데이트 여부
 #  - true인 경우 로딩시 플러그인을 업데이트 함. 
-#    데이터폴더/plugins 폴더 안에 플러그인 만을 대상으로 함.
+#    /data/plugins 폴더에 있는 플러그인 만을 대상으로 함.
 #  - debug 값이 true인 경우에는 항상 false
-plugin_update: true
+#plugin_update: true
 
 
 # running_type
-# termux, entware 인 경우 입력 함. (이외 사용하는 값 native, docker)
+# termux, entware 인 경우 입력 함. 
 #running_type: "native"
 
 

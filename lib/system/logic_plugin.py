@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os
-import traceback
-import logging
 import json
-import zipfile
-import time
+import logging
+import os
 import platform
+import time
+import traceback
+import zipfile
+
 # third-party
 import requests
-
-
 # sjva 공용
-from framework import frame, app, path_data, logger
+from framework import app, frame, logger, path_data
 from framework.util import Util
 from support.base.process import SupportProcess
 
-# 패키지
-from .model import ModelSetting
 import system
 
+# 패키지
+from .model import ModelSetting
 
 
 class LogicPlugin(object):
@@ -153,7 +152,7 @@ class LogicPlugin(object):
                 return
             if frame.config['debug'] == True:
                 return
-            if frame.config['plugin_update'] != True:
+            if frame.config.get('plugin_update', True) != True:
                 return
 
             custom_path = os.path.join(path_data, 'plugins')
@@ -213,6 +212,7 @@ class LogicPlugin(object):
                             pass
                 if zip_filename and zip_filename != '':
                     import zipfile
+
                     from tool_base import ToolBaseFile
                     zip_filepath = os.path.join(path_data, 'tmp', zip_filename)
                     extract_filepath = os.path.join(path_data, 'tmp', name)

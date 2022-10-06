@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+  {{ macros.m_button_group([['saveBtn', '파일 저장']])}}
+  {{ macros.m_row_start('5') }}
+  {{ macros.m_row_end() }}
+  {{ macros.m_hr() }}
+
+  {{ macros.info_text_and_buttons('export_filepath', '파일 위치', [['globalEditBtn', '편집기에서 열기', [('file',arg['export_filepath'])]]], value=arg['export_filepath']) }}
+  {{ macros.setting_input_textarea('export', 'export.sh', desc=['', 
+    '도커를 재시작하거나 flaskfarm.sh 스크립트를 재시작해야 적용됩니다.', 
+    '구동 환경에 따라 사용하는 변수가 다릅니다.', 
+    '', 
+    'REDIS_PORT : celery에서 사용하는 redis port.',
+    'CELERY_WORKER_COUNT : celery 작업 프로세스 개수.', 
+    'UPDATE_STOP : true인 경우 앱과 플러그인을 업데이트 하지 않음',
+    'DOCKER_NONSTOP : true인 경우 App이 종료되어서 도커가 중단되지 않음. 개발시 사용',
+    'PLUGIN_UPDATE_FROM_PYTHON : false인 경우 shell에서 업데이트 실행. true인 경우 앱에서 업데이트 실행.',
+    ], 
+    value=arg['export.sh'], row='20') }}
+</div>
+
+<script type="text/javascript">
+
+$("body").on('click', '#saveBtn', function(e){
+  e.preventDefault();
+  globalSendCommand('export_save', $('#export').val());
+});
+
+</script>    
+{% endblock %}

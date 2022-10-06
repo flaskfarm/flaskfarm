@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+  {{ macros.m_button_group([['saveBtn', '파일 저장']])}}
+  {{ macros.m_row_start('5') }}
+  {{ macros.m_row_end() }}
+  {{ macros.m_hr() }}
+
+  {{ macros.info_text_and_buttons('config_filepath', '파일 위치', [['globalEditBtn', '편집기에서 열기', [('file',arg['config_filepath'])]]], value=arg['config_filepath']) }}
+  {{ macros.setting_input_textarea('config', 'config.yaml', desc=['', 
+    'App을 재시작 해야 적용됩니다.', 
+    '', 
+    'path_data : 필수. 데이터 폴더 경로. 윈도우의 경우 폴더 구분 기호 \ 를 두개 사용', 
+    'use_gevent : 생략시 true', 
+    'use_celery : 생략시 true',
+    'redis_port : 생략시 6379',
+    'port : 생략시 설정에 있는 DB port 사용. 설정시 DB 값보다 우선 사용',
+    'debug : 생략시 false. true인 경우 소스 수정시 재로딩',
+    'plugin_update : 생략시 true. 환경변수 UPDATE_STOP, PLUGIN_UPDATE_FROM_PYTHON 값이 설정된 경우에도 적용',
+    'running_type : termux, entware인 경우에만 입력',
+    'plugin_loading_only_devpath : true인 경우 플러그인 개발 폴더에 있는 것들만 로딩',
+    'plugin_loading_list : 생략시 적용 안함. 로딩할 모듈 패키지명 리스트',
+    'plugin_except_list : 생략시 적용 안함. 로딩 제외할 모듈 패키지명 리스트',
+    ], 
+    value=arg['config.yaml'], row='20') }}
+</div>
+
+<script type="text/javascript">
+
+$("body").on('click', '#saveBtn', function(e){
+  e.preventDefault();
+  globalSendCommand('config_save', $('#config').val());
+});
+
+</script>    
+{% endblock %}

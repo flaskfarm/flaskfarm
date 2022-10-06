@@ -63,7 +63,7 @@ class PluginManager:
         # plugin_loading_list
         try:
             plugin_loading_list = F.config.get('plugin_loading_list', None)
-            if plugin_loading_list != None and type(plugin_loading_list) == type([]):
+            if plugin_loading_list != None and (type(plugin_loading_list) == type([]) and len(plugin_loading_list)) > 0:
                 new_plugins = []
                 for _ in plugins:
                     if _ in plugin_loading_list:
@@ -76,7 +76,7 @@ class PluginManager:
         # plugin_except_list
         try:
             plugin_except_list = F.config.get('plugin_except_list', None)
-            if plugin_except_list != None and type(plugin_except_list) == type([]):
+            if plugin_except_list != None and (type(plugin_except_list) == type([]) and len(plugin_except_list)) > 0:
                 new_plugins = []
                 for _ in plugins:
                     if _ not in plugin_except_list:

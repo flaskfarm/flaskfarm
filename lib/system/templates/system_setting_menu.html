@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+  {{ macros.m_button_group([['saveBtn', '파일 저장']])}}
+  {{ macros.m_row_start('5') }}
+  {{ macros.m_row_end() }}
+  {{ macros.m_hr() }}
+
+  {{ macros.info_text_and_buttons('menu_yaml_filepath', '파일 위치', [['globalEditBtn', '편집기에서 열기', [('file',arg['menu_yaml_filepath'])]]], value=arg['menu_yaml_filepath']) }}
+  {{ macros.setting_input_textarea('menu', 'menu.yaml', desc=['', 
+    'uri 값',
+    '플러그인 : 패키지 이름', 
+    '바로가기 : http로 시작하는 링크. 기본값은 새창에서 열기. target: "__self" 값이 있는 경우 기본창', 
+    '구분선 : -', 
+    ], 
+    value=arg['menu.yaml'], row='30') }}
+</div>
+
+<script type="text/javascript">
+
+$("body").on('click', '#saveBtn', function(e){
+  e.preventDefault();
+  globalSendCommand('menu_save', $('#menu').val());
+});
+
+</script>    
+{% endblock %}

@@ -86,9 +86,6 @@ class MenuManager:
 
         #F.logger.warning(d(cls.menu_map))
 
-        
-        
-
 
     @classmethod
     def get_menu_map(cls):

@@ -97,13 +97,13 @@ class Framework:
             #if frame.config['use_celery'] == False or platform.system() == 'Windows':
             if self.config['use_celery'] == False:
                 raise Exception('no celery')
-            try:
-                redis_port = os.environ['REDIS_PORT']
-            except:
-                try:
-                    redis_port = self.config['redis_port']
-                except:
-                    redis_port = '6379'
+            
+            redis_port = os.environ.get('REDIS_PORT', None)
+            if redis_port == None:
+                redis_port = self.config.get('redis_port', None)
+            if redis_port == None:
+                redis_port = '6379'
+  
 
             self.app.config['CELERY_BROKER_URL'] = 'redis://localhost:%s/0' % redis_port
             self.app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:%s/0' % redis_port
@@ -183,7 +183,7 @@ class Framework:
 
         if self.config['run_flask']:
             if self.config.get('port') == None:
-                self.config['port'] = SP.SystemModelSetting.get_int('port')
+                self.config['port'] = self.SystemModelSetting.get_int('port')
 
         from . import init_route, log_viewer
 
@@ -216,9 +216,12 @@ class Framework:
             self.config['path_working'] = os.getcwd()
             if os.environ.get('RUNNING_TYPE') == 'docker':
                 self.config['running_type'] = 'docker'
+            self.config['export_filepath'] = os.path.join(self.config['path_app'], 'export.sh')
+            self.config['exist_export'] = os.path.exists(self.config['export_filepath'])
             self.__process_args()
             self.__load_config()
             self.__init_define()
+            self.config['menu_yaml_filepath'] = os.path.join(self.config['path_data'], 'db', 'menu.yaml')
         elif mode == "flask":
             self.app.secret_key = os.urandom(24)
             #self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/db/system.db?check_same_thread=False'
@@ -298,7 +301,22 @@ class Framework:
             # 예외적으로 현재폴더가 app일 경우 지저분해지는 것을 방지하기 위해 data 로 지정
             if self.config['path_data'] == self.config['path_working']:
                 self.config['path_data'] = os.path.join(self.config['path_working'], 'data')
-        self.path_data = self.config['path_data']
+        self.path_data = self.config['path_data'] 
+
+        if self.config.get('use_gevent') == None:
+            self.config['use_gevent'] = True
+        if self.config.get('use_celery') == None:
+            self.config['use_celery'] = True
+        if self.config.get('debug') == None:
+            self.config['debug'] = False
+        if self.config.get('plugin_update') == None:
+            self.config['plugin_update'] = True
+        if self.config.get('plugin_loading_only_devpath') == None:
+            self.config['plugin_loading_only_devpath'] = False
+        if self.config.get('plugin_loading_list') == None:
+            self.config['plugin_loading_list'] = []
+        if self.config.get('plugin_except_list') == None:
+            self.config['plugin_except_list'] = []
 
         
 
@@ -399,7 +417,7 @@ class Framework:
         for i in range(10): 
             try: 
                 #self.logger.debug(d(self.config))
-                self.socketio.run(self.app, host=host, port=self.config['port'], debug=self.config['debug'], use_reloader=self.config['use_reloader'])
+                self.socketio.run(self.app, host=host, port=self.config['port'], debug=self.config['debug'], use_reloader=self.config['debug'])
                 self.logger.warning(f"EXIT CODE : {self.__exit_code}")
                 # 2021-05-18  
                 if self.config['running_type'] in ['termux', 'entware']:
