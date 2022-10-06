@@ -1,6 +1,6 @@
 import platform
 
-from support.base.util import SupportUtil
+from support import SupportUtil
 
 from .setup import *
 

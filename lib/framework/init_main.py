@@ -56,6 +56,7 @@ class Framework:
      
 
     def __initialize(self):
+        os.environ['FF'] = "true"
         self.__config_initialize("first")
         self.__make_default_dir()
         
@@ -155,13 +156,13 @@ class Framework:
             self.logger.error('CRITICAL db.create_all()!!!')
             self.logger.error(f'Exception:{str(e)}')
             self.logger.error(traceback.format_exc())
+        self.SystemModelSetting = SystemInstance.ModelSetting 
         SystemInstance.plugin_load()
         self.app.register_blueprint(SystemInstance.blueprint)
         self.config['flag_system_loading'] = True
         self.__config_initialize('member')
         self.__config_initialize('system_loading_after')
-        self.SystemModelSetting = SystemInstance.ModelSetting 
-
+       
 
     def initialize_plugin(self): 
         from system.setup import P as SP
@@ -222,6 +223,7 @@ class Framework:
             self.__load_config()
             self.__init_define()
             self.config['menu_yaml_filepath'] = os.path.join(self.config['path_data'], 'db', 'menu.yaml')
+            self.config['notify_yaml_filepath'] = os.path.join(self.config['path_data'], 'db', 'notify.yaml')
         elif mode == "flask":
             self.app.secret_key = os.urandom(24)
             #self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/db/system.db?check_same_thread=False'

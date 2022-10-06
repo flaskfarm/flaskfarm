@@ -1,8 +1,13 @@
-import os, traceback
+import os
+import traceback
+
 from flask import Blueprint
 from framework import F
-from support.base.yaml import SupportYaml
-from . import get_model_setting, Logic, default_route, default_route_single_module
+from support import SupportYaml
+
+from . import (Logic, default_route, default_route_single_module,
+               get_model_setting)
+
 
 class PluginBase(object):
     package_name = None

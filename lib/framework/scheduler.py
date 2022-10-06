@@ -6,7 +6,6 @@ from random import randint
 from apscheduler.jobstores.base import JobLookupError
 from apscheduler.triggers.cron import CronTrigger
 from pytz import timezone
-from support.base.util import pt
 
 
 class Scheduler(object):
@@ -27,7 +26,6 @@ class Scheduler(object):
         self.sched.start()
         self.logger.info('SCHEDULER start..')
 
-    @pt
     def first_run_check_thread_function(self):
         try:
             #time.sleep(60)

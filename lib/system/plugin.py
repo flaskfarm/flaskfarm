@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os, platform
-import traceback
+import json
 import logging
+import os
+import platform
 import threading
 import time
-import json
+import traceback
 
 # third-party
 import requests
-from flask import Blueprint, request, Response, send_file, render_template, redirect, jsonify, stream_with_context
-
-# sjva 공용
-from framework import frame, app, scheduler, socketio, check_api, path_app_root, path_data, get_logger#, celery
-from support.base.util import SingletonClass
+from flask import (Blueprint, Response, jsonify, redirect, render_template,
+                   request, send_file, stream_with_context)
 from flask_login import login_required
+# sjva 공용
+from framework import (app, check_api, frame, get_logger,  # , celery
+                       path_app_root, path_data, scheduler, socketio)
+from support import SingletonClass
 
 # 로그
 package_name = __name__.split('.')[0]
@@ -23,19 +25,19 @@ logger = get_logger(__package__)
 
 # 패키지
 from .logic import SystemLogic
-from .model import ModelSetting
-from .logic_plugin import LogicPlugin
-from .logic_selenium import SystemLogicSelenium
+from .logic_auth import SystemLogicAuth
 from .logic_command import SystemLogicCommand
 from .logic_command2 import SystemLogicCommand2
-from .logic_notify import SystemLogicNotify
-from .logic_telegram_bot import SystemLogicTelegramBot
-from .logic_auth import SystemLogicAuth
-from .logic_tool_crypt import SystemLogicToolDecrypt
-from .logic_terminal import SystemLogicTerminal
 # celery 때문에 import
 from .logic_env import SystemLogicEnv
+from .logic_notify import SystemLogicNotify
+from .logic_plugin import LogicPlugin
+from .logic_selenium import SystemLogicSelenium
 from .logic_site import SystemLogicSite
+from .logic_telegram_bot import SystemLogicTelegramBot
+from .logic_terminal import SystemLogicTerminal
+from .logic_tool_crypt import SystemLogicToolDecrypt
+from .model import ModelSetting
 
 #########################################################
 

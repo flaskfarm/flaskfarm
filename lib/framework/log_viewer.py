@@ -4,7 +4,7 @@ import time
 import traceback
 
 from flask import request
-from support.base.util import SingletonClass
+from support import SingletonClass
 
 from framework import F
 

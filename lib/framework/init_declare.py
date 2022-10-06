@@ -45,7 +45,7 @@ class CustomFormatter(logging.Formatter):
     green = "\x1B[32m"
     # pathname filename
     #format = "[%(asctime)s|%(name)s|%(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    format = '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset}|%(pathname)s:%(lineno)s] {color}%(message)s{reset}'
+    format = '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset} %(pathname)s:%(lineno)s] {color}%(message)s{reset}'
 
     FORMATS = {
         logging.DEBUG: format.format(color=grey, reset=reset, yellow=yellow, green=green),
@@ -86,7 +86,7 @@ class User:
         return str(r)
 
     def can_login(self, passwd_hash):
-        from support.base.aes import SupportAES
+        from support import SupportAES
         tmp = SupportAES.decrypt(self.passwd_hash)
         return passwd_hash == tmp
 

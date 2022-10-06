@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os
-import traceback
-import random
-import json
-import string
 import codecs
+import json
+import os
+import random
+import string
+import traceback
 
 # third-party
 import requests
-from flask import Blueprint, request, Response, send_file, render_template, redirect, jsonify
+from flask import (Blueprint, Response, jsonify, redirect, render_template,
+                   request, send_file)
+from framework import app, frame, path_app_root
+from framework.util import Util
+
+from .model import ModelSetting
+# 패키지
+from .plugin import logger, package_name
 
 # sjva 공용
 
-from framework import frame, path_app_root, app
-from framework.util import Util
 
-# 패키지
-from .plugin import package_name, logger
-from .model import ModelSetting
 
 class SystemLogicAuth(object):
     @staticmethod
@@ -78,7 +80,7 @@ class SystemLogicAuth(object):
     @staticmethod
     def check_auth_status(value=None):
         try:
-            from support.base.aes import SupportAES
+            from support import SupportAES
             mykey=(codecs.encode(SystemLogicAuth.get_ip().encode(), 'hex').decode() + codecs.encode(ModelSetting.get('auth_apikey').encode(), 'hex').decode()).zfill(32)[:32].encode()
             logger.debug(mykey)
             tmp = SupportAES.decrypt(value, mykey=mykey)

@@ -1,9 +1,7 @@
-import os, traceback, io, re, json, codecs
 from . import logger
 
+
 class SupportString(object):
-
-
     @classmethod
     def get_cate_char_by_first(cls, title):  # get_first
         value = ord(title[0].upper())

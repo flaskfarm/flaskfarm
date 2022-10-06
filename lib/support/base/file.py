@@ -1,12 +1,18 @@
-import os, traceback, re, json, codecs
+import codecs
+import json
+import os
+import re
+import traceback
+
 from . import logger
+
 
 class SupportFile(object):
 
     @classmethod
-    def read_file(cls, filename):
+    def read_file(cls, filename, mode='r'):
         try:
-            ifp = codecs.open(filename, 'r', encoding='utf8')
+            ifp = codecs.open(filename, mode, encoding='utf8')
             data = ifp.read()
             ifp.close()
             return data
@@ -15,10 +21,10 @@ class SupportFile(object):
             logger.error(traceback.format_exc())
 
     @classmethod
-    def write_file(cls, filename, data):
+    def write_file(cls, filename, data, mode='w'):
         try:
             import codecs
-            ofp = codecs.open(filename, 'w', encoding='utf8')
+            ofp = codecs.open(filename, mode, encoding='utf8')
             ofp.write(data)
             ofp.close()
         except Exception as exception: 
@@ -26,25 +32,8 @@ class SupportFile(object):
             logger.error(traceback.format_exc()) 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @classmethod
-    def download(cls, url, filepath):
+    def download_file(cls, url, filepath):
         try:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36',
@@ -54,17 +43,55 @@ class SupportFile(object):
             }
 
             import requests
-            response = requests.get(url, headers=headers)               # get request
-            if len(response.content) == 0:
-                return False
-
             with open(filepath, "wb") as file_is:   # open in binary mode
+                response = requests.get(url, headers=headers)               # get request
                 file_is.write(response.content)      # write to file
                 return True
         except Exception as exception:
             logger.debug('Exception:%s', exception)
             logger.debug(traceback.format_exc())   
         return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @classmethod
+    def text_for_filename(cls, text):
+        #text = text.replace('/', '')
+        # 2021-07-31 X:X
+        #text = text.replace(':', ' ')
+        text = re.sub('[\\/:*?\"<>|]', ' ', text).strip()
+        text = re.sub("\s{2,}", ' ', text)
+        return text
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @classmethod
@@ -83,14 +110,7 @@ class SupportFile(object):
         return False
 
 
-    @classmethod
-    def text_for_filename(cls, text):
-        #text = text.replace('/', '')
-        # 2021-07-31 X:X
-        #text = text.replace(':', ' ')
-        text = re.sub('[\\/:*?\"<>|]', ' ', text).strip()
-        text = re.sub("\s{2,}", ' ', text)
-        return text
+
 
 
     @classmethod
@@ -106,7 +126,8 @@ class SupportFile(object):
     @classmethod
     def file_move(cls, source_path, target_dir, target_filename):
         try:
-            import time, shutil
+            import shutil
+            import time
             if os.path.exists(target_dir) == False:
                 os.makedirs(target_dir)
             target_path = os.path.join(target_dir, target_filename)
@@ -217,7 +238,8 @@ class SupportFile(object):
 
     @classmethod
     def makezip(cls, zip_path, zip_extension='zip', remove_zip_path=True):
-        import zipfile, shutil
+        import shutil
+        import zipfile
         try:
             if os.path.exists(zip_path) == False:
                 return False
@@ -248,7 +270,8 @@ class SupportFile(object):
 
     @classmethod
     def makezip_all(cls, zip_path, zip_filepath=None, zip_extension='zip', remove_zip_path=True):
-        import zipfile, shutil
+        import shutil
+        import zipfile
         from pathlib import Path
         try:
             if os.path.exists(zip_path) == False:

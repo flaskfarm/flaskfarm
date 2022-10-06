@@ -1,19 +1,11 @@
-# -*- coding: utf-8 -*-
-# python
-import traceback, os
 import json
+import os
+import traceback
 
-# third-party
-from flask import Blueprint, request, render_template, redirect, jsonify
+from flask import jsonify, redirect, render_template, request
 from flask_login import login_required
-from flask_socketio import SocketIO, emit, send
-
-# sjva 공용
-from framework import socketio, check_api
-from support.base.util import AlchemyEncoder
-# 패키지
-
-#########################################################
+from framework import F
+from support import AlchemyEncoder
 
 
 def default_route(P):
@@ -178,7 +170,7 @@ def default_route(P):
     #########################################################
     # 단일 모듈인 경우 모듈이름을 붙이기 불편하여 추가.
     @P.blueprint.route('/api/<sub2>', methods=['GET', 'POST'])
-    @check_api
+    @F.check_api
     def api_first(sub2):
         try:
             for module in P.module_list:
@@ -188,7 +180,7 @@ def default_route(P):
             P.logger.error(traceback.format_exc())
 
     @P.blueprint.route('/api/<sub>/<sub2>', methods=['GET', 'POST'])
-    @check_api
+    @F.check_api
     def api(sub, sub2):
         try:
             for module in P.module_list:
@@ -284,7 +276,7 @@ def default_route_single_module(P):
             P.logger.error(traceback.format_exc())  
 
     @P.blueprint.route('/api/<sub>', methods=['GET', 'POST'])
-    @check_api
+    @F.check_api
     def api(sub):
         try:
             return P.module_list[0].process_api(sub, request)
@@ -330,7 +322,7 @@ def default_route_socketio_module(module):
     if module.socketio_list is None:
         module.socketio_list = []
 
-    @socketio.on('connect', namespace=f'/{P.package_name}/{module.name}')
+    @F.socketio.on('connect', namespace=f'/{P.package_name}/{module.name}')
     def connect():
         try:
             P.logger.debug(f'socket_connect : {P.package_name} - {module.name}')
@@ -342,7 +334,7 @@ def default_route_socketio_module(module):
             P.logger.error(traceback.format_exc())
 
 
-    @socketio.on('disconnect', namespace='/{package_name}/{sub}'.format(package_name=P.package_name, sub=module.name))
+    @F.socketio.on('disconnect', namespace='/{package_name}/{sub}'.format(package_name=P.package_name, sub=module.name))
     def disconnect():
         try:
             P.logger.debug('socket_disconnect : %s - %s', P.package_name, module.name)
@@ -358,7 +350,7 @@ def default_route_socketio_module(module):
             if encoding:
                 data = json.dumps(data, cls=AlchemyEncoder)
                 data = json.loads(data)
-            socketio.emit(cmd, data, namespace='/{package_name}/{sub}'.format(package_name=P.package_name, sub=module.name), broadcast=True)
+            F.socketio.emit(cmd, data, namespace='/{package_name}/{sub}'.format(package_name=P.package_name, sub=module.name), broadcast=True)
 
     module.socketio_callback = socketio_callback
 

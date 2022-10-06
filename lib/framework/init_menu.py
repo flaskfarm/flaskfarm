@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from support.base.yaml import SupportYaml
+from support import SupportYaml
 
 from framework import F
 

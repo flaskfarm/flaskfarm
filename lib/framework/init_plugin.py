@@ -1,7 +1,13 @@
 import os
+import platform
+import shutil
 import sys
 import threading
 import traceback
+import zipfile
+
+import requests
+from support import SupportFile, SupportSubprocess, SupportYaml
 
 from framework import F
 
@@ -139,7 +145,7 @@ class PluginManager:
                         #logger.error(traceback.format_exc())  
                         
                         #mod_plugin_info = getattr(mod, 'setup')
-                        F.logger.warning(f'[!] PLUGIN_INFO not exist : [{plugin_name}]')  
+                        F.logger.info(f'[!] PLUGIN_INFO not exist : [{plugin_name}] - is FF')  
                     if mod_plugin_info == None:
                         try:
                             mod = __import__(f'{plugin_name}.setup', fromlist=['setup'])
@@ -296,3 +302,96 @@ class PluginManager:
         except Exception as e:
             F.logger.error(f'Exception:{str(e)}')
             F.logger.error(traceback.format_exc())
+
+    @classmethod
+    def plugin_install(cls, plugin_git, zip_url=None, zip_filename=None):
+        is_git = True if plugin_git != None and plugin_git != '' else False
+        ret = {}
+        try:
+            if is_git:
+                name = plugin_git.split('/')[-1]
+            else:
+                name = zip_filename.split('.')[0]
+            
+            plugin_all_path = os.path.join(F.config['path_data'], 'plugins')
+            plugin_path = os.path.join(plugin_all_path, name)
+            plugin_info = None
+            if os.path.exists(plugin_path):
+                ret['ret'] = 'danger'
+                ret['msg'] = '이미 설치되어 있습니다.'
+                ret['status'] = 'already_exist'
+                return ret
+            
+            if plugin_git and plugin_git.startswith('http'):
+                for tag in ['main', 'master']:
+                    try:
+                        info_url = plugin_git.replace('github.com', 'raw.githubusercontent.com') + f'/{tag}/info.yaml'
+                        plugin_info = requests.get(info_url).json()
+                        if plugin_info is not None:
+                            break
+                    except:
+                        pass
+
+            if zip_filename and zip_filename != '':
+                zip_filepath = os.path.join(F.config['path_data'], 'tmp', zip_filename)
+                extract_filepath = os.path.join(F.config['path_data'], 'tmp', name)
+                if SupportFile.download(zip_url, zip_filepath):
+                    with zipfile.ZipFile(zip_filepath, 'r') as zip_ref:
+                        zip_ref.extractall(extract_filepath)
+                    plugin_info_filepath = os.path.join(extract_filepath, 'info.yaml')
+                    if os.path.exists(plugin_info_filepath):
+                        plugin_info = SupportYaml.read_yaml(plugin_info_filepath)
+            
+            if plugin_info == None:
+                plugin_info = {}
+
+            flag = True
+            tmp = plugin_info.get('require_os', '')
+            if tmp != '' and type(tmp) == type([]) and platform.system() not in tmp:
+                ret['ret'] = 'danger'
+                ret['msg'] = '설치 가능한 OS가 아닙니다.'
+                ret['status'] = 'not_support_os'
+                flag = False
+            
+            tmp = plugin_info.get('require_running_type', '')
+            if tmp != '' and type(tmp) == type([]) and F.config['running_type'] not in tmp:
+                ret['ret'] = 'danger'
+                ret['msg'] = '설치 가능한 실행타입이 아닙니다.'
+                ret['status'] = 'not_support_running_type'
+                flag = False
+
+
+            if flag:
+                if plugin_git and plugin_git.startswith('http'):
+                    command = ['git', '-C', plugin_all_path, 'clone', plugin_git + '.git', '--depth', '1']
+                    log = SupportSubprocess.execute_command_return(command)
+                if zip_filename and zip_filename != '':
+                    
+                    if os.path.exists(plugin_path) == False:
+                        shutil.move(extract_filepath, plugin_path)
+                    else:
+                        for tmp in os.listdir(extract_filepath):
+                            shutil.move(os.path.join(extract_filepath, tmp), plugin_path)
+                    log = ''
+
+                # 2021-12-31
+                tmp = plugin_info.get('require_plugin', '')
+                if tmp != '' and type(tmp) == type([]) and len(tmp) > 0:
+                    for need_plugin in plugin_info['require_plugin']:
+                        if need_plugin['package_name'] in cls.plugin_init:
+                            F.logger.debug(f"Dependency 설치 - 이미 설치됨 : {need_plugin['package_name']}")
+                            continue
+                        else:
+                            F.logger.debug(f"Dependency 설치 : {need_plugin['package_name']}")
+                            cls.plugin_install(need_plugin['home'], None, None)
+
+                ret['ret'] = 'success'
+                ret['msg'] = ['정상적으로 설치하였습니다. 재시작시 적용됩니다.', log]
+                ret['msg'] = '<br>'.join(log)
+                   
+        except Exception as e: 
+            F.logger.error(f'Exception:{str(e)}')
+            F.logger.error(traceback.format_exc())
+            ret['ret'] = 'danger'
+            ret['msg'] = str(e)
+        return ret

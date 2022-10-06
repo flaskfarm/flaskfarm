@@ -14,7 +14,7 @@ import requests
 # sjva 공용
 from framework import app, frame, logger, path_data
 from framework.util import Util
-from support.base.process import SupportProcess
+from support import SupportProcess
 
 import system
 
