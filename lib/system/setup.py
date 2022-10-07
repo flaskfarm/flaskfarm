@@ -73,11 +73,11 @@ try:
 
     SystemModelSetting = P.ModelSetting
     from .mod_home import ModuleHome
-    from .mod_plugin import ModulePlugin
     from .mod_route import ModuleRoute
     from .mod_setting import ModuleSetting
-    
-    P.set_module_list([ModuleSetting, ModuleHome, ModuleRoute, ModulePlugin])
+    from .mod_plugin import ModulePlugin
+    from .mod_tool import ModuleTool
+    P.set_module_list([ModuleHome, ModuleRoute, ModuleSetting, ModulePlugin, ModuleTool])
 
 except Exception as e:
     P.logger.error(f'Exception:{str(e)}')

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<head>
+  {{ dropzone.load_css() }}
+  {{ dropzone.style('border: 2px dashed #0087F7; margin: 10%; min-height: 400px;') }}
+</head>
+
+<div>
+  {{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장']])}}
+  {{ macros.m_row_start('5') }}
+  {{ macros.m_row_end() }}
+  {{ macros.m_hr() }}
+  <form id='setting' name='setting'>
+    {{ macros.setting_input_text_and_buttons('path_upload', '업로드 경로', [['select_btn', '폴더 선택']], value=arg['path_upload'], desc=['설정 저장 후부터 적용']) }}
+  </form>
+  {{ macros.m_hr_black() }}
+  {{ dropzone.create(action='upload') }}
+  {{ dropzone.load_js() }}
+  {{ dropzone.config() }}
+
+<script type="text/javascript">
+  $("body").on('click', '#select_btn', function(e){ 
+    e.preventDefault();
+    globalSelectLocalFolder("업로드 폴더 선택", $('#path_upload').val(), function(ret) {
+      $('#path_upload').val(ret);
+    });
+  });
+  
+  $("body").on('click', '#plugin_install_btn', function(e){ 
+    e.preventDefault();
+    globalSendCommand('plugin_install', $('#_plugin_git').val());
+  });
+  
+</script>  
+
+{% endblock %}

@@ -16,7 +16,7 @@
 <script type="text/javascript">
 $("body").on('click', '#select_btn', function(e){ 
   e.preventDefault();
-  selectLocalFolder("폴더 선택", $('#plugin_dev_path').val(), function(ret) {
+  globalSelectLocalFolder("폴더 선택", $('#plugin_dev_path').val(), function(ret) {
     $('#plugin_dev_path').val(ret);
   });
 });

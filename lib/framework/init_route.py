@@ -35,9 +35,11 @@ def global_ajax(sub):
         # globalEditBtn
         try:
             import flaskcode
-            return jsonify(True)
+            from flaskcode.setup import P as PP
+            ret = {'ret':True, 'target':PP.ModelSetting.get('setting_open_target')}
+            return jsonify(ret)
         except:
-            return jsonify(False)
+            return jsonify({'ret':False})
 
 
 
@@ -92,7 +94,7 @@ def file2(path):
 
 
 
-@F.app.route("/up", methods=['GET', 'POST'])
+@F.app.route("/upload", methods=['GET', 'POST'])
 def upload():
     # curl -F file=@downloader_video.tar https://dev.soju6jan.com/up
     # 
@@ -100,9 +102,9 @@ def upload():
         if request.method == 'POST':
             f = request.files['file']
             from werkzeug import secure_filename
-            tmp = secure_filename(f.filename)
-            F.logger.debug('upload : %s', tmp)
-            f.save(os.path.join(F.path_data, 'upload', tmp))
+            upload_path = F.SystemModelSetting.get('path_upload')
+            os.makedirs(upload_path, exist_ok=True)
+            f.save(os.path.join(upload_path, secure_filename(f.filename)))
             return jsonify('success')
     except Exception as exception:
         F.logger.error('Exception:%s', exception)

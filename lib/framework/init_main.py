@@ -90,7 +90,16 @@ class Framework:
         
         self.celery = self.__init_celery()
         
-
+        from flask_dropzone import Dropzone
+        self.app.config.update(
+            DROPZONE_MAX_FILE_SIZE = 102400,
+            DROPZONE_TIMEOUT = 5*60*1000,
+            #DROPZONE_ALLOWED_FILE_CUSTOM = True,
+            #DROPZONE_ALLOWED_FILE_TYPE = 'default, image, audio, video, text, app, *.*',
+        )
+        self.dropzone = Dropzone(self.app)
+        
+        
     def __init_celery(self):
         try:
             from celery import Celery
@@ -190,7 +199,7 @@ class Framework:
 
         self.__make_default_logger()
         self.logger.info('### LAST')
-        self.logger.info(f"### PORT: {self.config['port']}")
+        self.logger.info(f"### PORT: {self.config.get('port')}")
         self.logger.info('### Now you can access App by webbrowser!!')
 
 
