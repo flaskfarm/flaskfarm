@@ -16,6 +16,7 @@ class PluginManager:
     plugin_list = {}
     plugin_menus = {}
     setting_menus = []
+    all_package_list = {}
 
 
     @classmethod 
@@ -29,25 +30,28 @@ class PluginManager:
         plugins = os.listdir(plugin_path)
         """
         plugins = []
-        pass_include = []
-        except_plugin_list = []
+       
 
         #2019-07-17 
-        if F.config.get('plugin_loading_only_devpath', None) != True:
-            try:
-                plugin_path = os.path.join(F.config['path_data'], 'plugins')
-                if os.path.exists(plugin_path) == True and os.path.isdir(plugin_path) == True:
-                    sys.path.insert(1, plugin_path)
-                    tmps = os.listdir(plugin_path)
-                    add_plugin_list = []
-                    for t in tmps:
-                        if not t.startswith('_') and os.path.isdir(os.path.join(plugin_path, t)):
-                            add_plugin_list.append(t)
-                    plugins = plugins + add_plugin_list
-                    pass_include = pass_include + add_plugin_list
-            except Exception as exception:
-                F.logger.error('Exception:%s', exception)
-                F.logger.error(traceback.format_exc())
+        
+        try:
+            plugin_path = os.path.join(F.config['path_data'], 'plugins')
+            if os.path.exists(plugin_path) == True and os.path.isdir(plugin_path) == True:
+                sys.path.insert(1, plugin_path)
+                tmps = os.listdir(plugin_path)
+                add_plugin_list = []
+                for t in tmps:
+                    if not t.startswith('_') and os.path.isdir(os.path.join(plugin_path, t)):
+                        add_plugin_list.append(t)
+                        cls.all_package_list[t] = {'pos':'normal', 'path':os.path.join(plugin_path, t)}
+
+                plugins = plugins + add_plugin_list
+        except Exception as exception:
+            F.logger.error('Exception:%s', exception)
+            F.logger.error(traceback.format_exc())
+        
+        if F.config.get('plugin_loading_only_devpath', None) == True:
+            plugins = []
 
         # 2018-09-04
         try:
@@ -60,8 +64,8 @@ class PluginManager:
                     for t in tmps:
                         if not t.startswith('_')  and os.path.isdir(os.path.join(plugin_path, t)):
                             add_plugin_list.append(t)
+                            cls.all_package_list[t] = {'pos':'dev', 'path':os.path.join(plugin_path, t)}
                     plugins = plugins + add_plugin_list
-                    pass_include = pass_include + add_plugin_list
         except Exception as exception:
             F.logger.error('Exception:%s', exception)
             F.logger.error(traceback.format_exc())
@@ -74,6 +78,9 @@ class PluginManager:
                 for _ in plugins:
                     if _ in plugin_loading_list:
                         new_plugins.append(_)
+                    else:
+                        cls.all_package_list[t]['loading'] = False
+                        cls.all_package_list[t]['status'] = 'not_include_loading_list'
                 plugins = new_plugins
         except Exception as exception:
             F.logger.error('Exception:%s', exception)
@@ -87,11 +94,16 @@ class PluginManager:
                 for _ in plugins:
                     if _ not in plugin_except_list:
                         new_plugins.append(_)
+                    else:
+                        cls.all_package_list[t]['loading'] = False
+                        cls.all_package_list[t]['status'] = 'include_except_list'
                 plugins = new_plugins
         except Exception as exception:
             F.logger.error('Exception:%s', exception)
             F.logger.error(traceback.format_exc())
         return plugins
+
+
 
     # menu, blueprint, plugin_info, plugin_load, plugin_unload
     @classmethod
@@ -112,7 +124,8 @@ class PluginManager:
                 #    F.logger.debug('Except plugin : %s' % frame.plugin_menu)
                 #    continue
                 F.logger.debug(f'[+] PLUGIN LOADING Start.. [{plugin_name}]') 
-                entity = {'version':'3'}
+                entity = cls.all_package_list[plugin_name]
+                entity['version'] = '3'
                 try:
                     mod = __import__('%s' % (plugin_name), fromlist=[])
                     mod_plugin_info = None
@@ -166,7 +179,6 @@ class PluginManager:
                             entity['P'] = getattr(mod, 'P')
                             mod_blue_print = getattr(entity['P'], 'blueprint')
                         if mod_blue_print: 
-                            #if plugin_name in pass_include or is_include_menu(plugin_name):
                             F.app.register_blueprint(mod_blue_print)
                     except Exception as exception:
                         #logger.error('Exception:%s', exception)
@@ -179,6 +191,9 @@ class PluginManager:
                     F.logger.error('Exception:%s', exception)
                     F.logger.error(traceback.format_exc())
                     F.logger.debug('no blueprint')
+                    cls.all_package_list[plugin_name]['loading'] = False
+                    cls.all_package_list[plugin_name]['status'] = 'import fail'
+                    cls.all_package_list[plugin_name]['log'] = traceback.format_exc()
             
             #from tool_base import d 
             #logger.error(d(system.LogicPlugin.current_loading_plugin_list))
@@ -227,7 +242,6 @@ class PluginManager:
                         mod_plugin_load = getattr(entity['module'], 'plugin_load')
                     elif entity['version'] == '4':
                         mod_plugin_load = getattr(entity['P'], 'plugin_load')
-                    #if mod_plugin_load and (key in pass_include or is_include_menu(key)):
                     if mod_plugin_load:
                         def func(mod_plugin_load, key):
                             try:
@@ -239,6 +253,9 @@ class PluginManager:
                                 F.logger.error('### plugin_load exception : %s', key)
                                 F.logger.error('Exception:%s', exception)
                                 F.logger.error(traceback.format_exc())
+                                cls.all_package_list[key]['loading'] = False
+                                cls.all_package_list[key]['status'] = 'plugin_load error'
+                                cls.all_package_list[key]['log'] = traceback.format_exc()
                         # mod는 위에서 로딩
                         if key != 'mod':
                             t = threading.Thread(target=func, args=(mod_plugin_load, key))
@@ -258,7 +275,7 @@ class PluginManager:
                     elif entity['version'] == '4':
                         mod_menu = getattr(entity['P'], 'menu')
                     
-                    if mod_menu:# and (key in pass_include or is_include_menu(key)):
+                    if mod_menu:
                         cls.plugin_menus[key]=  {'menu':mod_menu, 'match':False}
                     if entity['version'] == '4':
                         setting_menu = getattr(entity['P'], 'setting_menu')

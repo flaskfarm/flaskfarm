@@ -1,7 +1,10 @@
 def d(data):
     if type(data) in [type({}), type([])]:
         import json
-        return '\n' + json.dumps(data, indent=4, ensure_ascii=False)
+        try:
+            return '\n' + json.dumps(data, indent=4, ensure_ascii=False)
+        except:
+            return data
     else:
         return str(data)
 

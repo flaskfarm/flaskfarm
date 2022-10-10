@@ -20,11 +20,10 @@ __menu = {
             'uri': 'plugin', 
             'name': '플러그인',
             'list': [
-                {'uri': 'setting', 'name': '개발 설정'},
-                {'uri': 'list', 'name': '플러그인 목록'},
+                {'uri': 'setting', 'name': '설정'},
+                {'uri': 'list', 'name': '로딩 플러그인'},
             ],
         },
-
         {
             'uri': 'tool',
             'name': '시스템 툴',
@@ -73,9 +72,9 @@ try:
 
     SystemModelSetting = P.ModelSetting
     from .mod_home import ModuleHome
+    from .mod_plugin import ModulePlugin
     from .mod_route import ModuleRoute
     from .mod_setting import ModuleSetting
-    from .mod_plugin import ModulePlugin
     from .mod_tool import ModuleTool
     P.set_module_list([ModuleHome, ModuleRoute, ModuleSetting, ModulePlugin, ModuleTool])
 

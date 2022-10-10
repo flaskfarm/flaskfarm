@@ -790,6 +790,10 @@ macros.setting_button_with_info([['toggle_btn', 'Toggle', [{'key':'category', 'v
 <div class="col-sm-{{width}}" style="text-align:{{align}}; word-break:break-all;">{{html}}</div>
 {% endmacro %}
 
+{% macro m_col_wide(width, html, align='left') %}
+<div class="col-sm-{{width}}" style="padding:0px; margin:0px; text-align:{{align}}; word-break:break-all;">{{html}}</div>
+{% endmacro %}
+
 {% macro m_strong(html) %}
   <strong>{{html}}</strong>
 {% endmacro %}
