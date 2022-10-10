@@ -382,6 +382,12 @@ class PluginManager:
                 if plugin_git and plugin_git.startswith('http'):
                     command = ['git', '-C', plugin_all_path, 'clone', plugin_git + '.git', '--depth', '1']
                     log = SupportSubprocess.execute_command_return(command)
+                    if os.path.exists(plugin_path):
+                        ret['ret'] = 'success'
+                        ret['msg'] = '정상적으로 설치하였습니다. 재시작시 적용됩니다.<br>' + '<br>'.join(log['log'].split('\n'))
+                    else:
+                        ret['ret'] = 'danger'
+                        ret['msg'] = '설치 실패.<br>' + '<br>'.join(log['log'].split('\n'))
                 if zip_filename and zip_filename != '':
                     
                     if os.path.exists(plugin_path) == False:
@@ -402,9 +408,8 @@ class PluginManager:
                             F.logger.debug(f"Dependency 설치 : {need_plugin['package_name']}")
                             cls.plugin_install(need_plugin['home'], None, None)
 
-                ret['ret'] = 'success'
-                ret['msg'] = ['정상적으로 설치하였습니다. 재시작시 적용됩니다.', log]
-                ret['msg'] = '<br>'.join(log)
+                
+                #ret['msg'] = '<br>'.join(log)
                    
         except Exception as e: 
             F.logger.error(f'Exception:{str(e)}')
