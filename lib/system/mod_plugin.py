@@ -39,14 +39,19 @@ class ModulePlugin(PluginModuleBase):
                     data.append(entity['P'].plugin_info)
             """
             for name, entity in F.PluginManager.all_package_list.items():
-                if entity['version'] == '3':
-                    #data.append(entity)
+                try:
+                    if entity.get('version') == '3':
+                        #data.append(entity)
+                        data.append({'package_name':name})
+                    else:
+                        data.append(entity['P'].plugin_info)
+                        data[-1]['loading'] = entity.get('loading')
+                        data[-1]['status'] = entity.get('status')
+                        data[-1]['log'] = entity.get('log')
+                except Exception as e:
                     data.append({'package_name':name})
-                else:
-                    data.append(entity['P'].plugin_info)
-                    data[-1]['loading'] = entity.get('loading')
-                    data[-1]['status'] = entity.get('status')
-                    data[-1]['log'] = entity.get('log')
+                    P.logger.error(f'Exception:{str(e)}')
+                    P.logger.error(traceback.format_exc())
             ret['data'] = data
             #P.logger.debug(data)
         elif command == 'uninstall':
