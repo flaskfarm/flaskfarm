@@ -32,6 +32,7 @@ class ModuleSetting(PluginModuleBase):
         'notify_discord_webhook' : '',
         'notify_advaned_use' : 'False',
         'notify.yaml': '', #직접 사용하지 않으나 저장 편의상.
+        'command_text': '',
     } 
 
     def __init__(self, P):
