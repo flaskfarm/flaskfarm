@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-#########################################################
-# python
 import traceback
 from datetime import datetime
 
-# third-party
+from framework import F
 
-# sjva 공용
-from framework import db
-from framework.util import Util
 
-#########################################################
-class ModelBase(db.Model):
+class ModelBase(F.db.Model):
     __abstract__ = True
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     model_setting = None
@@ -26,8 +19,8 @@ class ModelBase(db.Model):
 
     def save(self):
         try:
-            db.session.add(self)
-            db.session.commit()
+            F.db.session.add(self)
+            F.db.session.commit()
         except Exception as e:
             self.logger.error(f'Exception:{str(e)}')
             self.logger.error(traceback.format_exc())
@@ -60,7 +53,7 @@ class ModelBase(db.Model):
     @classmethod
     def get_by_id(cls, id):
         try:
-            return db.session.query(cls).filter_by(id=id).first()
+            return F.db.session.query(cls).filter_by(id=id).first()
         except Exception as e:
             cls.logger.error(f'Exception:{str(e)}')
             cls.logger.error(traceback.format_exc())
@@ -69,7 +62,7 @@ class ModelBase(db.Model):
     @classmethod
     def get_list(cls, by_dict=False):
         try:
-            tmp = db.session.query(cls).all()
+            tmp = F.db.session.query(cls).all()
             if by_dict:
                 tmp = [x.as_dict() for x in tmp]
             return tmp
@@ -82,8 +75,8 @@ class ModelBase(db.Model):
     @classmethod
     def delete_by_id(cls, id):
         try:
-            db.session.query(cls).filter_by(id=id).delete()
-            db.session.commit()
+            F.db.session.query(cls).filter_by(id=id).delete()
+            F.db.session.commit()
             return True
         except Exception as e:
             cls.logger.error(f'Exception:{str(e)}')
@@ -93,8 +86,8 @@ class ModelBase(db.Model):
     @classmethod
     def delete_all(cls):
         try:
-            db.session.query(cls).delete()
-            db.session.commit()
+            F.db.session.query(cls).delete()
+            F.db.session.commit()
             return True
         except Exception as e:
             cls.logger.error(f'Exception:{str(e)}')
@@ -140,6 +133,6 @@ class ModelBase(db.Model):
     # 오버라이딩
     @classmethod
     def make_query(cls, order='desc', search='', option1='all', option2='all'):
-        query = db.session.query(cls)
+        query = F.db.session.query(cls)
         return query 
         

@@ -1,25 +1,18 @@
-# -*- coding: utf-8 -*-
-#########################################################
-# python
-import os, traceback
+import traceback
 
-# third-party
+from framework import F
 
-# sjva 공용
-from framework import frame, db
-from framework.util import Util
 
-#########################################################
 def get_model_setting(package_name, logger, table_name=None):
     
-    class ModelSetting(db.Model):
+    class ModelSetting(F.db.Model):
         __tablename__ = '%s_setting' % package_name if table_name is None else table_name
         __table_args__ = {'mysql_collate': 'utf8_general_ci'}
         __bind_key__ = package_name
 
-        id = db.Column(db.Integer, primary_key=True)
-        key = db.Column(db.String, unique=True, nullable=False)
-        value = db.Column(db.String, nullable=False)
+        id = F.db.Column(F.db.Integer, primary_key=True)
+        key = F.db.Column(F.db.String, unique=True, nullable=False)
+        value = F.db.Column(F.db.String, nullable=False)
     
         def __init__(self, key, value):
             self.key = key
@@ -34,7 +27,7 @@ def get_model_setting(package_name, logger, table_name=None):
         @staticmethod
         def get(key):
             try:
-                ret = db.session.query(ModelSetting).filter_by(key=key).first()
+                ret = F.db.session.query(ModelSetting).filter_by(key=key).first()
                 if ret is not None:
                     return ret.value.strip()
                 return None
@@ -44,7 +37,7 @@ def get_model_setting(package_name, logger, table_name=None):
 
         @staticmethod
         def has_key(key):
-            return (db.session.query(ModelSetting).filter_by(key=key).first() is not None)
+            return (F.db.session.query(ModelSetting).filter_by(key=key).first() is not None)
         
         @staticmethod
         def get_int(key):
@@ -65,13 +58,13 @@ def get_model_setting(package_name, logger, table_name=None):
         @staticmethod
         def set(key, value):
             try:
-                item = db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
+                item = F.db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
                 if item is not None:
                     item.value = value.strip() if value is not None else value
-                    db.session.commit()
+                    F.db.session.commit()
                 else:
-                    db.session.add(ModelSetting(key, value.strip()))
-                    db.session.commit()
+                    F.db.session.add(ModelSetting(key, value.strip()))
+                    F.db.session.commit()
             except Exception as exception:
                 logger.error('Exception:%s %s', exception, key)
                 logger.error(traceback.format_exc())
@@ -79,7 +72,7 @@ def get_model_setting(package_name, logger, table_name=None):
         @staticmethod
         def to_dict():
             try:
-                ret = Util.db_list_to_dict(db.session.query(ModelSetting).all())
+                ret = ModelSetting.db_list_to_dict(F.db.session.query(ModelSetting).all())
                 ret['package_name'] = package_name
                 return ret 
             except Exception as exception:
@@ -99,9 +92,9 @@ def get_model_setting(package_name, logger, table_name=None):
                     #logger.debug('Key:%s Value:%s', key, value)
                     if ModelSetting.get(key) != value:
                         change_list.append(key)
-                        entity = db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
+                        entity = F.db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
                         entity.value = value
-                db.session.commit()
+                F.db.session.commit()
                 return True, change_list 
             except Exception as exception: 
                 logger.error('Exception:%s', exception)
@@ -134,5 +127,12 @@ def get_model_setting(package_name, logger, table_name=None):
                 if _.strip() != '':
                     tmp.append(_.strip())
             return tmp
+
+        @staticmethod
+        def db_list_to_dict(db_list):
+            ret = {}
+            for item in db_list:
+                ret[item.key] = item.value
+            return ret
 
     return ModelSetting

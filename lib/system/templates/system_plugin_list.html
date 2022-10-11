@@ -1,25 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<style type="text/css">
-  .my_hover:hover{
-    background-color: #ffff00;
-    transition: all 0.01s ease-in-out;
-  }
-</style>
-
 <div>
-      
-      {{ macros.m_hr_head_top() }}
-      {{ macros.m_row_start('0') }}
-      {{ macros.m_col_wide(1, macros.m_strong('Idx'), 'center') }}
-      {{ macros.m_col_wide(2, macros.m_strong('Title')) }}
-      {{ macros.m_col_wide(2, macros.m_strong('Package Name')) }}
-      {{ macros.m_col_wide(1, macros.m_strong('Dev.')) }}
-      {{ macros.m_col_wide(1, macros.m_strong('Version')) }}
-      {{ macros.m_col_wide(5, macros.m_strong('Description')) }}
-      {{ macros.m_row_end() }}
-      {{ macros.m_hr_head_bottom() }}
-      <div id="plugin_list_div"></div>
+  {{ macros.m_hr_head_top() }}
+  {{ macros.m_row_start('0') }}
+  {{ macros.m_col_wide(1, macros.m_strong('Idx'), 'center') }}
+  {{ macros.m_col_wide(2, macros.m_strong('Title')) }}
+  {{ macros.m_col_wide(2, macros.m_strong('Package Name')) }}
+  {{ macros.m_col_wide(1, macros.m_strong('Dev.')) }}
+  {{ macros.m_col_wide(1, macros.m_strong('Version')) }}
+  {{ macros.m_col_wide(5, macros.m_strong('Description')) }}
+  {{ macros.m_row_end() }}
+  {{ macros.m_hr_head_bottom() }}
+  <div id="plugin_list_div"></div>
 </div>
 
 

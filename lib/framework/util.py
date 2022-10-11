@@ -6,17 +6,6 @@ from framework import F
 
 
 class Util(object):
-    
- 
-    @staticmethod
-    def db_list_to_dict(db_list):
-        """
-        세팅DB에서 사용, (key, value) dict로 변환
-        """
-        ret = {}
-        for item in db_list:
-            ret[item.key] = item.value
-        return ret
 
     @staticmethod
     def db_to_dict(db_list):

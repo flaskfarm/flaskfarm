@@ -117,6 +117,7 @@ class ModuleSetting(PluginModuleBase):
 
     def plugin_load(self):
         try:
+            F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
             if F.config['arg_repeat'] == 0 or SystemModelSetting.get('system_start_time') == '':
                 SystemModelSetting.set('system_start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             SystemModelSetting.set('repeat', str(F.config['arg_repeat']))

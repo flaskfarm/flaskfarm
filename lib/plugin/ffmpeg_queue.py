@@ -1,14 +1,11 @@
-# -*- coding: utf-8 -*-
-#########################################################
-# python
-import os, sys, traceback
-import threading, time
-from datetime import datetime
 import abc
+import os
+import queue
+import threading
+import time
+import traceback
+from datetime import datetime
 
-# third-party
-# sjva 공용
-#########################################################
 
 class FfmpegQueueEntity(abc.ABCMeta('ABC', (object,), {'__slots__': ()})):
 
@@ -78,12 +75,6 @@ class FfmpegQueueEntity(abc.ABCMeta('ABC', (object,), {'__slots__': ()})):
 
 class FfmpegQueue(object):
     
-    
-
-
-    
-    
-
     def __init__(self, P, max_ffmpeg_count):
         self.P = P
         self.static_index = 1
@@ -136,6 +127,7 @@ class FfmpegQueue(object):
                     continue
 
                 import ffmpeg
+
                 #max_pf_count = 0 
                 #save_path = ModelSetting.get('download_path')
                 #if ModelSetting.get('auto_make_folder') == 'True':

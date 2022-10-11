@@ -1,10 +1,18 @@
-import os, io, traceback, time, random, requests
+import io
+import os
+import random
+import time
+import traceback
+
+import requests
+
 try:
-    from discord_webhook import DiscordWebhook, DiscordEmbed
+    from discord_webhook import DiscordEmbed, DiscordWebhook
 except:
     os.system('pip3 install discord-webhook')
 
-from discord_webhook import DiscordWebhook, DiscordEmbed
+from discord_webhook import DiscordEmbed, DiscordWebhook
+
 from . import logger
 
 webhook_list = [
@@ -176,7 +184,7 @@ class SupportDiscord(object):
     def discord_cdn(cls, byteio=None, filepath=None, filename=None, webhook_url=None, content='', retry=True):
         data = None
         if webhook_url is None:
-            webhook_url =  webhook_list[random.randint(0,9)]  # sjva 채널
+            webhook_url =  webhook_list[random.randint(0,9)] 
 
         try:
             webhook = DiscordWebhook(url=webhook_url, content=content)

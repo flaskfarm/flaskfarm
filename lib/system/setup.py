@@ -28,16 +28,16 @@ __menu = {
             'uri': 'tool',
             'name': '시스템 툴',
             'list': [
+                {'uri': 'upload', 'name': '업로드'},
                 {'uri': 'celery', 'name': 'celery 테스트'},
                 {'uri': 'python', 'name': 'Python'},
                 {'uri': 'db', 'name': 'DB'},
                 {'uri': 'crypt', 'name': '암호화'},
-                {'uri': 'upload', 'name': '업로드'},
             ]
         },
         {
-            'uri': 'log',
-            'name': '로그'
+            'uri': 'all_log',
+            'name': '전체 로그'
         }
     ]
 }
@@ -72,11 +72,12 @@ try:
 
     SystemModelSetting = P.ModelSetting
     from .mod_home import ModuleHome
+    from .mod_log import ModuleLog
     from .mod_plugin import ModulePlugin
     from .mod_route import ModuleRoute
     from .mod_setting import ModuleSetting
     from .mod_tool import ModuleTool
-    P.set_module_list([ModuleHome, ModuleRoute, ModuleSetting, ModulePlugin, ModuleTool])
+    P.set_module_list([ModuleHome, ModuleRoute, ModuleSetting, ModulePlugin, ModuleTool, ModuleLog])
 
 except Exception as e:
     P.logger.error(f'Exception:{str(e)}')

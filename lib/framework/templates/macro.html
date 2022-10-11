@@ -276,8 +276,17 @@
 
 
 
-
-
+<!-- SELECT Dummy 
+option을 script로 넣을 때 사용
+예: 시스템 - 전체로그
+-->
+{% macro setting_select_empty(id, title, col='9', desc=None, value=None) %}
+  {{ setting_top(title) }}
+  <div class="input-group col-sm-{{col}}">
+    <div id="{{id}}_div" name="{{id}}_div"></div>
+  </div>
+  {{ setting_bottom(desc) }}
+{% endmacro %}
 
 
 
@@ -619,13 +628,7 @@ macros.setting_button_with_info([['toggle_btn', 'Toggle', [{'key':'category', 'v
   {{ setting_bottom(desc) }}
 {% endmacro %}
 
-{% macro setting_select_empty(id, title, col='9', desc=None, value=None) %}
-  {{ setting_top(title) }}
-  <div class="input-group col-sm-{{col}}">
-    <div id="{{id}}_div" name="{{id}}_div"></div>
-  </div>
-  {{ setting_bottom(desc) }}
-{% endmacro %}
+
 
 
 

@@ -79,7 +79,7 @@ class Logic(object):
                 except Exception as e:
                     self.P.logger.error(f'Exception:{str(e)}')
                     self.P.logger.error(traceback.format_exc())
-            self.P.logger.debug('%s plugin_unload', self.P.package_name)
+            self.P.logger.debug(f'[{self.P.package_name}] plugin_unload end')
         except Exception as e:
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())

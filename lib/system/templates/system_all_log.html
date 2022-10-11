@@ -1,23 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<style>
-  .tab-pane {
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    border-radius: 0px 0px 5px 5px;
-    padding: 10px;
-  }
-  .nav-tabs { margin-bottom: 0; }
-</style>
 
 <div>
-  {{ macros.setting_top(left='로그 파일 선택') }}
-  <div class="input-group col-sm-9">
-    <div id='log_select1_div'></div>
-    <div id='log_select2_div'></div>
-  </div>
-  {{ macros.setting_bottom() }}
+  {{ macros.setting_select_empty('log_select1', '로그 파일 선택 (.log)') }}
+  {{ macros.setting_select_empty('log_select2', '로그 파일 선택 (.logX)') }}
   <nav>
     {{ macros.m_tab_head_start() }}
       {{ macros.m_tab_head('이전', true) }}
@@ -30,12 +16,10 @@
         <textarea id="log" class="col-md-12" rows="30" charswidth="23" disabled style="background-color:#ffffff;visibility:hidden"></textarea>
       </div>
     {{ macros.m_tab_content_end() }}
-    
     {{ macros.m_tab_content_start('실시간', false) }}
       <div>
         <textarea id="add" class="col-md-12" rows="30" charswidth="23" disabled style="background-color:#ffffff;visibility:visible"></textarea>
       </div>
-      
       <div class="form-inline">
         <label class="form-check-label" for="auto_scroll">자동 스크롤</label>
         <input id="auto_scroll" name="auto_scroll" class="form-control form-control-sm" type="checkbox" data-toggle="toggle" checked>
@@ -44,14 +28,10 @@
         </span>
       </div>
     {{ macros.m_tab_content_end() }}
-
   </div>
 </div>
 
-
 <script type="text/javascript">
-var package_name = "{{arg['package_name']}}";
-var sub = "{{arg['sub']}}";
 var log_list = "{{arg['log_list']}}";
 var all_list = "{{arg['all_list']}}";
 
@@ -75,14 +55,14 @@ function make_form() {
   for(var i in data) {
     str += '<option value="' + data[i] + '">' + data[i] + '</option>';
   }
-  document.getElementById("log_select1_div").innerHTML = str;
+  $("#log_select1_div").html(str);
 
   str = '<select id="log_select" name="log_select" class="form-control form-control-sm">';
   data = all_list.split('|')
   for(var i in data) {
     str += '<option value="' + data[i] + '">' + data[i] + '</option>';
   }
-  document.getElementById("log_select2_div").innerHTML = str;
+  $("#log_select2_div").html(str);
 }
 
 $("body").on('change', '#log_select', function(e){
@@ -90,14 +70,15 @@ $("body").on('change', '#log_select', function(e){
   filename = $(this)[0].value;
   current_filename = filename;
   $('#loading').show();
+  $("#add").html('');
   socket.emit("start", {'filename':filename} );
 });
 
 
 function ResizeTextArea() {
   ClientHeight = window.innerHeight
-  $("#log").height(ClientHeight-260);
-  $("#add").height(ClientHeight-280);
+  $("#log").height(ClientHeight-300);
+  $("#add").height(ClientHeight-320);
 }
 
 $(window).resize(function() {
