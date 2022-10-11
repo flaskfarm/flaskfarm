@@ -11,7 +11,7 @@ class ModuleTool(PluginModuleBase):
 
 
     def __init__(self, P):
-        super(ModuleTool, self).__init__(P, name=name, first_menu='celery')
+        super(ModuleTool, self).__init__(P, name=name, first_menu='upload')
         
 
     def process_menu(self, page, req):

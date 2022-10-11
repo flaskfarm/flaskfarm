@@ -61,9 +61,7 @@ class Framework:
         self.__make_default_dir()
         
         self.logger = self.get_logger(__package__)
-        
-        from support import set_logger
-        set_logger(self.logger)
+        import support
 
         self.__prepare_starting()
         self.app = Flask(__name__)
@@ -462,6 +460,8 @@ class Framework:
 
     def __app_close(self):
         try:
+            from support import SupportSubprocess
+            SupportSubprocess.all_process_close()
             from .init_plugin import PluginManager
             PluginManager.plugin_unload()
             self.socketio.stop()

@@ -12,6 +12,7 @@ __menu = {
                 {'uri': 'menu', 'name': '메뉴 구성'},                
                 {'uri': 'config', 'name': 'config.yaml 파일'},
                 {'uri': 'export', 'name': 'export.sh 파일'},
+                {'uri': 'celery', 'name': '비동기 작업(celery)'},
                 {'uri': 'notify', 'name': '알림'},
                 
             ],
@@ -22,6 +23,7 @@ __menu = {
             'list': [
                 {'uri': 'setting', 'name': '설정'},
                 {'uri': 'list', 'name': '로딩 플러그인'},
+                {'uri': 'all', 'name': '플러그인 목록'},
             ],
         },
         {
@@ -29,7 +31,6 @@ __menu = {
             'name': '시스템 툴',
             'list': [
                 {'uri': 'upload', 'name': '업로드'},
-                {'uri': 'celery', 'name': 'celery 테스트'},
                 {'uri': 'python', 'name': 'Python'},
                 {'uri': 'db', 'name': 'DB'},
                 {'uri': 'crypt', 'name': '암호화'},

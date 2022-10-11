@@ -13,7 +13,7 @@
   <form id='setting' name='setting'>  
   <div class="tab-content" id="nav-tabContent">
     {{ macros.m_tab_content_start('normal', true) }}
-      {{ macros.setting_checkbox('tool_crypt_use_user_key', '암호화 키 본인키 사용', value=arg['tool_crypt_use_user_key'], desc=['On : 본인 키 사용', '주의) 변경 후 일반설정-인증-로그인 암호를 새로 저장해야 합니다.', 'Off : 앱 고정 키 사용']) }}
+      {{ macros.setting_checkbox('tool_crypt_use_user_key', '암호화 키 직접 입력', value=arg['tool_crypt_use_user_key'], desc=['On : 본인 키 사용', '주의) 변경 후 일반설정-인증-로그인 암호를 새로 저장해야 합니다.', 'Off : 앱 고정 키 사용']) }}
       <div id="tool_crypt_use_user_key_div" class="collapse">
         {{ macros.setting_input_text('tool_crypt_user_key', '암호화 키', value=arg['tool_crypt_user_key'], desc=['16진수(숫자, a~e)로 이루어진 32글자. 미만시 앞을 0으로 채움. 초과시 뒤에 무시']) }}
       </div>

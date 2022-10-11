@@ -116,8 +116,14 @@
   <!--command modal-->
   {{ macros.m_modal_start('command_modal', '', 'modal-lg') }}
     <div>
-      <textarea id="command_modal_textarea" class="col-md-12" rows="30" disabled style="visibility:visible"></textarea>
+      <textarea id="command_modal_textarea" class="col-md-12" rows="30" disabled style="background-color:#ffffff;visibility:visible"></textarea>
     </div>
+    <form id='command_modal_form' name='command_form'>
+      <div class="form-inline input-group">
+        <input id="command_modal_input" name="command_modal_input" type="text" class="form-control form-control-sm" placeholder="">
+        <button id="command_modal_input_btn" class="btn btn-sm btn-outline-success">입력</button>
+      </div>
+    </form>
   {{ macros.m_modal_end() }}
   <!--command modal end-->
   <!-- Modal end -->

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+  {{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장'], ['celery_test_btn', 'Celery 테스트']])}}
+  {{ macros.m_row_start('5') }}
+  {{ macros.m_row_end() }}
+  {{ macros.m_hr() }}
+
+  <div class="tab-content" id="nav-tabContent">
+    {{ macros.info_text('use_celery', 'use_celery 값', arg['use_celery']) }}
+    {{ macros.info_text('running_type', 'running_type 값', arg['running_type']) }}
+    {{ macros.info_text('_tmp', '설명', "Docker는 celery가 서비스로 동작하기 때문에 설정이 불필요하며 '테스트' 버튼으로 작동 여부 확인만 가능합니다.", desc=['','native로 동작하는 경우 celery 실행을 따로 하지 않고 한번에 실행하기 위한 설정', 'Redis는 설정된 Port로 동작중인 상태여야 함.']) }}
+    {{ macros.m_hr() }}
+    <form id='setting' name='setting'>
+    {{ macros.setting_checkbox('celery_start_by_web', '시작시 celery 실행', value=arg['celery_start_by_web']) }}
+
+    {{ macros.setting_input_textarea('celery_start_command', 'celery 실행 명령', desc=['', 
+    
+    '예: celery -A flaskfarm.main.celery worker --loglevel=info --pool=gevent --concurrency=2 --config_filepath="config.yaml파일경로" --running_type=native', 
+    '패키지로 실행시 : -A flaskfarm.main.celery',
+    'GIT 소스로 실행시 : -A main.celery (현재 작업폴더가 flaskfarm)',
+    'Linux는 사용자에 따라 export C_FORCE_ROOT=true 필요'
+    ], 
+    value=arg['celery_start_command'], row='5') }}
+    </form>
+    {{ macros.setting_buttons([['celery_excute_btn', '실행 테스트']]) }}
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+
+$("body").on('click', '#celery_excute_btn', function(e){
+  e.preventDefault();
+  globalSendCommand('celery_execute', $('#celery_start_command').val());
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$("body").on('click', '#shutdown_btn', function(e){
+  e.preventDefault();
+  shutdown_confirm();
+});
+
+$("body").on('click', '#celery_test_btn', function(e){
+  e.preventDefault();
+  $.ajax({
+    url: '/' + package_name + '/ajax/' + sub + '/celery_test',
+    type: "POST", 
+    cache: false,
+    data: {},
+    dataType: "json",
+    success: function (ret) {
+      if (ret.ret == 'success') {
+        $.notify('<strong>'+ ret.data+'</strong>', {
+          type: 'success'
+        });
+      } else if (ret.ret == 'timeout' || ret.ret == 'no_celery') {
+        $.notify('<strong>'+ ret.data+'</strong>', {
+          type: 'warning'
+        });
+      }
+      //m_modal(ret)
+    }
+  });
+});
+
+
+$("body").on('click', '#ps_btn', function(e){
+  e.preventDefault();
+  $.ajax({
+    url: '/' + package_name + '/ajax/' + sub + '/ps',
+    type: "POST", 
+    cache: false,
+    data: {},
+    dataType: "json",
+    success: function (ret) {
+    }
+  });
+});
+
+$("body").on('click', '#worker_start_btn', function(e){
+  e.preventDefault();
+  $.ajax({
+    url: '/' + package_name + '/ajax/' + sub + '/worker_start',
+    type: "POST", 
+    cache: false,
+    data: {},
+    dataType: "json",
+    success: function (ret) {
+      if (ret.ret == 'success') {
+        $.notify('<strong>'+ ret.data+'</strong>', {
+          type: 'success'
+        });
+      } else if (ret.ret == 'timeout' || ret.ret == 'no_celery' || ret.ret == 'not_registered') {
+        $.notify('<strong>'+ ret.data+'</strong>', {
+          type: 'warning'
+        });
+      }
+      //m_modal(ret)
+    }
+  });
+});
+
+
+
+
+
+</script>    
+{% endblock %}

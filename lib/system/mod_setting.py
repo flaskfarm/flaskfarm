@@ -2,6 +2,7 @@ import random
 import string
 
 from support import SupportDiscord, SupportFile, SupportTelegram
+from tool.modal_command import ToolModalCommand
 
 from .setup import *
 
@@ -33,6 +34,10 @@ class ModuleSetting(PluginModuleBase):
         'notify_advaned_use' : 'False',
         'notify.yaml': '', #직접 사용하지 않으나 저장 편의상.
         'command_text': '',
+        'celery_start_by_web': 'False', #웹 실행시 celery 실행
+        'celery_start_command': "celery -A flaskfarm.main.celery worker --loglevel=info --pool=gevent --concurrency=2 --config_filepath={F.config['config_filepath']} --running_type=native",
+        
+
     } 
 
     def __init__(self, P):
@@ -57,6 +62,9 @@ class ModuleSetting(PluginModuleBase):
             elif page == 'notify':
                 arg['notify_yaml_filepath'] = F.config['notify_yaml_filepath']
                 arg['notify.yaml'] = SupportFile.read_file(arg['notify_yaml_filepath'])
+            elif page == 'celery':
+                arg['use_celery'] = F.config['use_celery']
+                arg['running_type'] = F.config['running_type']
 
             return render_template(f'{__package__}_{name}_{page}.html', arg=arg)
         except Exception as e: 
@@ -113,41 +121,52 @@ class ModuleSetting(PluginModuleBase):
         elif command == 'command_run':
             ret['msg'] = arg1
             pass
+        elif command == 'celery_execute':
+            tmp = arg1.replace("{F.config['config_filepath']}", F.config['config_filepath']).replace('{F.config["config_filepath"]}', F.config['config_filepath'])
+            cmd = [
+                ['msg', f'명령 : {tmp}'],
+                ['msg', ''],
+                tmp.split(' '),
+            ]
+            ToolModalCommand.start("Celery 실행", cmd)
         return jsonify(ret)
 
 
     def plugin_load(self):
         try:
-            if F.config['run_flask']:
-                F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
-                F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
+            if F.config['run_flask'] == False:
+                return
+            F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
+            F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
 
-                if F.config['arg_repeat'] == 0 or SystemModelSetting.get('system_start_time') == '':
-                    SystemModelSetting.set('system_start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-                SystemModelSetting.set('repeat', str(F.config['arg_repeat']))
-                username = SystemModelSetting.get('web_id')
-                passwd = SystemModelSetting.get('web_pw')
-                F.users[username] = User(username, passwd_hash=passwd)
+            if F.config['arg_repeat'] == 0 or SystemModelSetting.get('system_start_time') == '':
+                SystemModelSetting.set('system_start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            SystemModelSetting.set('repeat', str(F.config['arg_repeat']))
+            username = SystemModelSetting.get('web_id')
+            passwd = SystemModelSetting.get('web_pw')
+            F.users[username] = User(username, passwd_hash=passwd)
 
-                self.__set_restart_scheduler()
-                self.__set_scheduler_check_scheduler()
-                F.get_recent_version()
+            self.__set_restart_scheduler()
+            self.__set_scheduler_check_scheduler()
+            F.get_recent_version()
 
-                notify_yaml_filepath = os.path.join(F.config['path_data'], 'db', 'notify.yaml')
-                if os.path.exists(notify_yaml_filepath) == False:
-                    import shutil
-                    shutil.copy(
-                        os.path.join(F.config['path_app'], 'files', 'notify.yaml.template'),
-                        notify_yaml_filepath
-                    )
-                if SystemModelSetting.get_bool('restart_notify'):
-                    from tool import ToolNotify
-                    msg = f"시스템이 시작되었습니다.\n재시작: {F.config['arg_repeat']}"
-                    ToolNotify.send_message(msg, message_id='system_start')
+            notify_yaml_filepath = os.path.join(F.config['path_data'], 'db', 'notify.yaml')
+            if os.path.exists(notify_yaml_filepath) == False:
+                import shutil
+                shutil.copy(
+                    os.path.join(F.config['path_app'], 'files', 'notify.yaml.template'),
+                    notify_yaml_filepath
+                )
+            if SystemModelSetting.get_bool('restart_notify'):
+                from tool import ToolNotify
+                msg = f"시스템이 시작되었습니다.\n재시작: {F.config['arg_repeat']}"
+                ToolNotify.send_message(msg, message_id='system_start')
         except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
             P.logger.error(traceback.format_exc())
 
+    def plugin_unload(self):
+        ToolModalCommand.process_close()
 
     def setting_save_after(self, change_list):
         if 'theme'  in change_list:

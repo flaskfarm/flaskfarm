@@ -1,6 +1,11 @@
-import os, sys, logging, logging.handlers
+import logging
+import logging.handlers
+import os
+import sys
 from datetime import datetime
+
 from pytz import timezone, utc
+
 """
 ConsoleColor.Black => "\x1B[30m",
             ConsoleColor.DarkRed => "\x1B[31m",
@@ -48,6 +53,8 @@ class CustomFormatter(logging.Formatter):
 
 
 def get_logger(name=None, log_path=None):
+    if os.environ.get('FF') == 'true':
+        name = 'framework'
     if name == None:
         name = sys.argv[0].rsplit('.', 1)[0]
     logger = logging.getLogger(name)

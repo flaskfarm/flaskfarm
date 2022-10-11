@@ -40,6 +40,15 @@ def global_ajax(sub):
             return jsonify(ret)
         except:
             return jsonify({'ret':False})
+    elif sub == 'command_modal_hide':
+        from tool import ToolModalCommand
+        ToolModalCommand.modal_close()
+        return jsonify('')
+    elif sub == 'command_modal_input':
+        from tool import ToolModalCommand
+        cmd = request.form['cmd']
+        ToolModalCommand.input_command(cmd)
+        return jsonify('')
 
 
 
