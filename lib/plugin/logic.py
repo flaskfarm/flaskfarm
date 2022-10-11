@@ -1,4 +1,7 @@
-import traceback, time, threading
+import threading
+import time
+import traceback
+
 from framework import F, Job
 
 #########################################################
@@ -34,8 +37,8 @@ class Logic(object):
                             if self.P.ModelSetting.has_key(key) and self.P.ModelSetting.get_bool(key):
                                 self.scheduler_start_sub(module.name, page_instance.name)
 
-        except Exception as exception:
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     def db_init(self):
@@ -59,8 +62,8 @@ class Logic(object):
                         if F.db.session.query(self.P.ModelSetting).filter_by(key=key).count() == 0:
                             F.db.session.add(self.P.ModelSetting(key, value))
             F.db.session.commit()
-        except Exception as exception:
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
 
@@ -68,12 +71,17 @@ class Logic(object):
         try:
             self.P.logger.debug('%s plugin_unload', self.P.package_name)
             for module in self.P.module_list:
-                module.plugin_unload()
-                if module.page_list is not None:
-                    for page_instance in module.page_list:
-                        page_instance.plugin_unload()
-        except Exception as exception:
-            self.P.logger.error('Exception:%s', exception)
+                try:
+                    module.plugin_unload()
+                    if module.page_list is not None:
+                        for page_instance in module.page_list:
+                            page_instance.plugin_unload()
+                except Exception as e:
+                    self.P.logger.error(f'Exception:{str(e)}')
+                    self.P.logger.error(traceback.format_exc())
+            self.P.logger.debug('%s plugin_unload', self.P.package_name)
+        except Exception as e:
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
 
@@ -83,8 +91,8 @@ class Logic(object):
             module = self.get_module(sub)
             job = Job(self.P.package_name, job_id, module.get_scheduler_interval(), self.scheduler_function, module.get_scheduler_desc(), args=sub)
             F.scheduler.add_job_instance(job)
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     
@@ -92,8 +100,8 @@ class Logic(object):
         try:
             job_id = '%s_%s' % (self.P.package_name, sub)
             F.scheduler.remove_job(job_id)
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
 
@@ -101,16 +109,16 @@ class Logic(object):
         try:
             module = self.get_module(sub)
             module.scheduler_function()
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     def reset_db(self,sub):
         try:
             module = self.get_module(sub)
             return module.reset_db()
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
 
@@ -130,8 +138,8 @@ class Logic(object):
                     self.scheduler_function(sub)
                 threading.Thread(target=func, args=()).start()
                 ret = 'thread'
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
             ret = 'fail'
         return ret
@@ -144,8 +152,8 @@ class Logic(object):
                 self.scheduler_function(sub)
             threading.Thread(target=func, args=()).start()
             ret = {'ret':'success', 'msg':'실행합니다.'}
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
             ret = {'ret' : 'danger', 'msg':str(exception)}
         return ret
@@ -155,8 +163,8 @@ class Logic(object):
             for module in self.P.module_list:
                 if module.name == sub:
                     return module
-        except Exception as exception:
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     def process_telegram_data(self, data, target=None):
@@ -164,8 +172,8 @@ class Logic(object):
             for module in self.P.module_list:
                 if target is None or target.startswith(module.name):
                     module.process_telegram_data(data, target=target)
-        except Exception as exception:
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     #######################################################
@@ -179,16 +187,16 @@ class Logic(object):
             ins_page = ins_module.get_page(page_name)
             job = Job(self.P.package_name, job_id, ins_page.get_scheduler_interval(), ins_page.scheduler_function, ins_page.get_scheduler_desc(), args=None)
             F.scheduler.add_job_instance(job)
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     def scheduler_stop_sub(self, module_name, page_name):
         try:
             job_id = f'{self.P.package_name}_{module_name}_{page_name}'
             F.scheduler.remove_job(job_id)
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     def scheduler_function_sub(self, module_name, page_name):
@@ -196,8 +204,8 @@ class Logic(object):
             ins_module = self.get_module(module_name)
             ins_sub = ins_module.get_page(page_name)
             ins_sub.scheduler_function()
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     def one_execute_sub(self, module_name, page_name):
@@ -215,8 +223,8 @@ class Logic(object):
                     self.scheduler_function_sub(module_name, page_name)
                 threading.Thread(target=func, args=()).start()
                 ret = 'thread'
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
             ret = 'fail'
         return ret
@@ -229,8 +237,8 @@ class Logic(object):
                 self.scheduler_function_sub(module_name, page_name)
             threading.Thread(target=func, args=()).start()
             ret = {'ret':'success', 'msg':'실행합니다.'}
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
             ret = {'ret' : 'danger', 'msg':str(exception)}
         return ret
