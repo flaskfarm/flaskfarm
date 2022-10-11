@@ -117,29 +117,32 @@ class ModuleSetting(PluginModuleBase):
 
     def plugin_load(self):
         try:
-            F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
-            if F.config['arg_repeat'] == 0 or SystemModelSetting.get('system_start_time') == '':
-                SystemModelSetting.set('system_start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-            SystemModelSetting.set('repeat', str(F.config['arg_repeat']))
-            username = SystemModelSetting.get('web_id')
-            passwd = SystemModelSetting.get('web_pw')
-            F.users[username] = User(username, passwd_hash=passwd)
+            if F.config['run_flask']:
+                F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
+                F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
 
-            self.__set_restart_scheduler()
-            self.__set_scheduler_check_scheduler()
-            F.get_recent_version()
+                if F.config['arg_repeat'] == 0 or SystemModelSetting.get('system_start_time') == '':
+                    SystemModelSetting.set('system_start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                SystemModelSetting.set('repeat', str(F.config['arg_repeat']))
+                username = SystemModelSetting.get('web_id')
+                passwd = SystemModelSetting.get('web_pw')
+                F.users[username] = User(username, passwd_hash=passwd)
 
-            notify_yaml_filepath = os.path.join(F.config['path_data'], 'db', 'notify.yaml')
-            if os.path.exists(notify_yaml_filepath) == False:
-                import shutil
-                shutil.copy(
-                    os.path.join(F.config['path_app'], 'files', 'notify.yaml.template'),
-                    notify_yaml_filepath
-                )
-            if SystemModelSetting.get_bool('restart_notify'):
-                from tool import ToolNotify
-                msg = f"시스템이 시작되었습니다.\n재시작: {F.config['arg_repeat']}"
-                ToolNotify.send_message(msg, message_id='system_start')
+                self.__set_restart_scheduler()
+                self.__set_scheduler_check_scheduler()
+                F.get_recent_version()
+
+                notify_yaml_filepath = os.path.join(F.config['path_data'], 'db', 'notify.yaml')
+                if os.path.exists(notify_yaml_filepath) == False:
+                    import shutil
+                    shutil.copy(
+                        os.path.join(F.config['path_app'], 'files', 'notify.yaml.template'),
+                        notify_yaml_filepath
+                    )
+                if SystemModelSetting.get_bool('restart_notify'):
+                    from tool import ToolNotify
+                    msg = f"시스템이 시작되었습니다.\n재시작: {F.config['arg_repeat']}"
+                    ToolNotify.send_message(msg, message_id='system_start')
         except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
             P.logger.error(traceback.format_exc())
