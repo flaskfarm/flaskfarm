@@ -1,6 +1,4 @@
-
 gevent
 gevent-websocket
 celery
 redis
-
