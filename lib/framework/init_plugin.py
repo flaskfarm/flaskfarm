@@ -384,7 +384,7 @@ class PluginManager:
             if flag:
                 if plugin_git and plugin_git.startswith('http'):
                     command = ['git', '-C', plugin_all_path, 'clone', plugin_git + '.git', '--depth', '1']
-                    log = SupportSubprocess.execute_command_return(command)
+                    log = SupportSubprocess.execute_command_return(command, log=True)
                     F.logger.debug(log)
                     if os.path.exists(plugin_path):
                         ret['ret'] = 'success'
