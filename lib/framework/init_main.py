@@ -67,7 +67,8 @@ class Framework:
         self.app = Flask(__name__)
         self.__config_initialize('flask')
 
-        self.db = SQLAlchemy(self.app, session_options={"autoflush": False})
+        self.__init_db()
+        
         
         if True or self.config['run_flask']:
             from .scheduler import Job, Scheduler
@@ -96,7 +97,29 @@ class Framework:
             #DROPZONE_ALLOWED_FILE_TYPE = 'default, image, audio, video, text, app, *.*',
         )
         self.dropzone = Dropzone(self.app)
+
+
+    def __init_db(self):
+        # https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/config/#flask_sqlalchemy.config.SQLALCHEMY_BINDS
+        # 어떤 편법도 불가. db를 사용하지 않아도 파일이 생김.
+        db_path = os.path.join(self.config['path_data'], 'db', 'system.db')
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}' # 3.0에서 필수
+        self.app.config['SQLALCHEMY_BINDS'] = {'system':f'sqlite:///{db_path}'}
+        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+        _ = os.path.join(self.config['path_data'], 'plugins')
+        plugins = []
+        if os.path.exists(_):
+            plugins = os.listdir(_)
         
+        if self.config['path_plugins_dev'] != None and os.path.exists(self.config['path_plugins_dev']):
+            plugins += os.listdir(self.config['path_plugins_dev'])
+        
+        for package_name in plugins:
+            db_path = os.path.join(self.config['path_data'], 'db', f'{package_name}.db')
+            self.app.config['SQLALCHEMY_BINDS'][package_name] = f'sqlite:///{db_path}'
+        self.db = SQLAlchemy(self.app, session_options={"autoflush": False})  
+
         
     def __init_celery(self):
         try:
@@ -158,7 +181,8 @@ class Framework:
         from system.setup import P
         SystemInstance = P
         try:
-            self.db.create_all()
+            with self.app.app_context():
+                self.db.create_all()
         except Exception as e:
             self.logger.error('CRITICAL db.create_all()!!!')
             self.logger.error(f'Exception:{str(e)}')
@@ -200,7 +224,6 @@ class Framework:
         self.logger.info(f"### PORT: {self.config.get('port')}")
         self.logger.info('### Now you can access App by webbrowser!!')
 
-
     def __prepare_starting(self):
         # 여기서 monkey.patch시 너무 늦다고 문제 발생
         pass
@@ -233,10 +256,6 @@ class Framework:
             self.config['notify_yaml_filepath'] = os.path.join(self.config['path_data'], 'db', 'notify.yaml')
         elif mode == "flask":
             self.app.secret_key = os.urandom(24)
-            #db_path = os.path.join(self.config['path_data'], 'db', 'system.db')
-            #self.app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}check_same_thread=False'
-            self.app.config['SQLALCHEMY_BINDS'] = {}
-            self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
             self.app.config['TEMPLATES_AUTO_RELOAD'] = True
             self.app.config['JSON_AS_ASCII'] = False
         elif mode == 'system_loading_after':
@@ -327,7 +346,8 @@ class Framework:
             self.config['plugin_loading_list'] = []
         if self.config.get('plugin_except_list') == None:
             self.config['plugin_except_list'] = []
-
+        if self.config.get('path_plugins_dev') == None:
+            self.config['path_plugins_dev'] = None
         
 
     def __make_default_dir(self):

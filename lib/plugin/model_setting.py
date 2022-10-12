@@ -4,7 +4,7 @@ from framework import F
 
 
 def get_model_setting(package_name, logger, table_name=None):
-    
+
     class ModelSetting(F.db.Model):
         __tablename__ = '%s_setting' % package_name if table_name is None else table_name
         __table_args__ = {'mysql_collate': 'utf8_general_ci'}
@@ -27,17 +27,19 @@ def get_model_setting(package_name, logger, table_name=None):
         @staticmethod
         def get(key):
             try:
-                ret = F.db.session.query(ModelSetting).filter_by(key=key).first()
-                if ret is not None:
-                    return ret.value.strip()
-                return None
+                with F.app.app_context():
+                    ret = F.db.session.query(ModelSetting).filter_by(key=key).first()
+                    if ret is not None:
+                        return ret.value.strip()
+                    return None
             except Exception as exception:
                 logger.error('Exception:%s %s', exception, key)
                 logger.error(traceback.format_exc())
 
         @staticmethod
         def has_key(key):
-            return (F.db.session.query(ModelSetting).filter_by(key=key).first() is not None)
+            with F.app.app_context():
+                return (F.db.session.query(ModelSetting).filter_by(key=key).first() is not None)
         
         @staticmethod
         def get_int(key):
@@ -58,13 +60,14 @@ def get_model_setting(package_name, logger, table_name=None):
         @staticmethod
         def set(key, value):
             try:
-                item = F.db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
-                if item is not None:
-                    item.value = value.strip() if value is not None else value
-                    F.db.session.commit()
-                else:
-                    F.db.session.add(ModelSetting(key, value.strip()))
-                    F.db.session.commit()
+                with F.app.app_context():
+                    item = F.db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
+                    if item is not None:
+                        item.value = value.strip() if value is not None else value
+                        F.db.session.commit()
+                    else:
+                        F.db.session.add(ModelSetting(key, value.strip()))
+                        F.db.session.commit()
             except Exception as exception:
                 logger.error('Exception:%s %s', exception, key)
                 logger.error(traceback.format_exc())

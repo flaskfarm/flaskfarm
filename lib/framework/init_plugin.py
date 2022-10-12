@@ -213,9 +213,11 @@ class PluginManager:
 
             # import가 끝나면 DB를 만든다.
             # 플러그인 로드시 DB 초기화를 할 수 있다.
+            
             if not F.config['run_celery']:
-                try: 
-                    F.db.create_all()
+                try:
+                    with F.app.app_context(): 
+                        F.db.create_all()
                 except Exception as exception:
                     F.logger.error('Exception:%s', exception)
                     F.logger.error(traceback.format_exc())

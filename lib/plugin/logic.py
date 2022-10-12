@@ -47,21 +47,20 @@ class Logic(object):
                 return
 
             for key, value in Logic.db_default.items():
-                if F.db.session.query(self.P.ModelSetting).filter_by(key=key).count() == 0:
-                    F.db.session.add(self.P.ModelSetting(key, value))
+                if self.P.ModelSetting.get(key) == None:
+                    self.P.ModelSetting.set(key, value)
 
             for module in self.P.module_list:
                 if module.page_list is not None:
                     for page_instance in module.page_list:
                         if page_instance.db_default is not None:
                             for key, value in page_instance.db_default.items():
-                                if F.db.session.query(self.P.ModelSetting).filter_by(key=key).count() == 0:
-                                    F.db.session.add(self.P.ModelSetting(key, value))        
+                                if self.P.ModelSetting.get(key) == None:
+                                    self.P.ModelSetting.set(key, value)
                 if module.db_default is not None:
                     for key, value in module.db_default.items():
-                        if F.db.session.query(self.P.ModelSetting).filter_by(key=key).count() == 0:
-                            F.db.session.add(self.P.ModelSetting(key, value))
-            F.db.session.commit()
+                        if self.P.ModelSetting.get(key) == None:
+                            self.P.ModelSetting.set(key, value)
         except Exception as e:
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
