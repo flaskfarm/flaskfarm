@@ -433,6 +433,8 @@ class PluginManager:
             if F.config['plugin_update'] != True:
                 return
             plugins_path = os.path.join(F.config['path_data'], 'plugins')
+            if os.path.exists(plugins_path) == False:
+                return
             tmps = os.listdir(plugins_path)
             for t in tmps:
                 plugin_path = os.path.join(plugins_path, t)

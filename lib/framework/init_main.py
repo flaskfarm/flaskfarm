@@ -78,10 +78,10 @@ class Framework:
         if self.config['use_gevent']:
             self.socketio = SocketIO(self.app, cors_allowed_origins="*")
         else:
-            if self.config['running_type'] == 'termux':
-                self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='eventlet')
-            else:
-                self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='threading')
+            #if self.config['running_type'] == 'termux':
+            #    self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='eventlet')
+            #else:
+            self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='threading')
         
         CORS(self.app)
         Markdown(self.app)
@@ -161,9 +161,13 @@ class Framework:
                     #F.logger.info(f"celery running_type: {options}")
             celery.steps['worker'].add(CustomArgs)
         except Exception as e:
-            self.logger.error('CELERY!!!')
-            self.logger.error(f'Exception:{str(e)}')
-            self.logger.error(traceback.format_exc())
+            if self.config['use_celery']:
+                self.logger.error('CELERY!!!')
+                self.logger.error(f'Exception:{str(e)}')
+                self.logger.error(traceback.format_exc())
+            else:
+                self.logger.info("use_celery = False")
+
             def dummy_func():
                 pass
                     
