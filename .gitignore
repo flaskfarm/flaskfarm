@@ -142,3 +142,4 @@ pre_start.sh
 *.code-workspace
 false
 *copy.py
+*.sh

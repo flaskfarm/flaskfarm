@@ -7,7 +7,6 @@ Flask-Markdown
 Flask-SocketIO
 python-engineio
 python-socketio
-#Werkzeug==2.0.1
 Werkzeug
 Jinja2
 
