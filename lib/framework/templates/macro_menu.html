@@ -46,10 +46,10 @@
               {% if category_child['uri'] == menu[0] %}
                 <a class="dropdown-item active" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
               {% else %}
-                {% if category_child['target'] == '__blank' %}
-                  <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+                {% if 'target' in category_child %}
+                  <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold" target="{{category_child['target']}}">{{ category_child['name'] }}</a>
                 {% else %}
-                  <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold" target="__blank">{{ category_child['name'] }}</a>
+                  <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
                 {% endif %}
               {% endif %}
             {% endif %}
