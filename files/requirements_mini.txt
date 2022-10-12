@@ -10,8 +10,6 @@ python-socketio
 #Werkzeug==2.0.1
 Werkzeug
 Jinja2
-markupsafe
-itsdangerous
 
 # common util
 apscheduler
