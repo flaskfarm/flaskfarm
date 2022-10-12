@@ -1,22 +1,22 @@
 #flask
-Flask==1.1.1
-Flask-SQLAlchemy==2.5.1
-Flask-Login==0.4.1
-Flask-Cors==3.0.8
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-Cors
 Flask-Markdown
-Flask-SocketIO==4.3.1
-python-engineio==3.13.2
-python-socketio==4.6.0
+Flask-SocketIO
+python-engineio
+python-socketio
 #Werkzeug==2.0.1
-Werkzeug==0.16.1
-Jinja2==2.10.1
-markupsafe==2.0.1
-itsdangerous==2.0.1
+Werkzeug
+Jinja2
+markupsafe
+itsdangerous
 
 # common util
 apscheduler
 pytz
-requests==2.26.0
+requests
 discord-webhook
 pyyaml
 telepot-mod

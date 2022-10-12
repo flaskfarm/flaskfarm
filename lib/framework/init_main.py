@@ -112,8 +112,8 @@ class Framework:
         if os.path.exists(_):
             plugins = os.listdir(_)
         
-        if self.config['path_plugins_dev'] != None and os.path.exists(self.config['path_plugins_dev']):
-            plugins += os.listdir(self.config['path_plugins_dev'])
+        if self.config['path_dev'] != None and os.path.exists(self.config['path_dev']):
+            plugins += os.listdir(self.config['path_dev'])
         
         for package_name in plugins:
             db_path = os.path.join(self.config['path_data'], 'db', f'{package_name}.db')
@@ -346,8 +346,8 @@ class Framework:
             self.config['plugin_loading_list'] = []
         if self.config.get('plugin_except_list') == None:
             self.config['plugin_except_list'] = []
-        if self.config.get('path_plugins_dev') == None:
-            self.config['path_plugins_dev'] = None
+        if self.config.get('path_dev') == None:
+            self.config['path_dev'] = None
         
 
     def __make_default_dir(self):

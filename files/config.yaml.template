@@ -1,5 +1,5 @@
 path_data: "."
-#path_plugins_dev: 
+#path_dev: 
 
 
 # 데이터 폴더 루트 경로
@@ -7,11 +7,11 @@ path_data: "."
 # 예) data_folder: "C:\\work\\data"
 # 현재 폴더인 경우 .
 #path_data: "."
-#path_data: "/mnt/c/work/FlaskFarm/working"
+
 
 # 개발용 플러그인 경로
-#path_plugins_dev:
-#path_data: "/mnt/c/work/FlaskFarm/working"
+#path_dev:
+
 
 # gevent 사용여부
 # 플러그인 개발이나 termux 환경에서의 실행 같이 특수한 경우에만 false로 사용.

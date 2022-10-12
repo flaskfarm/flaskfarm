@@ -7,10 +7,6 @@ from .setup import *
 name = 'plugin'
 
 class ModulePlugin(PluginModuleBase):
-    db_default = {
-        'plugin_dev_path': os.path.join(F.config['path_data'], 'dev'),
-    } 
-
     def __init__(self, P):
         super(ModulePlugin, self).__init__(P, name=name, first_menu='list')
         

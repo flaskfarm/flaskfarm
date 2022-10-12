@@ -1,9 +1,11 @@
 psutil
 gevent
 gevent-websocket
-celery==5.0.5
+#celery==5.0.5
+celery
 redis
 lxml
 pillow
-selenium==3.141.0
+#selenium==3.141.0
+selenium
 pycryptodome
