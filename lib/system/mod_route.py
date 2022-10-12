@@ -36,17 +36,18 @@ class ModuleRoute(PluginModuleBase):
         def user_loader(user_id):
             return F.users[user_id]
 
-        
+
         @P.blueprint.route('/restart', methods=['GET'])
         @login_required
         def restart():
-            F.restart()
+            threading.Timer(1, F.restart).start()
             return render_template('system_restart.html',sub='restart', referer=request.headers.get("Referer"))
         
+
         @P.blueprint.route('/shutdown', methods=['GET'])
         @login_required
         def shutdown():
-            F.shutdown()
+            threading.Timer(1, F.shutdown).start()
             return render_template('system_restart.html',sub='shutdown', referer=request.headers.get("Referer"))
 
 
