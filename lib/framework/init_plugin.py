@@ -56,7 +56,7 @@ class PluginManager:
         # 2018-09-04
         try:
             plugin_path = F.SystemModelSetting.get('plugin_dev_path')
-            if plugin_path != '':
+            if plugin_path != None and plugin_path != '':
                 if os.path.exists(plugin_path):
                     sys.path.insert(0, plugin_path)
                     tmps = os.listdir(plugin_path)
