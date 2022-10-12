@@ -24,15 +24,14 @@ $(document).ready(function() {
   if (MODULE_NAME == 'restart') {
     $('#loading').show();
     setTimeout(function(){
-    }, 2000);
-
-    var protocol = window.location.protocol;
-    var restartSocket = io.connect(window.location.href);
-    
-    restartSocket.on('connect', function(data){
-      console.log('접속 받음')
-      window.location.href = referer;
-    });
+      var protocol = window.location.protocol;
+      var restartSocket = io.connect(window.location.href);
+      
+      restartSocket.on('connect', function(data){
+        console.log('접속 받음')
+        window.location.href = referer;
+      });
+    }, 3000);
   }
 })
 </script> 
