@@ -22,7 +22,7 @@ class SupportSubprocess(object):
     # 2021-10-25
     # timeout 적용
     @classmethod
-    def execute_command_return(cls, command, format=None, log=False, shell=False, env=None, timeout=None, uid=0, gid=0):
+    def execute_command_return(cls, command, format=None, log=False, shell=False, env=None, timeout=None, uid=None, gid=None):
 
         try:
             logger.debug(f"execute_command_return : {' '.join(command)}")
@@ -40,8 +40,11 @@ class SupportSubprocess(object):
             if platform.system() == 'Windows':
                 process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8')
             else:
-                #process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, preexec_fn=demote(uid, gid), encoding='utf8')
-                process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8')
+                if uid == None:
+                    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8')
+                else:
+                    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, preexec_fn=demote(uid, gid), encoding='utf8')
+                
                 
 
             new_ret = {'status':'finish', 'log':None}
@@ -87,7 +90,7 @@ class SupportSubprocess(object):
     instance_list = []
 
 
-    def __init__(self, command,  print_log=False, shell=False, env=None, timeout=None, uid=0, gid=0, stdout_callback=None):
+    def __init__(self, command,  print_log=False, shell=False, env=None, timeout=None, uid=None, gid=None, stdout_callback=None):
         self.command = command
         self.print_log = print_log
         self.shell = shell
@@ -128,7 +131,10 @@ class SupportSubprocess(object):
             if platform.system() == 'Windows':
                 self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8')
             else:
-                self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, preexec_fn=demote(self.uid, self.gid), encoding='utf8')
+                if self.uid == None:
+                    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8')
+                else:
+                    process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, preexec_fn=demote(self.uid, self.gid), encoding='utf8')
             SupportSubprocess.instance_list.append(self)
             self.start_communicate()
             self.start_send_callback()

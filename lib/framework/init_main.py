@@ -78,7 +78,10 @@ class Framework:
         if self.config['use_gevent']:
             self.socketio = SocketIO(self.app, cors_allowed_origins="*")
         else:
-            self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='threading')
+            if self.config['running_type'] == 'termux':
+                self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='eventlet')
+            else:
+                self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='threading')
         
         CORS(self.app)
         Markdown(self.app)
