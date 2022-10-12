@@ -485,7 +485,8 @@ class Framework:
             SupportSubprocess.all_process_close()
             from .init_plugin import PluginManager
             PluginManager.plugin_unload()
-            self.socketio.stop()
+            with self.app.app_context():
+                self.socketio.stop()
         except Exception as exception: 
             self.logger.error('Exception:%s', exception)
             self.logger.error(traceback.format_exc())

@@ -18,4 +18,5 @@ discord-webhook
 pyyaml
 telepot-mod
 Flask-Dropzone
-
+pycryptodome
+psutil
