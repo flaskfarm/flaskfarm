@@ -22,3 +22,5 @@ pyyaml
 pycryptodome
 telepot-mod
 Flask-Dropzone
+lxml
+pillow

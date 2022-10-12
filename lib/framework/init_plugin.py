@@ -331,6 +331,7 @@ class PluginManager:
                 name = zip_filename.split('.')[0]
             
             plugin_all_path = os.path.join(F.config['path_data'], 'plugins')
+            os.makedirs(plugin_all_path, exist_ok=True)
             plugin_path = os.path.join(plugin_all_path, name)
             plugin_info = None
             if os.path.exists(plugin_path):
@@ -382,6 +383,7 @@ class PluginManager:
                 if plugin_git and plugin_git.startswith('http'):
                     command = ['git', '-C', plugin_all_path, 'clone', plugin_git + '.git', '--depth', '1']
                     log = SupportSubprocess.execute_command_return(command)
+                    F.logger.debug(log)
                     if os.path.exists(plugin_path):
                         ret['ret'] = 'success'
                         ret['msg'] = '정상적으로 설치하였습니다. 재시작시 적용됩니다.<br>' + '<br>'.join(log['log'].split('\n'))
