@@ -19,8 +19,6 @@ pytz
 requests==2.26.0
 discord-webhook
 pyyaml
-pycryptodome
 telepot-mod
 Flask-Dropzone
-lxml
-pillow
+

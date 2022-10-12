@@ -233,7 +233,8 @@ class Framework:
             self.config['notify_yaml_filepath'] = os.path.join(self.config['path_data'], 'db', 'notify.yaml')
         elif mode == "flask":
             self.app.secret_key = os.urandom(24)
-            #self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/db/system.db?check_same_thread=False'
+            #db_path = os.path.join(self.config['path_data'], 'db', 'system.db')
+            #self.app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}check_same_thread=False'
             self.app.config['SQLALCHEMY_BINDS'] = {}
             self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
             self.app.config['TEMPLATES_AUTO_RELOAD'] = True

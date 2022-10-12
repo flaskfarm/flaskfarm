@@ -3,4 +3,7 @@ gevent
 gevent-websocket
 celery==5.0.5
 redis
+lxml
+pillow
 selenium==3.141.0
+pycryptodome
