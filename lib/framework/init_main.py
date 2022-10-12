@@ -207,6 +207,7 @@ class Framework:
         #system.LogicPlugin.custom_plugin_update()
         from .init_plugin import PluginManager
         self.PluginManager = PluginManager
+        PluginManager.plugin_update()
         PluginManager.plugin_init()
         PluginManager.plugin_menus['system'] = {'menu':SP.menu, 'match':False} 
         

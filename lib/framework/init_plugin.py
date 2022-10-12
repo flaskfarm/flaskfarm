@@ -421,3 +421,32 @@ class PluginManager:
             ret['ret'] = 'danger'
             ret['msg'] = str(e)
         return ret
+
+
+    @classmethod
+    def plugin_update(cls):
+        try:
+            if os.environ.get('UPDATE_STOP') == 'true':
+                return
+            if os.environ.get('PLUGIN_UPDATE_FROM_PYTHON') == 'false':
+                return
+            if F.config['plugin_update'] != True:
+                return
+            plugins_path = os.path.join(F.config['path_data'], 'plugins')
+            tmps = os.listdir(plugins_path)
+            for t in tmps:
+                plugin_path = os.path.join(plugins_path, t)
+                if t.startswith('_'):
+                    continue
+                if os.path.exists(os.path.join(plugin_path, '.git')):
+                    command = ['git', '-C', plugin_path, 'reset', '--hard', 'HEAD']
+                    ret = SupportSubprocess.execute_command_return(command)
+                    F.logger.debug(ret)
+                    command = ['git', '-C', plugin_path, 'pull']
+                    ret = SupportSubprocess.execute_command_return(command)
+                    F.logger.debug(ret)
+                else:
+                    F.logger.debug(f"{plugin_path} not git repo")
+        except Exception as exception: 
+            F.logger.error('Exception:%s', exception)
+            F.logger.error(traceback.format_exc())
