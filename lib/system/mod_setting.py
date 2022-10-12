@@ -1,8 +1,10 @@
 import random
 import string
+import time
 
-from support import SupportDiscord, SupportFile, SupportTelegram
-from tool.modal_command import ToolModalCommand
+from support import (SupportDiscord, SupportFile, SupportSubprocess,
+                     SupportTelegram)
+from tool import ToolModalCommand
 
 from .setup import *
 
@@ -35,7 +37,7 @@ class ModuleSetting(PluginModuleBase):
         'notify.yaml': '', #직접 사용하지 않으나 저장 편의상.
         'command_text': '',
         'celery_start_by_web': 'False', #웹 실행시 celery 실행
-        'celery_start_command': "celery -A flaskfarm.main.celery worker --loglevel=info --pool=gevent --concurrency=2 --config_filepath={F.config['config_filepath']} --running_type=native",
+        'celery_start_command': "celery -A flaskfarm.main.celery worker --workdir={F.config['path_working']} --loglevel=info --pool=gevent --concurrency=2 --config_filepath={F.config['config_filepath']} --running_type=native",
         
 
     } 
@@ -65,7 +67,6 @@ class ModuleSetting(PluginModuleBase):
             elif page == 'celery':
                 arg['use_celery'] = F.config['use_celery']
                 arg['running_type'] = F.config['running_type']
-
             return render_template(f'{__package__}_{name}_{page}.html', arg=arg)
         except Exception as e: 
             P.logger.error(f'Exception:{str(e)}')
@@ -122,13 +123,13 @@ class ModuleSetting(PluginModuleBase):
             ret['msg'] = arg1
             pass
         elif command == 'celery_execute':
-            tmp = arg1.replace("{F.config['config_filepath']}", F.config['config_filepath']).replace('{F.config["config_filepath"]}', F.config['config_filepath'])
-            cmd = [
-                ['msg', f'명령 : {tmp}'],
-                ['msg', ''],
-                tmp.split(' '),
-            ]
-            ToolModalCommand.start("Celery 실행", cmd)
+            self.celery_execute(arg1, mode='foreground')
+        elif command == 'celery_execute_back':
+            self.celery_execute(arg1, mode='background')
+            ret['msg'] = '실행했습니다.'
+        elif command == 'celery_test':
+            return self.__celery_test()
+  
         return jsonify(ret)
 
 
@@ -136,9 +137,8 @@ class ModuleSetting(PluginModuleBase):
         try:
             if F.config['run_flask'] == False:
                 return
-            F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
-            F.logger.info(f"arg_repeat : {F.config['arg_repeat']}")
-
+            if SystemModelSetting.get_bool('celery_start_by_web'):
+                self.celery_execute()
             if F.config['arg_repeat'] == 0 or SystemModelSetting.get('system_start_time') == '':
                 SystemModelSetting.set('system_start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             SystemModelSetting.set('repeat', str(F.config['arg_repeat']))
@@ -161,15 +161,17 @@ class ModuleSetting(PluginModuleBase):
                 from tool import ToolNotify
                 msg = f"시스템이 시작되었습니다.\n재시작: {F.config['arg_repeat']}"
                 ToolNotify.send_message(msg, message_id='system_start')
+            
+
         except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
             P.logger.error(traceback.format_exc())
 
     def plugin_unload(self):
-        ToolModalCommand.process_close()
+        ToolModalCommand.modal_close()
 
     def setting_save_after(self, change_list):
-        if 'theme'  in change_list:
+        if 'theme' in change_list or 'web_title' in change_list:
             F.socketio.emit("refresh", {}, namespace='/framework', broadcast=True)
         elif 'notify.yaml' in change_list:
             SupportFile.write_file(F.config['notify_yaml_filepath'], SystemModelSetting.get('notify.yaml'))
@@ -196,3 +198,53 @@ class ModuleSetting(PluginModuleBase):
         scheduler.add_job_instance(job_instance, run=False)
 
 
+    def celery_execute(self, command=None, mode='background'):
+        if command == None:
+            command = SystemModelSetting.get('celery_start_command')
+        command = command.replace("{F.config['config_filepath']}", F.config['config_filepath']).replace('{F.config["config_filepath"]}', F.config['config_filepath']).replace("{F.config['path_working']}", F.config['path_working']).replace('{F.config["path_working"]}', F.config['path_working'])
+        if mode == 'foreground':
+            cmd = [
+                ['msg', f'명령 : {command}'],
+                command.split(' '),
+            ]
+            ToolModalCommand.start("Celery 실행", cmd)
+        elif mode == 'background':
+            SupportSubprocess(command).start(join=False)
+
+
+    def __celery_test(self):
+        if F.config['use_celery']:
+            from celery import Celery
+            from celery.exceptions import NotRegistered, TimeoutError
+            data = {}
+            try:
+                result = self.celery_test.apply_async()
+                try:
+                    tmp = result.get(timeout=5, propagate=True)
+                except Exception as e:
+                    P.logger.error(f'Exception:{str(e)}')
+                    P.logger.error(traceback.format_exc())
+                data['ret'] = 'success'
+                data['msg'] = tmp
+            except TimeoutError:
+                data['ret'] = 'danger'
+                data['msg'] = 'celery가 동작중이 아니거나 모든 Worker가 작업중입니다.'
+            except NotRegistered:
+                data['ret'] = 'danger'
+                data['msg'] = 'Not Registered'
+        else:
+            data['ret'] = 'danger'
+            data['msg'] = 'celery 실행환경이 아닙니다.'
+        P.logger.debug(d(data))
+        return data
+
+    #@staticmethod
+    @celery.task
+    def celery_test():
+        try:
+            time.sleep(1)
+            data = '정상입니다. 이 메시지는 celery 에서 반환됩니다. '
+            return data
+        except Exception as e:
+            P.logger.error(f'Exception:{str(e)}')
+            P.logger.error(traceback.format_exc())

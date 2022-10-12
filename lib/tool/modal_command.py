@@ -87,12 +87,15 @@ class ToolModalCommand(object):
 
     @classmethod
     def process_callback(cls, mode, text):
+        #F.logger.warning(text)
         if cls.__show_modal == False:
             return
         if mode == 'end':
             F.socketio.emit("command_modal_add_text", "\n\n<<프로세스 종료>>", namespace='/framework', broadcast=True)
             F.socketio.emit("command_modal_input_disable", "", namespace='/framework', broadcast=True)
-
+        elif mode == 'thread_end':
+            #F.socketio.emit("command_modal_add_text", "\n\n<<프로세스 종료>>", namespace='/framework', broadcast=True)
+            F.socketio.emit("command_modal_input_disable", "", namespace='/framework', broadcast=True)
         else:
             F.socketio.emit("command_modal_add_text", text, namespace='/framework', broadcast=True)
 

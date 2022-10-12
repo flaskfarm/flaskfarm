@@ -34,10 +34,15 @@ def global_ajax(sub):
     elif sub == 'is_available_edit':
         # globalEditBtn
         try:
-            import flaskcode
-            from flaskcode.setup import P as PP
-            ret = {'ret':True, 'target':PP.ModelSetting.get('setting_open_target')}
-            return jsonify(ret)
+            if F.PluginManager.all_package_list['flaskcode']['loading']:
+                PP = F.PluginManager.all_package_list['flaskcode']['P']
+            #import flaskcode
+            #from flaskcode.setup import P as PP
+                ret = {'ret':True, 'target':PP.ModelSetting.get('setting_open_target')}
+                return jsonify(ret)
+            else:
+                return jsonify({'ret':False})
+            
         except:
             return jsonify({'ret':False})
     elif sub == 'command_modal_hide':

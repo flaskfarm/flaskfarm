@@ -14,7 +14,6 @@ __menu = {
                 {'uri': 'export', 'name': 'export.sh 파일'},
                 {'uri': 'celery', 'name': '비동기 작업(celery)'},
                 {'uri': 'notify', 'name': '알림'},
-                
             ],
         },
         {

@@ -132,13 +132,16 @@ class SupportSubprocess(object):
             self.start_send_callback()
             if self.process is not None:
                 self.process.wait()
-            #logger.info(f"{self.command} 정상 종료")
-            if self.stdout_queue != None:
-                self.stdout_queue.put('<END>')
+            logger.info(f"{self.command} 정상 종료")
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
-
+            if self.stdout_callback != None:
+                self.stdout_callback('error', str(e))
+                self.stdout_callback('error', str(traceback.format_exc()))
+        finally:
+            if self.stdout_callback != None:
+                self.stdout_callback('thread_end', None)
     
 
     def start_communicate(self):
@@ -150,8 +153,6 @@ class SupportSubprocess(object):
             
             def rdr():
                 while True:
-                    if self.process == None:
-                        break
                     buf = self.process.stdout.read(1)
                     if buf:
                         _queue.put( buf )
@@ -178,10 +179,9 @@ class SupportSubprocess(object):
                     except:
                         pass
                     if r is not None:
-                        if self.stdout_queue != None:
-                            self.stdout_queue.put(r)
-                if self.stdout_queue != None: # 사용자 중지
-                    self.stdout_queue.put('<END>')
+                        #print(f"{r=}")
+                        self.stdout_queue.put(r)
+                self.stdout_queue.put('<END>')
             for tgt in [rdr, clct]:
                 th = threading.Thread(target=tgt)
                 th.setDaemon(True)
@@ -200,10 +200,6 @@ class SupportSubprocess(object):
                 else:
                     if self.stdout_callback != None:
                         self.stdout_callback('log', line)
-            self.send_to_ui_thread = None
-            self.stdout_queue = None
-            self.process = None
-        
         th = threading.Thread(target=func, args=())
         th.setDaemon(True)
         th.start()
@@ -222,7 +218,7 @@ class SupportSubprocess(object):
             logger.error(traceback.format_exc())           
         finally:
             try:
-                self.stdout_queue = None 
+                #self.stdout_queue = None 
                 self.process.kill()
             except: pass
 
