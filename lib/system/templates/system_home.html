@@ -84,6 +84,7 @@ function make_system(data) {
     str += text_color(" (최신 버전 : " + data.recent_version+')', 'red');
   }
   $('#version_str').html(str);
+  $('#cpu_percent').html(data.cpu_percent);
 
   str = '<table id="result_table" class="table table-sm" style="margin-bottom:0px"   ><thead class=""><tr> \
   <th style="width:50%;text-align:center;font-size:11px;">시작시간</th> \
