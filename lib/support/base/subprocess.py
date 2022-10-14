@@ -127,7 +127,6 @@ class SupportSubprocess(object):
                             tmp.append(f'"{x}"')
                     self.command = ' '.join(tmp)
 
-            iter_arg =  ''
             if platform.system() == 'Windows':
                 self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8')
             else:

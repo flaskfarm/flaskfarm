@@ -64,24 +64,6 @@ def robot_to_root():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @F.app.route("/")
 @F.app.route("/None")
 @F.app.route("/home")
@@ -126,3 +108,8 @@ def upload():
         F.logger.error(traceback.format_exc())
         return jsonify('fail')
 
+
+# 3.10에서 이거 필수
+@F.socketio.on('connect', namespace=f'/framework')
+def connect():
+    pass
