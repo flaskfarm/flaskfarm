@@ -17,7 +17,7 @@ class ModuleSetting(PluginModuleBase):
         'ddns' : 'http://localhost:9999',
         'use_login' : 'False',
         'web_id': 'admin',
-        'web_pw': 'Vm51JgZqhpwXc/UPc9CAN1lhj4s65+4ikv7GzNmvN6c=',
+        'web_pw': '21232f297a57a5a743894a0e4a801fc3',
         'web_title': 'Home',
         'use_apikey': 'False',
         'apikey': ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)),
@@ -175,6 +175,11 @@ class ModuleSetting(PluginModuleBase):
             F.socketio.emit("refresh", {}, namespace='/framework', broadcast=True)
         elif 'notify.yaml' in change_list:
             SupportFile.write_file(F.config['notify_yaml_filepath'], SystemModelSetting.get('notify.yaml'))
+        elif 'web_pw' in change_list:
+            import hashlib
+            enc = hashlib.md5()
+            enc.update(SystemModelSetting.get('web_pw').encode())
+            SystemModelSetting.set('web_pw', enc.hexdigest())
 
 
     def __set_restart_scheduler(self):

@@ -1,5 +1,8 @@
 import traceback
 
+from flask import render_template
+
+
 class PluginModuleBase(object):
     db_default = None
  
@@ -33,8 +36,12 @@ class PluginModuleBase(object):
             self.P.logger.error(traceback.format_exc())
 
 
-    def process_menu(self, sub):
-        pass
+    def process_menu(self, page, req):
+        if self.page_list is not None:
+            page_ins = self.get_page(page)
+            if page_ins != None:
+                return page_ins.process_menu(req)
+        return render_template('sample.html', title=f"PluginModuleBase-process_menu{self.P.package_name}/{self.name}/{page}")
 
     def process_ajax(self, sub, req):
         pass
@@ -97,6 +104,26 @@ class PluginModuleBase(object):
         pass
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class PluginPageBase(object):
     db_default = None
 
@@ -107,19 +134,42 @@ class PluginPageBase(object):
         self.scheduler_desc = scheduler_desc
         self.socketio_list = None
 
+    def process_menu(self, req):
+        try:
+            arg = {}
+            if self.P.ModelSetting != None:
+                arg = self.P.ModelSetting.to_dict()
+            return render_template(f'{__package__}_{self.parent.name}_{self.name}.html', arg=arg)
+        except Exception as e:
+            pass
+            
+        return render_template('sample.html', title=f"PluginPageBase-process_menu {self.P.package_name}/{self.parent.name}/{self.name}")
+
 
     def process_ajax(self, sub, req):
+        pass
+    
+    def process_api(self, sub, req):
+        pass
+
+    def process_normal(self, sub, req):
+        pass
+    
+    def process_command(self, command, arg1, arg2, arg3, req):
+        pass
+    
+    
+    
+    # logic
+    def plugin_load(self):
+        pass
+    
+    # logic
+    def plugin_unload(self):
         pass
 
     def scheduler_function(self):
         pass
-    
-    def plugin_load(self):
-        pass
-    
-    def plugin_unload(self):
-        pass
-
 
     def get_scheduler_desc(self):
         return self.scheduler_desc 
@@ -132,40 +182,16 @@ class PluginPageBase(object):
         return f'{self.P.package_name}_{self.parent.name}_{self.name}'
 
 
-
-
-
-
-
-
-
-    
-    
-    def process_api(self, sub, req):
-        pass
-
-    def process_normal(self, sub, req):
+    # logic
+    def migration(self):
         pass
 
     
-
-    def reset_db(self):
-        pass
-
-    
-    
+    # route
     def setting_save_after(self, change_list):
         pass
 
     def process_telegram_data(self, data, target=None):
         pass
 
-    def migration(self):
-        pass
-    
-    #################################################################
-    
-
-    def process_menu(self, sub):
-        pass
 

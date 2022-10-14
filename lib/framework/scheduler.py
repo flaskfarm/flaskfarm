@@ -231,7 +231,9 @@ class Job(object):
                 self.thread = threading.Thread(target=self.target_function, args=(self.args,))
             self.thread.daemon = True
             self.thread.start()
+            F.socketio.emit('notify', {'type':'success', 'msg':f"{self.description}<br>작업을 시작합니다." }, namespace='/framework', broadcast=True)
             self.thread.join()
+            F.socketio.emit('notify', {'type':'success', 'msg':f"{self.description}<br>작업이 종료되었습니다." }, namespace='/framework', broadcast=True)
             self.end_time = datetime.now(timezone('Asia/Seoul'))
             self.running_timedelta = self.end_time - self.start_time
             self.status = 'success'

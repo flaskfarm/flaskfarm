@@ -63,13 +63,6 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-# Suuport를 logger 생성전에 쓰지 않기 위해 중복 선언    
-def read_yaml(filepath):
-    import yaml
-    with open(filepath, encoding='utf8') as file:
-        data = yaml.load(file, Loader=yaml.FullLoader)
-    return data
-
 
 class User:
     def __init__(self, user_id, email=None, passwd_hash=None, authenticated=False):
@@ -88,9 +81,14 @@ class User:
         return str(r)
 
     def can_login(self, passwd_hash):
-        from support import SupportAES
-        tmp = SupportAES.decrypt(self.passwd_hash)
-        return passwd_hash == tmp
+        #from support import SupportAES
+        #tmp = SupportAES.decrypt(self.passwd_hash)
+        import hashlib
+        enc = hashlib.md5()
+        enc.update(passwd_hash.encode())
+        hash = enc.hexdigest()
+        #return True
+        return self.passwd_hash == hash
 
     def is_active(self):
         return True

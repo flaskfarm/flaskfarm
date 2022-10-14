@@ -158,6 +158,8 @@ def default_route(P):
                 elif command == 'immediately_execute':
                     ret = P.logic.immediately_execute_sub(module_name, page_name)
                     return jsonify(ret)
+                elif command == 'command':
+                    return ins_page.process_command(request.form['command'], request.form.get('arg1'), request.form.get('arg2'), request.form.get('arg3'), request)
                 else:
                     return ins_page.process_ajax(command, request)
             P.logger.error(f"not process ajax : {P.package_name} {module_name} {page_name} {command}")
@@ -251,6 +253,9 @@ def default_route_single_module(P):
                 ret, change_list = P.ModelSetting.setting_save(request)
                 if ret:
                     P.module_list[0].setting_save_after(change_list)
+                    if P.module_list[0].page_list is not None:
+                        for page_ins in P.module_list[0].page_list:
+                            page_ins.setting_save_after(change_list)
                 return jsonify(ret)
             elif sub == 'scheduler':
                 sub = request.form['sub']
@@ -384,32 +389,32 @@ def default_route_socketio_page(page):
     if page.socketio_list is None:
         page.socketio_list = []
 
-    @socketio.on('connect', namespace=f'/{P.package_name}/{module.name}/{page.name}')
-    def connect():
+    @F.socketio.on('connect', namespace=f'/{P.package_name}/{module.name}/{page.name}')
+    def page_socketio_connect():
         try:
             P.logger.debug(f'socket_connect : {P.package_name}/{module.name}/{page.name}')
             page.socketio_list.append(request.sid)
-            socketio_callback('start', '')
-        except Exception as exception: 
-            P.logger.error(f'Exception:{str(exception)}', exception)
+            page_socketio_socketio_callback('start', '')
+        except Exception as e: 
+            P.logger.error(f'Exception:{str(e)}')
             P.logger.error(traceback.format_exc())
 
 
-    @socketio.on('disconnect', namespace=f'/{P.package_name}/{module.name}/{page.name}')
-    def disconnect():
+    @F.socketio.on('disconnect', namespace=f'/{P.package_name}/{module.name}/{page.name}')
+    def page_socketio_disconnect():
         try:
             P.logger.debug(f'socket_disconnect : {P.package_name}/{module.name}/{page.name}')
             page.socketio_list.remove(request.sid)
-        except Exception as exception: 
-            P.logger.error(f'Exception:{str(exception)}', exception)
+        except Exception as e: 
+            P.logger.error(f'Exception:{str(e)}')
             P.logger.error(traceback.format_exc())
 
 
-    def socketio_callback(cmd, data, encoding=True):
+    def page_socketio_socketio_callback(cmd, data, encoding=True):
         if page.socketio_list:
             if encoding:
                 data = json.dumps(data, cls=AlchemyEncoder)
                 data = json.loads(data)
-            socketio.emit(cmd, data, namespace=f'/{P.package_name}/{module.name}/{page.name}', broadcast=True)
+            F.socketio.emit(cmd, data, namespace=f'/{P.package_name}/{module.name}/{page.name}', broadcast=True)
 
-    page.socketio_callback = socketio_callback
+    page.socketio_callback = page_socketio_socketio_callback

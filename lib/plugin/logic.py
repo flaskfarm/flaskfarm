@@ -17,10 +17,14 @@ class Logic(object):
 
     def plugin_load(self):
         try:
-            #self.P.logger.debug('%s plugin_load', self.P.package_name)
+            self.P.logger.debug('%s plugin_load', self.P.package_name)
             self.db_init()
             for module in self.P.module_list:
                 module.migration()
+                if module.page_list is not None:
+                    for page_instance in module.page_list:
+                        page_instance.migration()
+
             for module in self.P.module_list:
                 module.plugin_load()
                 if module.page_list is not None:
@@ -154,7 +158,7 @@ class Logic(object):
         except Exception as e: 
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
-            ret = {'ret' : 'danger', 'msg':str(exception)}
+            ret = {'ret' : 'danger', 'msg':str(e)}
         return ret
 
     def get_module(self, sub):
@@ -239,5 +243,5 @@ class Logic(object):
         except Exception as e: 
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
-            ret = {'ret' : 'danger', 'msg':str(exception)}
+            ret = {'ret' : 'danger', 'msg':str(e)}
         return ret

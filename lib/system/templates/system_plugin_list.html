@@ -42,7 +42,7 @@ function make_plugin_list(data) {
       str += m_col_wide(2, '');
       str += m_col_wide(2, data[i].package_name);
       str += m_col_wide(5, '');
-      tmp = m_button_small('uninstall_btn', '삭제', [{'key':'package_name', 'value':data[i].package_name}]);
+      tmp = m_button('uninstall_btn', '삭제', {'package_name':data[i].package_name}, 'danger', false, true);
     } else {
       str += m_col_wide(2, data[i].title);
       
@@ -59,9 +59,9 @@ function make_plugin_list(data) {
       
       tmp = ''
       
-      tmp += m_button_small('globalOpenBtn', '홈페이지', [{'key':'url', 'value':data[i].home}], 'primary');
-      tmp += m_button_small('uninstall_btn', '삭제', [{'key':'package_name', 'value':data[i].package_name}, {'key':'title', 'value':data[i].title}]);
-      tmp += m_button_small('json_btn', 'JSON', [{'key':'idx', 'value':i}], 'info');
+      tmp += m_button_small('globalOpenBtn', '홈페이지', {'url':data[i].home}, 'primary', false, true);
+      tmp += m_button_small('uninstall_btn', '삭제', {'package_name':data[i].package_name, 'title':data[i].title}, 'danger', false, true);
+      tmp += m_button_small('json_btn', 'JSON', {'idx':i}, 'info', false, true);
     }
     tmp = m_button_group(tmp)
     str += m_col_wide(2, tmp, 'right')

@@ -1,26 +1,20 @@
-import os, sys, traceback, json
+import json
+import os
+import sys
+import traceback
 
 from . import logger
 
+
 class ToolUtil(object):
 
-    @classmethod
-    def make_apikey_url(cls, url):
-        from framework import SystemModelSetting
-        if not url.startswith('http'):
-            url = SystemModelSetting.get('ddns') + url
-        if SystemModelSetting.get_bool('auth_use_apikey'):
-            if url.find('?') == -1:
-                url += '?'
-            else:
-                url += '&'
-            url += 'apikey=%s' % SystemModelSetting.get('auth_apikey')
-        return url
+    
     
     @classmethod
     def save_dict(cls, data, filepath):
         try:
-            import json, codecs
+            import codecs
+            import json
             data = json.dumps(data, indent=4, ensure_ascii=False)
             ofp = codecs.open(filepath, 'w', encoding='utf8')
             ofp.write(data)

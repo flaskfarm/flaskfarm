@@ -38,7 +38,7 @@ class PluginBase(object):
             self.logger = F.get_logger(self.package_name)
             self.blueprint = Blueprint(self.package_name, self.package_name, url_prefix=f'/{self.package_name}', template_folder=os.path.join(os.path.dirname(setting['filepath']), 'templates'), static_folder=os.path.join(os.path.dirname(setting['filepath']), 'static'))
             self.menu = setting['menu']
-            self.setting_menu = setting['setting_menu']
+            self.setting_menu = setting.get('setting_menu', None)
 
             self.ModelSetting = None
             if setting.get('use_db', True):

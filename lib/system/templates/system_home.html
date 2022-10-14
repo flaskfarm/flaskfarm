@@ -14,7 +14,7 @@
   {{ macros.info_text_and_buttons('python_version', 'Python', [['globalLinkBtn', '패키지 관리', [('url','/system/python')]]], info['python_version']) }}
   {{ macros.info_text('platform', 'Platform', info['platform']) }}
   {{ macros.info_text('processor', 'Processor', info['processor']) }}
-  {{ macros.info_text_and_buttons('version_str', '버전',  [['globalOpenBtn', '업데이트 내역', [('url','https://sjva.me/wiki/public/changelog')]], ['recent_version_btn', '최신버전 확인']], info['version']) }}
+  {{ macros.info_text_and_buttons('version_str', '버전',  [['globalOpenBtn', '업데이트 내역', [('url',arg['changelog'])]], ['recent_version_btn', '최신버전 확인']], info['version']) }}
   </div>
   </div> 
 

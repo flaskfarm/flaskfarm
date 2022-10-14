@@ -35,16 +35,16 @@ class CustomFormatter(logging.Formatter):
     green = "\x1B[32m"
     # pathname filename
     #format = "[%(asctime)s|%(name)s|%(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
-    format = '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset}|%(pathname)s:%(lineno)s] {color}%(message)s{reset}'
+    
+    __format = '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset} %(pathname)s:%(lineno)s] {color}%(message)s{reset}' if os.environ.get('LOGGER_PATHNAME', "False") == "True" else '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset} %(filename)s:%(lineno)s] {color}%(message)s{reset}'
 
     FORMATS = {
-        logging.DEBUG: format.format(color=grey, reset=reset, yellow=yellow, green=green),
-        logging.INFO: format.format(color=green, reset=reset, yellow=yellow, green=green),
-        logging.WARNING: format.format(color=yellow, reset=reset, yellow=yellow, green=green),
-        logging.ERROR: format.format(color=red, reset=reset, yellow=yellow, green=green),
-        logging.CRITICAL: format.format(color=bold_red, reset=reset, yellow=yellow, green=green)
+        logging.DEBUG: __format.format(color=grey, reset=reset, yellow=yellow, green=green),
+        logging.INFO: __format.format(color=green, reset=reset, yellow=yellow, green=green),
+        logging.WARNING: __format.format(color=yellow, reset=reset, yellow=yellow, green=green),
+        logging.ERROR: __format.format(color=red, reset=reset, yellow=yellow, green=green),
+        logging.CRITICAL: __format.format(color=bold_red, reset=reset, yellow=yellow, green=green)
     }
-
 
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno)

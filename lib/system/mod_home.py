@@ -14,7 +14,8 @@ class ModuleHome(PluginModuleBase):
         default_route_socketio_module(self)
 
     def process_menu(self, page, req):
-        return render_template(f'{__package__}_{name}.html', info=self.get_info('static'))
+        arg = {'changelog':F.config['DEFINE']['CHANGELOG']}
+        return render_template(f'{__package__}_{name}.html', info=self.get_info('static'), arg=arg)
 
     def process_command(self, command, arg1, arg2, arg3, req):
         if command == 'recent_version':

@@ -1,7 +1,8 @@
 import os
 import traceback
 
-from flask import jsonify, redirect, request, send_from_directory
+from flask import (jsonify, redirect, render_template, request,
+                   send_from_directory)
 from flask_login import login_required
 
 from framework import F
@@ -109,7 +110,26 @@ def upload():
         return jsonify('fail')
 
 
+@F.app.route("/videojs", methods=['GET', 'POST'])
+def videojs():
+    data = {}
+    data['play_title'] = request.form['play_title']
+    data['play_source_src'] = request.form['play_source_src']
+    data['play_source_type'] = request.form['play_source_type']
+    if 'play_subtitle_src' in request.form:
+        data['play_subtitle_src'] = request.form['play_subtitle_src']
+    return render_template('videojs.html', data=data)
+
+
+
+
+
+
+
+
 # 3.10에서 이거 필수
 @F.socketio.on('connect', namespace=f'/framework')
 def connect():
     pass
+
+

@@ -8,6 +8,7 @@ import time
 import traceback
 from datetime import datetime
 
+import yaml
 from flask import Flask
 from flask_cors import CORS
 from flask_login import LoginManager, login_required
@@ -69,7 +70,6 @@ class Framework:
 
         self.__init_db()
         
-        
         if True or self.config['run_flask']:
             from .scheduler import Job, Scheduler
             self.scheduler = Scheduler(self)
@@ -78,9 +78,6 @@ class Framework:
         if self.config['use_gevent']:
             self.socketio = SocketIO(self.app, cors_allowed_origins="*")
         else:
-            #if self.config['running_type'] == 'termux':
-            #    self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='eventlet')
-            #else:
             self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='threading')
         
         CORS(self.app)
@@ -208,18 +205,14 @@ class Framework:
         from .init_web import jinja_initialize
         jinja_initialize(self.app)
 
-        #system.LogicPlugin.custom_plugin_update()
         from .init_plugin import PluginManager
         self.PluginManager = PluginManager
         PluginManager.plugin_update()
         PluginManager.plugin_init()
         PluginManager.plugin_menus['system'] = {'menu':SP.menu, 'match':False} 
-        
-        #from .init_menu import init_menu, get_menu_map
+
         from .init_menu import MenuManager
         MenuManager.init_menu()
-        #init_menu(self.plugin_menu)
-        #system.SystemLogic.apply_menu_link()
 
         if self.config['run_flask']:
             if self.config.get('port') == None:
@@ -231,6 +224,7 @@ class Framework:
         self.logger.info('### LAST')
         self.logger.info(f"### PORT: {self.config.get('port')}")
         self.logger.info('### Now you can access App by webbrowser!!')
+
 
     def __prepare_starting(self):
         # 여기서 monkey.patch시 너무 늦다고 문제 발생
@@ -276,7 +270,9 @@ class Framework:
     def __init_define(self):
         self.config['DEFINE'] = {}
         # 이건 필요 없음
-        self.config['DEFINE']['MAIN_SERVER_URL'] = 'https://server.sjva.me'
+        self.config['DEFINE']['GIT_VERSION_URL'] = 'https://raw.githubusercontent.com/flaskfarm/flaskfarm/main/lib/framework/version.py'
+        self.config['DEFINE']['CHANGELOG'] = 'https://flaskfarm.github.io/posts/changelog'
+
 
 
     def __process_args(self):
@@ -306,29 +302,23 @@ class Framework:
             #self.config['arg_config'] = 
 
     def __load_config(self):
-        from .init_declare import read_yaml
-
         #if self.config['run_flask']:
         if self.config['arg_config'] == '.':
             #self.config['config_filepath'] = os.path.join(self.path_app_root, 'config.yaml')
             self.config['config_filepath'] = os.path.join(self.config['path_working'], 'config.yaml')
         else:
             self.config['config_filepath'] = self.config['arg_config']
-        if not os.path.exists(self.config['config_filepath']):
-            # celery는 환경변수 사용불가로 native 판단
-            # 도커는 celery가 먼저 진입
-            # 추후에 변경할 것!!!!!!!!!!!!!!!!! TODO
-            if self.config.get('running_type').startswith('docker'):# or os.path.exists('/data'):
-                shutil.copy(
-                    os.path.join(self.path_app_root, 'files', 'config.yaml.docker'),
-                    self.config['config_filepath']
-                )
+        if os.path.exists(self.config['config_filepath']) == False:
+            if self.config.get('running_type').startswith('docker'):
+                with open(self.config['config_filepath'], 'w', encoding='utf8') as f:
+                    yaml.dump({'path_data':'/data'}, f, default_flow_style=False, allow_unicode=True)
             else:                
                 shutil.copy(
                     os.path.join(self.path_app_root, 'files', 'config.yaml.template'),
                     self.config['config_filepath']
                 )
-        data = read_yaml(self.config['config_filepath'])
+        with open(self.config['config_filepath'], encoding='utf8') as file:
+            data = yaml.load(file, Loader=yaml.FullLoader)
         for key, value in data.items():
             if key == 'running_type' and value not in ['termux', 'entware']:
                 continue
@@ -509,8 +499,8 @@ class Framework:
     def get_recent_version(self):
         try:
             import requests
-            url = f"{self.config['DEFINE']['MAIN_SERVER_URL']}/version"
-            self.config['recent_version'] = requests.get(url).text
+            text = requests.get(self.config['DEFINE']['GIT_VERSION_URL']).text
+            self.config['recent_version'] = text.split('=')[1].strip().strip('"')
             return True
         except Exception as e:
             self.logger.error(f'Exception:{str(e)}')
