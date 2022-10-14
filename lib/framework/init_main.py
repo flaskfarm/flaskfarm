@@ -478,8 +478,7 @@ class Framework:
                 continue  
             except KeyboardInterrupt: 
                 self.logger.error('KeyboardInterrupt !!')
-            except:
-                self.logger.error("start error")
+            
                 
             #except SystemExit: 
             #    return 
