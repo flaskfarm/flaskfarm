@@ -37,7 +37,7 @@ class ModuleSetting(PluginModuleBase):
         'notify.yaml': '', #직접 사용하지 않으나 저장 편의상.
         'command_text': '',
         'celery_start_by_web': 'False', #웹 실행시 celery 실행
-        'celery_start_command': "celery -A flaskfarm.main.celery worker --workdir={F.config['path_working']} --loglevel=info --pool=gevent --concurrency=2 --config_filepath={F.config['config_filepath']} --running_type=native",
+        'celery_start_command': "celery -A flaskfarm.main.celery worker --loglevel=info --pool=gevent --concurrency=2 --config_filepath={F.config['config_filepath']} --running_type=native",
         
 
     } 
@@ -205,8 +205,8 @@ class ModuleSetting(PluginModuleBase):
         command = command.split(' ')
         if mode == 'foreground':
             cmd = [
-                ['msg', f'명령 : {command}'],
-                command.split(' '),
+                ['msg', f'명령 : {' '.join(command)}'],
+                command,
             ]
             ToolModalCommand.start("Celery 실행", cmd)
         elif mode == 'background':

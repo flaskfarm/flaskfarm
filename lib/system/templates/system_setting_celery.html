@@ -16,7 +16,7 @@
 
     {{ macros.setting_input_textarea('celery_start_command', 'celery 실행 명령', desc=['', 
     
-    '예: celery -A flaskfarm.main.celery worker --workdir={F.config["path_working"]} --loglevel=info --pool=gevent --concurrency=2 --config_filepath={F.config["config_filepath"]} --running_type=native', 
+    '예: celery -A flaskfarm.main.celery worker --loglevel=info --pool=gevent --concurrency=2 --config_filepath={F.config["config_filepath"]} --running_type=native', 
     '',
     '패키지로 실행시 : -A flaskfarm.main.celery',
     'Git 소스로 실행시 : -A main.celery', '',
