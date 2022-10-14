@@ -1,3 +1,2 @@
 lxml
 selenium
-pycryptodome

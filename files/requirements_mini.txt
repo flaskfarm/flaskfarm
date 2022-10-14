@@ -25,3 +25,4 @@ pillow
 
 gevent
 gevent-websocket
+pycryptodome
