@@ -1,5 +1,5 @@
-VERSION="4.0.0"
 from .init_main import Framework
+from .version import VERSION
 
 frame = Framework.get_instance()
 F = frame

@@ -4,7 +4,7 @@ import traceback
 from flask import jsonify, redirect, request, send_from_directory
 from flask_login import login_required
 
-from framework import VERSION, F
+from framework import F
 
 
 @F.app.route('/global/ajax/<sub>', methods=['GET', 'POST'])
@@ -91,6 +91,7 @@ def home():
 
 @F.app.route("/version")
 def get_version():
+    from .version import VERSION
     return VERSION
 
 @F.app.route("/open/<path:path>")
