@@ -202,6 +202,7 @@ class ModuleSetting(PluginModuleBase):
         if command == None:
             command = SystemModelSetting.get('celery_start_command')
         command = command.replace("{F.config['config_filepath']}", F.config['config_filepath']).replace('{F.config["config_filepath"]}', F.config['config_filepath']).replace("{F.config['path_working']}", F.config['path_working']).replace('{F.config["path_working"]}', F.config['path_working'])
+        command = command.split(' ')
         if mode == 'foreground':
             cmd = [
                 ['msg', f'명령 : {command}'],
@@ -232,6 +233,9 @@ class ModuleSetting(PluginModuleBase):
             except NotRegistered:
                 data['ret'] = 'danger'
                 data['msg'] = 'Not Registered'
+            except:
+                data['ret'] = 'danger'
+                data['msg'] = '실패'
         else:
             data['ret'] = 'danger'
             data['msg'] = 'celery 실행환경이 아닙니다.'
