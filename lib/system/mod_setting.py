@@ -205,7 +205,7 @@ class ModuleSetting(PluginModuleBase):
         command = command.split(' ')
         if mode == 'foreground':
             cmd = [
-                ['msg', f'명령 : {' '.join(command)}'],
+                ['msg', f"명령 : {' '.join(command)}"],
                 command,
             ]
             ToolModalCommand.start("Celery 실행", cmd)
