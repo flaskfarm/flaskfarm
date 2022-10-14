@@ -253,8 +253,8 @@ class Framework:
                 self.config['path_app'] = self.config['path_app'][0].upper() + self.config['path_app'][1:]
             self.path_app_root = self.config['path_app']
             self.config['path_working'] = os.getcwd()
-            if os.environ.get('RUNNING_TYPE') == 'docker':
-                self.config['running_type'] = 'docker'
+            if os.environ.get('RUNNING_TYPE', None) != None:
+                self.config['running_type'] = os.environ.get('RUNNING_TYPE')
             self.config['export_filepath'] = os.path.join(self.config['path_app'], 'export.sh')
             self.config['exist_export'] = os.path.exists(self.config['export_filepath'])
             self.__process_args()
@@ -262,13 +262,15 @@ class Framework:
             self.__init_define()
             self.config['menu_yaml_filepath'] = os.path.join(self.config['path_data'], 'db', 'menu.yaml')
             self.config['notify_yaml_filepath'] = os.path.join(self.config['path_data'], 'db', 'notify.yaml')
+            if 'running_type' not in self.config:
+                self.config['running_type'] = 'native'
+
         elif mode == "flask":
             self.app.secret_key = os.urandom(24)
             self.app.config['TEMPLATES_AUTO_RELOAD'] = True
             self.app.config['JSON_AS_ASCII'] = False
         elif mode == 'system_loading_after':
-            if 'running_type' not in self.config:
-                self.config['running_type'] = 'native'
+            pass
 
 
     def __init_define(self):
@@ -316,8 +318,7 @@ class Framework:
             # celery는 환경변수 사용불가로 native 판단
             # 도커는 celery가 먼저 진입
             # 추후에 변경할 것!!!!!!!!!!!!!!!!! TODO
-            #if self.config.get('running_type') == 'docker':
-            if self.config.get('running_type') == 'docker':# or os.path.exists('/data'):
+            if self.config.get('running_type').startswith('docker'):# or os.path.exists('/data'):
                 shutil.copy(
                     os.path.join(self.path_app_root, 'files', 'config.yaml.docker'),
                     self.config['config_filepath']
@@ -452,7 +453,7 @@ class Framework:
 
     def start(self):
         host = '0.0.0.0'
-        for i in range(10): 
+        for i in range(5): 
             try: 
                 #self.logger.debug(d(self.config))
                 # allow_unsafe_werkzeug=True termux  nohup 실행시 필요함
@@ -477,6 +478,9 @@ class Framework:
                 continue  
             except KeyboardInterrupt: 
                 self.logger.error('KeyboardInterrupt !!')
+            except:
+                self.logger.error("start error")
+                
             #except SystemExit: 
             #    return 
                 #sys.exit(self.__exit_code)
