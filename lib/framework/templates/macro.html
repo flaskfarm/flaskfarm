@@ -234,7 +234,7 @@
   {{ setting_bottom(desc, padding_top='-5') }}
 {% endmacro %}
 
-{% macro info_text_go_button(id, left, buttons, value='', desc=None) %}
+{% macro info_text_go_buttons(id, left, buttons, value='', desc=None) %}
   {{ setting_top(left) }}
     <div style="padding-left:20px; padding-top:-5px;">
       <span id={{id}}><a href="{{value}}" target="_blank">{{value}}</a></span>

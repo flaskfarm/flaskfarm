@@ -139,11 +139,11 @@ class PluginPageBase(object):
             arg = {}
             if self.P.ModelSetting != None:
                 arg = self.P.ModelSetting.to_dict()
-            return render_template(f'{__package__}_{self.parent.name}_{self.name}.html', arg=arg)
+            return render_template(f'{self.P.package_name}_{self.parent.name}_{self.name}.html', arg=arg)
         except Exception as e:
             pass
             
-        return render_template('sample.html', title=f"PluginPageBase-process_menu {self.P.package_name}/{self.parent.name}/{self.name}")
+        return render_template('sample.html', title=f"PluginPageBase-process_menu --- {self.P.package_name}/{self.parent.name}/{self.name}")
 
 
     def process_ajax(self, sub, req):

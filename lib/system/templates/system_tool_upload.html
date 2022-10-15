@@ -11,7 +11,7 @@
   {{ macros.m_row_end() }}
   {{ macros.m_hr() }}
   <form id='setting' name='setting'>
-    {{ macros.setting_input_text_and_buttons('path_upload', '업로드 경로', [['select_btn', '폴더 선택']], value=arg['path_upload'], desc=['설정 저장 후부터 적용']) }}
+    {{ macros.setting_input_text_and_buttons('path_upload', '업로드 경로', [['select_btn', '폴더 선택']], value=arg['path_upload'], desc=['경로 변경시 설정 저장 후부터 적용']) }}
   </form>
   {{ macros.m_hr_black() }}
   {{ dropzone.create(action='upload') }}
