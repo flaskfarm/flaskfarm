@@ -143,3 +143,4 @@ pre_start.sh
 false
 *copy.py
 *.sh
+data/

@@ -210,11 +210,11 @@ class PluginManager:
                     elif entity['version'] == '4':
                         mod_menu = getattr(entity['P'], 'menu')
                     
-                    if mod_menu:
+                    if mod_menu and cls.all_package_list[key]['loading'] != False:
                         cls.plugin_menus[key]=  {'menu':mod_menu, 'match':False}
                     if entity['version'] == '4':
                         setting_menu = getattr(entity['P'], 'setting_menu')
-                        if setting_menu != None:
+                        if setting_menu != None and cls.all_package_list[key]['loading'] != False:
                             cls.setting_menus.append(setting_menu)
 
                             

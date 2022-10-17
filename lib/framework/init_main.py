@@ -309,7 +309,7 @@ class Framework:
         else:
             self.config['config_filepath'] = self.config['arg_config']
         if os.path.exists(self.config['config_filepath']) == False:
-            if self.config.get('running_type').startswith('docker'):
+            if self.config.get('running_type', '').startswith('docker'):
                 with open(self.config['config_filepath'], 'w', encoding='utf8') as f:
                     yaml.dump({'path_data':'/data'}, f, default_flow_style=False, allow_unicode=True)
             else:                
