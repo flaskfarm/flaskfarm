@@ -15,9 +15,9 @@ logger = get_logger()
 from .base.aes import SupportAES
 from .base.discord import SupportDiscord
 from .base.file import SupportFile
-from .base.sc import SupportSC
 from .base.string import SupportString
 from .base.sub_process import SupportSubprocess
+from .base.support_sc import SupportSC
 from .base.telegram import SupportTelegram
 from .base.util import (AlchemyEncoder, SingletonClass, SupportUtil,
                         default_headers, pt)

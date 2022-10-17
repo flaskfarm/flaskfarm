@@ -10,27 +10,19 @@ from . import logger
 
 class SupportSC:
     LIBRARY_LOADING = False
-    """
     try:
-        if platform.system() == 'Linux':
-            if (platform.platform().find('86') == -1 and platform.platform().find('64') == -1) or platform.platform().find('arch') != -1 or platform.platform().find('arm') != -1:
-                sys.path.insert(2, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib', 'sc', 'LinuxArm'))
-            else:
-                sys.path.insert(2, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib', 'sc', 'Linux'))
-        if platform.system() == 'Windows':
-            sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'sc', 'Windows'))
-        import sc
+        sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'libsc'))
+        import support.base.support_sc as support_sc
         LIBRARY_LOADING = True
     except:
         pass
-    """
     
 
     @classmethod
     def encode(cls, text, mode=0):
         try:
-            import sc
-            return sc.encode(text, mode)
+            import support.base.support_sc as support_sc
+            return support_sc.encode(text, mode)
         except Exception as e:
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
@@ -40,16 +32,16 @@ class SupportSC:
     @classmethod
     def decode(cls, text):
         try:
-            import sc
-            return sc.decode(text)
+            import support.base.support_sc as support_sc
+            return support_sc.decode(text)
         except:
             return None
     
     @classmethod
     def load_module(cls, module_name, module_code):
         try:
-            import sc
-            mod = sc.load_module(module_name, module_code)
+            import support.base.support_sc as support_sc
+            mod = support_sc.load_module(module_name, module_code)
             sys.modules[mod] = mod
             logger.warning(f"C-LOADING : {module_name}")
             return mod
@@ -73,8 +65,8 @@ class SupportSC:
     @classmethod
     def td(self, mediacode, ts, url):
         try:
-            import sc
-            ret = sc.td1(mediacode, str(ts), url).strip()
+            import support.base.support_sc as support_sc
+            ret = support_sc.td1(mediacode, str(ts), url).strip()
             ret = re.sub('[^ -~]+', '', ret).strip()
             return ret
         except:
