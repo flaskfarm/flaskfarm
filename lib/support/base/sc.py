@@ -10,6 +10,7 @@ from . import logger
 
 class SupportSC:
     LIBRARY_LOADING = False
+    """
     try:
         if platform.system() == 'Linux':
             if (platform.platform().find('86') == -1 and platform.platform().find('64') == -1) or platform.platform().find('arch') != -1 or platform.platform().find('arm') != -1:
@@ -22,7 +23,8 @@ class SupportSC:
         LIBRARY_LOADING = True
     except:
         pass
-
+    """
+    
 
     @classmethod
     def encode(cls, text, mode=0):
