@@ -94,23 +94,6 @@ class SupportFile(object):
 
 
 
-    @classmethod
-    def write(cls, data, filepath, mode='w'):
-        try:
-            import codecs
-            ofp = codecs.open(filepath, mode, encoding='utf8')
-            if isinstance(data, bytes) and mode == 'w':
-                data = data.decode('utf-8') 
-            ofp.write(data)
-            ofp.close()
-            return True
-        except Exception as exception:
-            logger.debug('Exception:%s', exception)
-            logger.debug(traceback.format_exc())
-        return False
-
-
-
 
 
     @classmethod

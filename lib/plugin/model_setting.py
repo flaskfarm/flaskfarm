@@ -1,4 +1,5 @@
 import traceback
+from datetime import datetime
 
 from framework import F
 
@@ -32,8 +33,8 @@ def get_model_setting(package_name, logger, table_name=None):
                     if ret is not None:
                         return ret.value.strip()
                     return None
-            except Exception as exception:
-                logger.error('Exception:%s %s', exception, key)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)} [{key}]")
                 logger.error(traceback.format_exc())
 
         @staticmethod
@@ -45,16 +46,24 @@ def get_model_setting(package_name, logger, table_name=None):
         def get_int(key):
             try:
                 return int(ModelSetting.get(key))
-            except Exception as exception:
-                logger.error('Exception:%s %s', exception, key)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)} [{key}]")
                 logger.error(traceback.format_exc())
         
         @staticmethod
         def get_bool(key):
             try:
                 return (ModelSetting.get(key) == 'True')
-            except Exception as exception:
-                logger.error('Exception:%s %s', exception, key)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)} [{key}]")
+                logger.error(traceback.format_exc())
+        
+        @staticmethod
+        def get_datetime(key):
+            try:
+                return datetime.strptime(ModelSetting.get(key), '%Y-%m-%d %H:%M:%S.%f')
+            except Exception as e:
+                logger.error(f"Exception:{str(e)} [{key}]")
                 logger.error(traceback.format_exc())
 
         @staticmethod
@@ -68,8 +77,8 @@ def get_model_setting(package_name, logger, table_name=None):
                     else:
                         F.db.session.add(ModelSetting(key, value.strip()))
                         F.db.session.commit()
-            except Exception as exception:
-                logger.error('Exception:%s %s', exception, key)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)} [{key}]")
                 logger.error(traceback.format_exc())
 
         @staticmethod
@@ -78,8 +87,8 @@ def get_model_setting(package_name, logger, table_name=None):
                 ret = ModelSetting.db_list_to_dict(F.db.session.query(ModelSetting).all())
                 ret['package_name'] = package_name
                 return ret 
-            except Exception as exception:
-                logger.error('Exception:%s', exception)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)}")
                 logger.error(traceback.format_exc())
 
 
@@ -99,8 +108,8 @@ def get_model_setting(package_name, logger, table_name=None):
                         entity.value = value
                 F.db.session.commit()
                 return True, change_list 
-            except Exception as exception: 
-                logger.error('Exception:%s', exception)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)}")
                 logger.error(traceback.format_exc())
                 logger.debug('Error Key:%s Value:%s', key, value)
                 return False, []
@@ -115,8 +124,8 @@ def get_model_setting(package_name, logger, table_name=None):
                     values = [x.split(comment)[0].strip() for x in value.split(delimeter)]
                 values = ModelSetting.get_list_except_empty(values)
                 return values
-            except Exception as exception: 
-                logger.error('Exception:%s', exception)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)}")
                 logger.error(traceback.format_exc())
                 logger.error('Error Key:%s Value:%s', key, value)
 

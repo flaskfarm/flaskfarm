@@ -16,34 +16,30 @@ class Logic(object):
         self.P = P
 
     def plugin_load(self):
-        try:
-            self.P.logger.debug('%s plugin_load', self.P.package_name)
-            self.db_init()
+        self.P.logger.debug('%s plugin_load', self.P.package_name)
+        self.db_init()
+        for module in self.P.module_list:
+            module.migration()
+            if module.page_list is not None:
+                for page_instance in module.page_list:
+                    page_instance.migration()
+
+        for module in self.P.module_list:
+            module.plugin_load()
+            if module.page_list is not None:
+                for page_instance in module.page_list:
+                    page_instance.plugin_load()
+        if self.P.ModelSetting is not None:
             for module in self.P.module_list:
-                module.migration()
+                key = f'{module.name}_auto_start'
+                if self.P.ModelSetting.has_key(key) and self.P.ModelSetting.get_bool(key):
+                    self.scheduler_start(module.name)
                 if module.page_list is not None:
                     for page_instance in module.page_list:
-                        page_instance.migration()
+                        key = f'{module.name}_{page_instance.name}_auto_start'
+                        if self.P.ModelSetting.has_key(key) and self.P.ModelSetting.get_bool(key):
+                            self.scheduler_start_sub(module.name, page_instance.name)
 
-            for module in self.P.module_list:
-                module.plugin_load()
-                if module.page_list is not None:
-                    for page_instance in module.page_list:
-                        page_instance.plugin_load()
-            if self.P.ModelSetting is not None:
-                for module in self.P.module_list:
-                    key = f'{module.name}_auto_start'
-                    if self.P.ModelSetting.has_key(key) and self.P.ModelSetting.get_bool(key):
-                        self.scheduler_start(module.name)
-                    if module.page_list is not None:
-                        for page_instance in module.page_list:
-                            key = f'{module.name}_{page_instance.name}_auto_start'
-                            if self.P.ModelSetting.has_key(key) and self.P.ModelSetting.get_bool(key):
-                                self.scheduler_start_sub(module.name, page_instance.name)
-
-        except Exception as e:
-            self.P.logger.error(f'Exception:{str(e)}')
-            self.P.logger.error(traceback.format_exc())
 
     def db_init(self):
         try:

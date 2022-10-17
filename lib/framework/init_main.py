@@ -204,7 +204,7 @@ class Framework:
 
         from .init_web import jinja_initialize
         jinja_initialize(self.app)
-
+        
         from .init_plugin import PluginManager
         self.PluginManager = PluginManager
         PluginManager.plugin_update()

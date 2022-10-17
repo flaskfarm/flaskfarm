@@ -21,6 +21,7 @@ class ModuleSetting(PluginModuleBase):
         'web_title': 'Home',
         'use_apikey': 'False',
         'apikey': ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)),
+        'app_id': ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)),
         f'restart_interval': f'{random.randint(0,59)} {random.randint(1,23)} * * *',
         'restart_notify': 'False',
         'theme' : 'Cerulean',
