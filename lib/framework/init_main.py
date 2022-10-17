@@ -213,6 +213,7 @@ class Framework:
 
         from .init_menu import MenuManager
         MenuManager.init_menu()
+        self.logger.info("메뉴 구성 완료")
 
         if self.config['run_flask']:
             if self.config.get('port') == None:

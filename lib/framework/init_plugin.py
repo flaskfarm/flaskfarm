@@ -187,8 +187,10 @@ class PluginManager:
 
                                 if key in cls.plugin_menus:
                                     del cls.plugin_menus[key]
+                                    F.logger.info(f"플러그인 로딩 실패로 메뉴 삭제1 : {key}")
                                     from framework.init_menu import MenuManager
                                     MenuManager.init_menu()
+                                    F.logger.info(f"플러그인 로딩 실패로 메뉴 삭제2 : {key}")
 
 
                         # mod는 위에서 로딩
@@ -215,6 +217,7 @@ class PluginManager:
                     if entity['version'] == '4':
                         setting_menu = getattr(entity['P'], 'setting_menu')
                         if setting_menu != None and cls.all_package_list[key]['loading'] != False:
+                            F.logger.info(f"메뉴 포함 : {key}")
                             cls.setting_menus.append(setting_menu)
 
                             
