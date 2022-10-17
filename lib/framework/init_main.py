@@ -448,10 +448,10 @@ class Framework:
             try: 
                 #self.logger.debug(d(self.config))
                 # allow_unsafe_werkzeug=True termux  nohup 실행시 필요함
-                if self.config['running_type'] == 'termux':
-                    self.socketio.run(self.app, host=host, port=self.config['port'], debug=self.config['debug'], use_reloader=self.config['debug'], allow_unsafe_werkzeug=True)
-                else:
-                    self.socketio.run(self.app, host=host, port=self.config['port'], debug=self.config['debug'], use_reloader=self.config['debug'])
+                #if self.config['running_type'] == 'termux':
+                #    self.socketio.run(self.app, host=host, port=self.config['port'], debug=self.config['debug'], use_reloader=self.config['debug'], allow_unsafe_werkzeug=True)
+                #else:
+                self.socketio.run(self.app, host=host, port=self.config['port'], debug=self.config['debug'], use_reloader=self.config['debug'])
                 self.logger.warning(f"EXIT CODE : {self.__exit_code}")
                 # 2021-05-18  
                 if self.config['running_type'] in ['termux', 'entware']:
