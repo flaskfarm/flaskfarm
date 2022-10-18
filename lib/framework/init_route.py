@@ -86,16 +86,12 @@ def open_file(path):
 @F.app.route("/file/<path:path>")
 @F.check_api
 def file2(path):
-    F.logger.debug('file2 :%s', path)
-    return send_from_directory('/', path)
-
-
+    # 윈도우 drive 필요 없음
+    return send_from_directory('/', path, as_attachment=True)
 
 
 @F.app.route("/upload", methods=['GET', 'POST'])
 def upload():
-    # curl -F file=@downloader_video.tar https://dev.soju6jan.com/up
-    # 
     try:
         if request.method == 'POST':
             f = request.files['file']

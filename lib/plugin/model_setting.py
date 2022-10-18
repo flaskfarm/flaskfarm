@@ -61,7 +61,9 @@ def get_model_setting(package_name, logger, table_name=None):
         @staticmethod
         def get_datetime(key):
             try:
-                return datetime.strptime(ModelSetting.get(key), '%Y-%m-%d %H:%M:%S.%f')
+                tmp = ModelSetting.get(key)
+                if tmp != None and tmp != '':
+                    return datetime.strptime(tmp, '%Y-%m-%d %H:%M:%S.%f')
             except Exception as e:
                 logger.error(f"Exception:{str(e)} [{key}]")
                 logger.error(traceback.format_exc())
