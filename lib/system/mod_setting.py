@@ -37,7 +37,7 @@ class ModuleSetting(PluginModuleBase):
         'notify_advaned_use' : 'False',
         'notify.yaml': '', #직접 사용하지 않으나 저장 편의상.
         'command_text': '',
-        'celery_start_by_web': 'True' if F.config['running_type'] == 'docker_alpine' else 'False', #웹 실행시 celery 실행
+        'celery_start_by_web': 'True', #if F.config['running_type'] == 'docker_alpine' else 'False', #웹 실행시 celery 실행
         'celery_start_command': f"celery -A flaskfarm.main.celery worker --loglevel=info --pool=gevent --concurrency=2 --config_filepath={F.config['config_filepath']} --running_type={F.config['running_type']}",
         
 
