@@ -1,76 +1,91 @@
 {% extends "base.html" %}
 {% block content %}
-<div>
-  {{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장']])}}
-  {{ macros.m_row_start('5') }}
-  {{ macros.m_row_end() }}
-  <nav>  
-    {{ macros.m_tab_head_start() }}
-      {{ macros.m_tab_head2('normal', '일반', true) }}
-      
-    {{ macros.m_tab_head_end() }}
-  </nav>  
-  <form id='setting' name='setting'>  
-  <div class="tab-content" id="nav-tabContent">
-    {{ macros.m_tab_content_start('normal', true) }}
-      {{ macros.setting_checkbox('tool_crypt_use_user_key', '암호화 키 직접 입력', value=arg['tool_crypt_use_user_key'], desc=['On : 본인 키 사용', '주의) 변경 후 일반설정-인증-로그인 암호를 새로 저장해야 합니다.', 'Off : 앱 고정 키 사용']) }}
-      <div id="tool_crypt_use_user_key_div" class="collapse">
-        {{ macros.setting_input_text('tool_crypt_user_key', '암호화 키', value=arg['tool_crypt_user_key'], desc=['16진수(숫자, a~e)로 이루어진 32글자. 미만시 앞을 0으로 채움. 초과시 뒤에 무시']) }}
-      </div>
 
-      {{ macros.setting_input_text_and_buttons('tool_crypt_encrypt_word', '암호화', [['tool_crypt_encrypt_word_btn', '암호화']], value=arg['tool_crypt_encrypt_word']) }}
-      {{ macros.setting_input_text('tool_crypt_encrypt_word_result', '', disabled=True) }}
+{{ macros.m_button_group([['all_upgrade_btn', '모두 업그레이드'], ['refresh_btn', '새로고침']])}}
+{{ macros.m_row_start('5') }}
+{{ macros.m_row_end() }}
 
-      {{ macros.setting_input_text_and_buttons('tool_crypt_decrypt_word', '평문화', [['tool_crypt_decrypt_word_btn', '평문화']], value=arg['tool_crypt_decrypt_word']) }}
-      {{ macros.setting_input_text('tool_crypt_decrypt_word_result', '', disabled=True) }}
-    {{ macros.m_tab_content_end() }}   
-   
-  </div><!--tab-content-->
-  </form>
-</div> <!--전체-->
+{{ macros.setting_input_text_and_buttons('pip', 'pip 패키지 설치', [['install_btn', '설치 & 업그레이드']], value=arg['tool_python_name'], desc=None) }}
+
+
+<div id="list_div"></div>
 
 <script type="text/javascript">
-var package_name = "{{arg['package_name'] }}";
-var sub = "{{arg['sub'] }}";
-
 $(document).ready(function(){
-  use_collapse("tool_crypt_use_user_key");
+  refresh();
 });
 
-$("body").on('change', '#tool_crypt_use_user_key', function(e){
-  use_collapse('tool_crypt_use_user_key');
-});
-
-$("body").on('click', '#tool_crypt_encrypt_word_btn', function(e) {
-  e.preventDefault();
-  word = document.getElementById("tool_crypt_encrypt_word").value
-  crypt_test('encrypt', word);
-});
-
-$("body").on('click', '#tool_crypt_decrypt_word_btn', function(e) {
-  e.preventDefault();
-  word = document.getElementById("tool_crypt_decrypt_word").value
-  crypt_test('decrypt', word);
-});
-
-function crypt_test(mode, word) {
-  $.ajax({
-    url: '/' + package_name + '/ajax/'+sub+'/crypt_test',
-    type: "POST", 
-    cache: false,
-    data: {mode:mode, word:word},
-    dataType: "json",
-    success: function (ret) {
-      if (ret.ret == 'success') {
-        if (mode == "encrypt")
-          document.getElementById("tool_crypt_encrypt_word_result").value = ret.data;
-        else
-          document.getElementById("tool_crypt_decrypt_word_result").value = ret.data;
-      } else {
-        notify(ret.log, 'warning');
-      }
-    }
+function refresh() {
+  globalSendCommandPage('get_freeze', null, null, null, null, function(ret){
+    make_list(ret.data);
   });
+}
+
+$("body").on('click', '#install_btn', function(e){
+  e.preventDefault();
+  name = $('#pip').val();
+  if (name == '') {
+    notify("package 명을 입력하세요.", 'danger');
+    return
+  }
+  upgrade(name);
+});
+
+$("body").on('click', '#upgrade_btn', function(e){
+  e.preventDefault();
+  upgrade($(this).data('name'));
+});
+
+
+function upgrade(name) {
+  globalSendCommandPage('upgrade', name);
+}
+
+$("body").on('click', '#remove_btn', function(e){
+  e.preventDefault();
+  remove_confirm($(this).data('name'));
+});
+
+function remove(name) {
+  globalSendCommandPage('remove', name);
+}
+
+function remove_confirm(name) {
+  $("#confirm_title").html("삭제 확인");
+  $("#confirm_body").html(name + "패키지를<br>삭제 하시겠습니까?");
+  $('#confirm_button').attr('onclick', "remove('"+name+"');");
+  $("#confirm_modal").modal();
+}
+
+$("body").on('click', '#refresh_btn', function(e){
+  e.preventDefault();
+  refresh();
+});
+
+function make_list(data) {
+  current_data = data;
+  str = '';
+  str = '<table id="result_table" class="table table-sm"  ><thead class="thead-dark"><tr> \
+    <th style="width:10%; text-align:center;">ID</th> \
+    <th style="width:30%; text-align:center;">Name</th> \
+    <th style="width:30%; text-align:center;">Version</th> \
+    <th style="width:30%; text-align:center;">Action</th> \
+    </tr></thead><tbody id="list">';
+  if (data.length == 0) str += '<tr><td colspan="6"><h4>Empty</h4></td></tr>';
+  for(i in data) {
+    //console.log(data[i]);
+    str += '<tr class="chover" style="cursor: pointer;">';
+    str += '<td scope="col" style="width:10%; text-align:center;">'+ (parseInt(i)+1) + '</td>';
+    str += '<td scope="col" style="width:30%; text-align:center;">'+ data[i][0] + '</td>';
+    str += '<td scope="col" style="width:30%; text-align:center;">'+ data[i][1] + '</td>';
+    tmp = j_button('upgrade_btn', 'Upgrade', {'name':data[i][0]}, 'primary', true, false);
+    tmp += j_button('remove_btn', '삭제', {'name':data[i][0]}, 'danger', true, false);
+    tmp = j_button_group(tmp);
+    str += '<td scope="col" style="width:30%; text-align:center;">'+ tmp + '</td>';
+    str += '</tr>'
+  }
+  str += '</table>';
+  document.getElementById("list_div").innerHTML = str;
 }
 </script>    
 {% endblock %}

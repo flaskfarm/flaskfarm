@@ -1,4 +1,5 @@
-from support import SupportFile
+from support import SupportSubprocess
+from tool import ToolModalCommand
 
 from .page_command import PageCommand
 from .setup import *
@@ -36,4 +37,27 @@ class PageCrypt(PluginPageBase):
 class PagePython(PluginPageBase):
     def __init__(self, P, parent):
         super(PagePython, self).__init__(P, parent, name='python')
+        self.db_default = {
+            f'{self.parent.name}_{self.name}_name': '',
+        } 
 
+    def process_command(self, command, arg1, arg2, arg3, req):
+        ret = {'ret':'success'}
+        if command == 'get_freeze':
+            command = ['pip', 'freeze']
+            result = SupportSubprocess.execute_command_return(command)
+            if result['status'] == 'finish':
+                ret['data'] = []
+                for tmp in result['log'].split('\n'):
+                    ret['data'].append(tmp.split('=='))
+            else:
+                ret['ret'] = 'danger'
+                ret['msg'] = "실패"
+        elif command == 'upgrade':
+            P.ModelSetting.set(f'{self.parent.name}_{self.name}_name', arg1)
+            cmd = ['pip', 'install', '--upgrade', arg1]
+            ToolModalCommand.start("pip 설치", [cmd])
+        elif command == 'remove':
+            cmd = ['pip', 'uninstall', '-y', arg1]
+            ToolModalCommand.start("pip 삭제", [cmd])
+        return jsonify(ret)

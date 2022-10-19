@@ -87,7 +87,7 @@ class SupportSubprocess(object):
             logger.error('command : %s', command)
     
 
-    instance_list = []
+    __instance_list = []
 
 
     def __init__(self, command,  print_log=False, shell=False, env=None, timeout=None, uid=None, gid=None, stdout_callback=None, call_id=None):
@@ -107,7 +107,7 @@ class SupportSubprocess(object):
 
     def start(self, join=True):
         try:
-            self.thread = threading.Thread(target=self.execute_thread_function, args=())
+            self.thread = threading.Thread(target=self.__execute_thread_function, args=())
             self.thread.setDaemon(True)
             self.thread.start()
             if join:
@@ -117,7 +117,7 @@ class SupportSubprocess(object):
             logger.error(traceback.format_exc())
 
 
-    def execute_thread_function(self):
+    def __execute_thread_function(self):
         try:
             if platform.system() == 'Windows':
                 tmp = []
@@ -137,15 +137,16 @@ class SupportSubprocess(object):
                     self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
                 else:
                     self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, preexec_fn=demote(self.uid, self.gid), encoding='utf8', bufsize=0)
-            SupportSubprocess.instance_list.append(self)
-            self.start_communicate()
-            self.start_send_callback()
+            SupportSubprocess.__instance_list.append(self)
+            self.__start_communicate()
+            self.__start_send_callback()
             if self.process is not None:
                 self.process.wait()
             logger.info(f"{self.command} END")
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
+            logger.warning(self.command)
             if self.stdout_callback != None:
                 self.stdout_callback('error', str(e))
                 self.stdout_callback('error', str(traceback.format_exc()))
@@ -154,7 +155,7 @@ class SupportSubprocess(object):
                 self.stdout_callback('thread_end', None)
     
 
-    def start_communicate(self):
+    def __start_communicate(self):
         self.stdout_queue = queue.Queue()
         sout = io.open(self.process.stdout.fileno(), 'rb', closefd=False)
        
@@ -199,7 +200,7 @@ class SupportSubprocess(object):
         Pump(sout)
 
 
-    def start_send_callback(self):
+    def __start_send_callback(self):
         def func():
             while self.stdout_queue:
                 line = self.stdout_queue.get()
@@ -245,29 +246,29 @@ class SupportSubprocess(object):
 
     @classmethod
     def all_process_close(cls):
-        for instance in cls.instance_list:
+        for instance in cls.__instance_list:
             instance.process_close()
-        cls.instance_list = []
+        cls.__instance_list = []
 
 
     @classmethod
     def remove_instance(cls, remove_instance):
         new = []
-        for instance in cls.instance_list:
+        for instance in cls.__instance_list:
             if remove_instance.timestamp == instance.timestamp:
                 continue
             new.append(instance)
-        cls.instance_list = new
+        cls.__instance_list = new
     
     @classmethod
     def print(cls):
-        for instance in cls.instance_list:
+        for instance in cls.__instance_list:
             logger.info(instance.command)
 
 
     @classmethod
     def get_instance_by_call_id(cls, call_id):
-        for instance in cls.instance_list:
+        for instance in cls.__instance_list:
             if instance.call_id == call_id:
                 return instance
            

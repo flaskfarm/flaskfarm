@@ -112,7 +112,7 @@ class PageCommand(PluginPageBase):
                 import io
                 from contextlib import redirect_stdout
                 load_log_list = io.StringIO()
-                with redirect_stdout(self.load_log_list):
+                with redirect_stdout(load_log_list):
                     start_communicate_load(load_log_list)
                     if job_id is not None:
                         command_logger = get_logger(f'command_{job_id}')

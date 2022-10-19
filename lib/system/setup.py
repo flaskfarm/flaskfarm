@@ -22,7 +22,7 @@ __menu = {
             'list': [
                 #{'uri': 'setting', 'name': '설정'},
                 {'uri': 'list', 'name': '로딩 플러그인'},
-                {'uri': 'all', 'name': '플러그인 목록'},
+                #{'uri': 'all', 'name': '플러그인 목록'},
             ],
         },
         {
@@ -32,8 +32,8 @@ __menu = {
                 {'uri': 'command', 'name': 'Command'},
                 {'uri': 'upload', 'name': '업로드'},
                 {'uri': 'python', 'name': 'Python'},
-                {'uri': 'db', 'name': 'DB'},
-                {'uri': 'crypt', 'name': '암호화'},
+                #{'uri': 'db', 'name': 'DB'},
+                #{'uri': 'crypt', 'name': '암호화'},
             ]
         },
         {
