@@ -36,17 +36,17 @@
 $(document).ready(function() {
   setWide();
   $('#loading').show();
-  ResizeTextArea()
+  ResizeTextAreaLog()
 })
 
-function ResizeTextArea() {
+function ResizeTextAreaLog() {
   ClientHeight = window.innerHeight
   $("#log").height(ClientHeight-240);
   $("#add").height(ClientHeight-260);
 }
 
 $(window).resize(function() {
-  ResizeTextArea();
+  ResizeTextAreaLog();
 });
 
 

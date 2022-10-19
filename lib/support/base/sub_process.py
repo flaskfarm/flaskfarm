@@ -90,7 +90,7 @@ class SupportSubprocess(object):
     instance_list = []
 
 
-    def __init__(self, command,  print_log=False, shell=False, env=None, timeout=None, uid=None, gid=None, stdout_callback=None):
+    def __init__(self, command,  print_log=False, shell=False, env=None, timeout=None, uid=None, gid=None, stdout_callback=None, call_id=None):
         self.command = command
         self.print_log = print_log
         self.shell = shell
@@ -101,6 +101,8 @@ class SupportSubprocess(object):
         self.stdout_callback = stdout_callback
         self.process = None
         self.stdout_queue = None
+        self.call_id = call_id
+        self.timestamp = time.time()
         
 
     def start(self, join=True):
@@ -127,13 +129,14 @@ class SupportSubprocess(object):
                             tmp.append(f'"{x}"')
                     self.command = ' '.join(tmp)
 
+            logger.debug(f"{self.command=}")
             if platform.system() == 'Windows':
-                self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8')
+                self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
             else:
                 if self.uid == None:
-                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8')
+                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
                 else:
-                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, preexec_fn=demote(self.uid, self.gid), encoding='utf8')
+                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, preexec_fn=demote(self.uid, self.gid), encoding='utf8', bufsize=0)
             SupportSubprocess.instance_list.append(self)
             self.start_communicate()
             self.start_send_callback()
@@ -207,9 +210,12 @@ class SupportSubprocess(object):
                 else:
                     if self.stdout_callback != None:
                         self.stdout_callback('log', line)
+            self.remove_instance(self)
+
         th = threading.Thread(target=func, args=())
         th.setDaemon(True)
         th.start()
+
 
 
     def process_close(self):
@@ -228,6 +234,8 @@ class SupportSubprocess(object):
                 #self.stdout_queue = None 
                 self.process.kill()
             except: pass
+        
+        self.remove_instance(self)
 
     def input_command(self, cmd):
         if self.process != None:
@@ -241,4 +249,25 @@ class SupportSubprocess(object):
             instance.process_close()
         cls.instance_list = []
 
+
+    @classmethod
+    def remove_instance(cls, remove_instance):
+        new = []
+        for instance in cls.instance_list:
+            if remove_instance.timestamp == instance.timestamp:
+                continue
+            new.append(instance)
+        cls.instance_list = new
     
+    @classmethod
+    def print(cls):
+        for instance in cls.instance_list:
+            logger.info(instance.command)
+
+
+    @classmethod
+    def get_instance_by_call_id(cls, call_id):
+        for instance in cls.instance_list:
+            if instance.call_id == call_id:
+                return instance
+           

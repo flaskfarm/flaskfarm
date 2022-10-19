@@ -36,39 +36,39 @@ function make_plugin_list(data) {
   console.log(data)
   for (i in data) {
     console.log(data[i]);
-    str += m_row_start();
-    str += m_col_wide(1, (parseInt(i)+1), 'center')
+    str += j_row_start();
+    str += j_col_wide(1, (parseInt(i)+1), 'center')
     if (data[i].title == null) {
-      str += m_col_wide(2, '');
-      str += m_col_wide(2, data[i].package_name);
-      str += m_col_wide(5, '');
-      tmp = m_button('uninstall_btn', '삭제', {'package_name':data[i].package_name}, 'danger', false, true);
+      str += j_col_wide(2, '');
+      str += j_col_wide(2, data[i].package_name);
+      str += j_col_wide(5, '');
+      tmp = j_button('uninstall_btn', '삭제', {'package_name':data[i].package_name}, 'danger', false, true);
     } else {
-      str += m_col_wide(2, data[i].title);
+      str += j_col_wide(2, data[i].title);
       
-      str += m_col_wide(2, data[i].package_name);
-      str += m_col_wide(1, data[i].developer);
-      str += m_col_wide(1, data[i].version);
+      str += j_col_wide(2, data[i].package_name);
+      str += j_col_wide(1, data[i].developer);
+      str += j_col_wide(1, data[i].version);
       if (data[i].loading == false) {
         tmp = data[i].description + '<br>' + text_color('[로딩 실패] ') + data[i].status;
-        str += m_col_wide(3, tmp);
+        str += j_col_wide(3, tmp);
 
       } else {
-        str += m_col_wide(3, data[i].description);
+        str += j_col_wide(3, data[i].description);
       }
       
       tmp = ''
       
-      tmp += m_button_small('globalOpenBtn', '홈페이지', {'url':data[i].home}, 'primary', false, true);
-      tmp += m_button_small('uninstall_btn', '삭제', {'package_name':data[i].package_name, 'title':data[i].title}, 'danger', false, true);
-      tmp += m_button_small('json_btn', 'JSON', {'idx':i}, 'info', false, true);
+      tmp += j_button_small('globalOpenBtn', '홈페이지', {'url':data[i].home}, 'primary', false, true);
+      tmp += j_button_small('uninstall_btn', '삭제', {'package_name':data[i].package_name, 'title':data[i].title}, 'danger', false, true);
+      tmp += j_button_small('json_btn', 'JSON', {'idx':i}, 'info', false, true);
     }
-    tmp = m_button_group(tmp)
-    str += m_col_wide(2, tmp, 'right')
-    str += m_row_end();
-    if (i != current_data.length -1) str += m_hr(0);
+    tmp = j_button_group(tmp)
+    str += j_col_wide(2, tmp, 'right')
+    str += j_row_end();
+    if (i != current_data.length -1) str += j_hr(0);
   }
-  document.getElementById("plugin_list_div").innerHTML = str;
+  $("#plugin_list_div").html(str);
 }
 
 $("body").on('click', '#json_btn', function(e){

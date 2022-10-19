@@ -241,3 +241,15 @@ class Logic(object):
             self.P.logger.error(traceback.format_exc())
             ret = {'ret' : 'danger', 'msg':str(e)}
         return ret
+
+
+    def arg_to_dict(self, arg):
+        import urllib.parse
+
+        tmp = urllib.parse.unquote(arg)
+        tmps = tmp.split('&')
+        ret = {}
+        for tmp in tmps:
+            _ = tmp.split('=')
+            ret[_[0]] = _[1]
+        return ret

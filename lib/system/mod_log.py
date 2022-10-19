@@ -23,6 +23,11 @@ class ModuleLog(PluginModuleBase):
             arg['log_list'] = '|'.join(log_list)
             arg['all_list'] = '|'.join(log_files)
             arg['filename'] = 'framework.log'
+            print(request.form)
+            print(request.form)
+            print(request.form)
+            print(request.form)
+            
             if 'filename' in request.form:
                 arg['filename'] = request.form['filename']
             return render_template(f'{__package__}_{name}.html', arg=arg)

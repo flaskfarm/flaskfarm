@@ -136,7 +136,7 @@ def default_route(P):
     @login_required
     def sub_ajax(module_name, page_name, command):
         try:
-            ins_module = P.get_module(module_name)
+            ins_module = P.logic.get_module(module_name)
             ins_page = ins_module.get_page(page_name)
             if ins_page != None:
                 if command == 'scheduler':

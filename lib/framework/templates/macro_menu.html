@@ -18,6 +18,8 @@
     {% for category in menu_map %}
       {% if 'uri' in category and category['uri'].startswith('http') %}
         <li class="nav-item"> <a class="nav-link" href="{{ category['uri']}}" target="_blank">{{category['name']}}</a></li>
+      {% elif 'uri' in category and category['uri'].startswith('http') == False %}
+        <li class="nav-item"> <a class="nav-link" href="{{ category['uri']}}">{{category['name']}}</a></li>
       {% else %}
         <!--{{ category }}-->
         <li class="nav-item dropdown">

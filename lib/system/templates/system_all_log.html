@@ -3,7 +3,7 @@
 
 <div>
   {{ macros.setting_select_empty('log_select1', '로그 파일 선택 (.log)') }}
-  {{ macros.setting_select_empty('log_select2', '로그 파일 선택 (.logX)') }}
+  <!--{{ macros.setting_select_empty('log_select2', '로그 파일 선택 (.logX)') }}-->
   <nav>
     {{ macros.m_tab_head_start() }}
       {{ macros.m_tab_head('이전', true) }}
@@ -42,7 +42,7 @@ var start_filename = "{{arg['filename']}}";
 
 $(document).ready(function() {
   $('#main_container').attr('class', 'container-fluid');
-  ResizeTextArea()
+  ResizeTextAreaAllLog()
   make_form()
   if (start_filename != '')
     document.getElementById('log_select').value = start_filename;
@@ -56,13 +56,14 @@ function make_form() {
     str += '<option value="' + data[i] + '">' + data[i] + '</option>';
   }
   $("#log_select1_div").html(str);
-
+  /*
   str = '<select id="log_select" name="log_select" class="form-control form-control-sm">';
   data = all_list.split('|')
   for(var i in data) {
     str += '<option value="' + data[i] + '">' + data[i] + '</option>';
   }
   $("#log_select2_div").html(str);
+  */
 }
 
 $("body").on('change', '#log_select', function(e){
@@ -75,14 +76,14 @@ $("body").on('change', '#log_select', function(e){
 });
 
 
-function ResizeTextArea() {
+function ResizeTextAreaAllLog() {
   ClientHeight = window.innerHeight
   $("#log").height(ClientHeight-300);
   $("#add").height(ClientHeight-320);
 }
 
 $(window).resize(function() {
-  ResizeTextArea();
+  ResizeTextAreaAllLog();
 });
 
 

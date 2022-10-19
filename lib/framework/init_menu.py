@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from support import SupportYaml
+from support import SupportYaml, d
 
 from framework import F
 
@@ -89,4 +89,5 @@ class MenuManager:
 
     @classmethod
     def get_menu_map(cls):
+        #F.logger.warning(d(cls.menu_map))
         return cls.menu_map

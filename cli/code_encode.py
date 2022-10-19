@@ -43,4 +43,4 @@ class CodeEncode:
 if __name__== "__main__":
     CodeEncode().process_args()
 
-    # python C:\work\FlaskFarm\flaskfarm\lib\cli\code_encode.py --source=C:\work\FlaskFarm\data\LOADING\klive_plus\source_spotv.py
+# python C:\work\FlaskFarm\flaskfarm\cli\code_encode.py --source=C:\work\FlaskFarm\data\LOADING\sjva

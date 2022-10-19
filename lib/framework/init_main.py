@@ -57,6 +57,7 @@ class Framework:
      
 
     def __initialize(self):
+        os.environ["PYTHONUNBUFFERED"] = "1"
         os.environ['FF'] = "true"
         self.__config_initialize("first")
         self.__make_default_dir()
@@ -118,7 +119,9 @@ class Framework:
         for package_name in plugins:
             db_path = os.path.join(self.config['path_data'], 'db', f'{package_name}.db')
             self.app.config['SQLALCHEMY_BINDS'][package_name] = f'sqlite:///{db_path}'
-        self.db = SQLAlchemy(self.app, session_options={"autoflush": False})  
+        self.db = SQLAlchemy(self.app, session_options={"autoflush": False, "expire_on_commit": False})  
+        #with self.app.app_context():
+        #    self.db.session.expunge_all()
 
         
     def __init_celery(self):
@@ -222,6 +225,7 @@ class Framework:
         from . import init_route, log_viewer
 
         self.__make_default_logger()
+        self.__config_initialize("last")
         self.logger.info('### LAST')
         self.logger.info(f"### PORT: {self.config.get('port')}")
         self.logger.info('### Now you can access App by webbrowser!!')
@@ -266,6 +270,18 @@ class Framework:
             self.app.config['JSON_AS_ASCII'] = False
         elif mode == 'system_loading_after':
             pass
+        elif mode == 'last':
+            db_foder = os.path.join(self.config['path_data'], 'db')
+            for name in os.listdir(db_foder):
+                if name.endswith('.db'):
+                    db_filepath = os.path.join(db_foder, name)
+                    try:
+                        if os.stat(db_filepath).st_size == 0:
+                            os.remove(db_filepath)
+                            self.logger.debug(f"REMOVE {db_filepath}")
+                    except:
+                        pass
+
 
 
     def __init_define(self):
@@ -372,7 +388,7 @@ class Framework:
     ###################################################
     # 로그
     ###################################################
-    def get_logger(self, name):
+    def get_logger(self, name, from_command=False):
         logger = logging.getLogger(name)
         if not logger.handlers:
             level = logging.DEBUG
@@ -396,25 +412,26 @@ class Framework:
             except:
                 pass
             logger.setLevel(level)
-            file_formatter = logging.Formatter(u'[%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s] %(message)s')
             def customTime(*args):
                 utc_dt = utc.localize(datetime.utcnow())
                 my_tz = timezone("Asia/Seoul")
                 converted = utc_dt.astimezone(my_tz) 
                 return converted.timetuple()
 
+            if from_command == False:
+                file_formatter = logging.Formatter(u'[%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s] %(message)s')
+            else:
+                file_formatter = logging.Formatter(u'[%(asctime)s] %(message)s')
+
             file_formatter.converter = customTime
             file_max_bytes = 1 * 1024 * 1024 
             fileHandler = logging.handlers.RotatingFileHandler(filename=os.path.join(self.path_data, 'log', f'{name}.log'), maxBytes=file_max_bytes, backupCount=5, encoding='utf8', delay=True)
-            streamHandler = logging.StreamHandler() 
-
-            # handler에 fommater 세팅 
             fileHandler.setFormatter(file_formatter) 
-            streamHandler.setFormatter(CustomFormatter()) 
-            
-            # Handler를 logging에 추가
             logger.addHandler(fileHandler)
-            logger.addHandler(streamHandler)
+            if from_command == False:
+                streamHandler = logging.StreamHandler() 
+                streamHandler.setFormatter(CustomFormatter()) 
+                logger.addHandler(streamHandler)
         return logger 
 
 

@@ -29,6 +29,7 @@ __menu = {
             'uri': 'tool',
             'name': '시스템 툴',
             'list': [
+                {'uri': 'command', 'name': 'Command'},
                 {'uri': 'upload', 'name': '업로드'},
                 {'uri': 'python', 'name': 'Python'},
                 {'uri': 'db', 'name': 'DB'},

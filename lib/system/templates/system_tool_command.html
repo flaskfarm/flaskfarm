@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% block content %}
+
+{{ macros.m_button_group([['foreground_command_btn', 'Foreground 실행'], ['job_new_btn', '저장'], ['select_file_btn', '파일선택', [['path_data', arg['path_data']]] ]])}}
+
+{{ macros.setting_input_textarea_wide('command', 'Command', row='3', value=arg['tool_command_recent'], desc=['예) cmd, bssh, sh, python test.py, LOAD test.py, curl ifconfig.me']) }}
+
+<div id="list_div"></div>
+
+{{ macros.m_modal_start('job_modal', '', 'modal-lg') }}
+  <form id='item_setting' name='item_setting'>
+    <input type='hidden' id="job_id" name="job_id">
+    {{ macros.setting_input_textarea_wide('job_command', 'Command', row=5, desc=['LOAD형으로 실행할 경우 python 대신 LOAD로 시작']) }}
+    {{ macros.setting_input_text('job_command_args', 'ARGS', desc=['Command에 덧붙여 전달할 값. API로 변경 가능']) }}
+
+    {{ macros.setting_input_text('job_description', 'Description') }}
+    {{ macros.setting_radio_with_value('job_schedule_mode', '스케쥴링 타입', [['none', '없음'], ['startup', '시작시 한번 실행'], ['scheduler', '스케쥴링']]) }}
+    {{ macros.setting_input_text('job_schedule_interval', '스케쥴링 정보', desc=['Interval(minute 단위)이나 Cron 설정']) }}
+    {{ macros.setting_checkbox('job_schedule_auto_start', '시작시 스케쥴링 등록', desc=['On : 시작시 자동으로 스케쥴러에 등록됩니다.']) }}
+  </form>
+</div>
+<div class="modal-footer">
+  {{ macros.m_button_group([['job_save_btn', '저장'], ['job_remove_btn', '삭제'], ['modal_hide_btn', '닫기']])}}
+</div>
+</div></div></div>
+
+<div class="modal fade" id="file_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal_title">Site </h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body" id="modal_body" style="word-break:break-all;">
+        <form id="file_form" name="file_form">
+          <div class="input-group col-sm-12">
+            <textarea id="file_textarea" name="file_textarea" class="col-md-12" rows="50"></textarea>
+          </div>
+          <input type="hidden" name="file_job_id" id="file_job_id" value="-1">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="file_save_btn" type="button" class="btn btn-primary">저장</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+  request_list();
+});
+
+
+//////////////////////////////////  상단 버튼
+$("body").on('click', '#foreground_command_btn', function(e){
+  e.preventDefault();
+  globalSendCommandPage('foreground_command', $('#command').val());
+});
+
+
+$("body").on('click', '#job_new_btn', function(e){
+  e.preventDefault();
+  globalSendCommandPage('job_new', $('#command').val(), null, null, null, function(ret){
+    request_list();
+  });
+});
+
+$("body").on('click', '#select_file_btn', function(e){
+  e.preventDefault();
+  path_data = $(this).data('path_data');
+  globalSelectLocalFile("파일 선택", path_data, function(ret){
+    $('#command').val(ret);
+  });
+});
+//////////////////////////////////  상단 버튼 END
+
+
+function request_list() {
+  globalSendCommandPage('job_list', null, null, null, null, function(ret){
+    make_list(ret.data);
+  });
+}
+
+function make_list(data) {
+  current_data = data;
+  str = '';
+  str = '<table id="result_table" class="table table-sm"  ><thead class="thead-dark"><tr> \
+    <th style="width:5%; text-align:center;">ID</th> \
+    <th style="width:60%; text-align:center;">Command & arg & Desc</th> \
+    <th style="width:5%; text-align:center;">자동</th> \
+    <th colspan="2"  style="width:20%; text-align:center;">스케쥴 상태</th> \
+    <th style="width:10%; text-align:center;">스케쥴</th> \
+    </tr></thead><tbody id="list">';
+  
+  if (data.length == 0) str += '<tr><td colspan="6"><h4>작업이 없습니다.</h4></td></tr>';
+
+  for(i in data) {
+    console.log(data[i]);
+    str += '<tr class="chover" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse_' + i + '" aria-expanded="true" >';
+
+    str += '<td rowspan="2" scope="col" style="width:5%; text-align:center;">'+ (data[i].id) + '</td>';
+
+
+    // command
+    tmp = '';
+    tmp += text_color(data[i].command, 'blue') + '<br>';
+    tmp += data[i].args + '<br>';
+    tmp += data[i].description + '<br>';
+
+    str += '<td scope="col" style="width:60%; text-align:left;">'+ tmp + '</td>';
+ 
+
+    tmp = (data[i].schedule_auto_start) ? text_color("ON", 'blue') : "OFF";
+    str += '<td scope="col" style="width:5%; text-align:center;">'+ tmp + '</td>';
+    
+    tmp2 = null;
+    if (data[i].schedule_mode == 'none') {
+      tmp1 = "없음";
+    } else if (data[i].schedule_mode == 'startup') {
+      tmp1 = "시작시 한번 실행";
+    } else if (data[i].schedule_mode == 'scheduler') { 
+      tmp1 = "스케쥴링";
+      tmp2 = '<input id="use_checkbox|'+data[i].id+'" type="checkbox" data-id='+data[i].id+' data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="info" data-offstyle="danger" data-size="small" ' + ((data[i].scheduler_is_include) ? 'checked' : '') + '>';
+      if (data[i].scheduler_is_include) {
+        tmp2 += (data[i].scheduler_is_running) ? "<br>실행중" : "<br>대기중";
+      }
+    }
+    if (tmp2 == null) {
+      str += '<td scope="col" colspan="2" style="width:20%; text-align:center;">'+ tmp1 + '</td>';  
+    } else {
+      str += '<td scope="col" style="width:10%; text-align:right;">'+ tmp1 + '</td>';
+      str += '<td scope="col" style="width:10%; text-align:left;">'+ tmp2 + '</td>';
+    }
+    str += '<td scope="col" style="width:10%; text-align:center;">'+ data[i].schedule_interval + '</td>';
+    str += '</tr>'
+
+    str += '<tr>'
+    tmp = j_row_start(0);
+    tmp += j_col('0', '');
+    btn = j_button('job_edit_btn', '작업 편집', {'idx':i}, 'secondary', false, true);
+    btn += j_button('job_remove_from_table_btn', '삭제', {'id':data[i].id}, 'danger', true, true);
+    btn += j_button('job_fore_execute_btn', 'Foreground 실행', {'id':data[i].id}, 'primary', true, true);
+    btn += j_button('job_back_execute_btn', 'Background 실행', {'id':data[i].id}, 'primary', true, true);
+    btn += j_button('job_log_btn', '로그', {'id':data[i].id}, 'info', true, true);
+    btn += j_button('job_cmd_input_btn', 'Command에 입력', {'idx':i}, 'info', true, true);
+    if ( data[i].filepath != '' && data[i].filepath != null )
+      btn += j_button('globalEditBtn', '파일 수정', {'file':data[i].filepath}, 'info', false, true);
+    if ( data[i].process )
+      btn += j_button('job_process_stop_btn', '실행중인 Process 중지', {'id':data[i].id}, 'danger', false, true);
+    tmp += j_col('12', j_button_group(btn));
+    tmp += j_row_end();
+    str += '<td colspan="1" scope="col" style="width:5%; text-align:center;">'+ tmp + '</td>';
+    str += '</tr>'
+  }
+  str += '</table>';
+  document.getElementById("list_div").innerHTML = str;
+  $('input[id^="use_checkbox|"]').bootstrapToggle();
+}
+
+
+
+
+
+$('input[type=radio][name=job_schedule_mode]').change(function() {
+  set_schedule_mode(this.value);
+});
+
+
+function set_schedule_mode(mode) {
+  $('input:radio[name="job_schedule_mode"][value="'+mode+'"]').attr('checked',true);
+
+  if ( mode == 'none' || mode == 'startup') {
+    $("#job_schedule_interval").attr('disabled', true);
+    $("#job_schedule_auto_start").attr('disabled', true);
+  } else {
+    $("#job_schedule_interval").attr('disabled', false);
+    $("#job_schedule_auto_start").attr('disabled', false);
+  }
+}
+
+
+// 아이템 저장 버튼
+$("body").on('click', '#job_save_btn', function(e){
+  e.preventDefault();
+  //tmp = document.getElementById("schedule_radio2").getAttribute("checked");
+  schedule_mode = $('input[name=job_schedule_mode]:checked').val();
+  console.log(tmp);
+  
+  schedule_interval = $("#job_schedule_interval").val();
+  
+  if (schedule_mode == 'scheduler' && schedule_interval == '') {
+    notify("스케쥴링 정보를 입력하세요", 'warning');
+    return
+  }
+
+  var formData = getFormdata('#item_setting');
+  globalSendCommandPage('job_save', formData, null, null, null, function(ret){
+    if (ret.ret == 'success') {
+      $('#job_modal').modal('hide');
+      request_list();
+    }
+  });
+});
+
+$("body").on('click', '#modal_hide_btn', function(e){
+  e.preventDefault();
+  $('#job_modal').modal('hide');
+});
+
+$("body").on('click', '#job_remove_btn', function(e){
+  e.preventDefault();
+  remove_job($("#job_id").val());
+});
+
+function remove_job(job_id) {
+  globalSendCommandPage('job_remove', job_id, null, null, null, function(ret){
+    if (ret.ret == 'success') {
+      $('#job_modal').modal('hide');
+      request_list();
+    }
+  });
+}
+
+////////////////////////////////////////////////////////////
+// JOB 테이블 제어
+$("body").on('click', '#job_edit_btn', function(e){
+  e.preventDefault();
+  idx = parseInt($(this).data('idx'));
+  item = current_data[idx];
+  $("#job_id").val(item.id);
+  $("#job_modal_title").html('ID: ' + item.id + ' Command ID: ' + item.command_id);
+  $("#job_command").val(item.command);
+  $("#job_description").val(item.description);
+  $("#job_command_args").val(item.args);
+  set_schedule_mode(item.schedule_mode);
+  if ( item.schedule_mode == 'scheduler') {
+    $("#scheduler_swtich_btn").attr('disabled', false);
+  } else {
+    $("#scheduler_swtich_btn").attr('disabled', true);
+  }
+  $("#job_schedule_interval").val(item.schedule_interval);
+  if (item.schedule_auto_start) {
+    $("#job_schedule_auto_start").val('on');
+    $('#job_schedule_auto_start').bootstrapToggle('on')
+  } else {
+    $("#job_schedule_auto_start").val('off');
+    $('#job_schedule_auto_start').bootstrapToggle('off')
+  }
+  $("#job_modal").modal();
+});
+
+
+$("body").on('click', '#job_remove_from_table_btn', function(e){
+  e.preventDefault();
+  remove_job($(this).data('id'));
+});
+
+
+
+$("body").on('click', '#job_fore_execute_btn', function(e){
+  e.preventDefault();
+  globalSendCommandPage('job_fore_execute', $(this).data('id'));
+});
+
+$("body").on('click', '#job_back_execute_btn', function(e){
+  e.preventDefault();
+  globalSendCommandPage('job_back_execute', $(this).data('id'), null, null, null, function(e) {
+    request_list();
+  });
+});
+
+$("body").on('click', '#job_log_btn', function(e){
+  e.preventDefault();
+  globalSendCommandPage('job_log', $(this).data('id'), null, null, null, function(data){
+    if (data.ret == 'success')  {
+        redirect = '/system/all_log/list';
+        $.redirectPost(redirect, {filename: data.filename});
+    }
+  });
+});
+
+
+$("body").on('click', '#job_cmd_input_btn', function(e){
+  e.preventDefault();
+  idx = parseInt($(this).data('idx'));
+  $("#command").val((current_data[idx].command + ' ' + current_data[idx].args).trim());
+  window.scrollTo(0,0);
+});
+
+
+$("body").on('change', 'input[id^="use_checkbox|"]', function(e){
+  e.preventDefault();
+  globalSendCommandPage('task_sched', $(this).data('id'), $(this).prop('checked'), null, null, function(e) {
+    request_list();
+  });
+});
+
+$("body").on('click', '#job_process_stop_btn', function(e){
+  e.preventDefault();
+  globalSendCommandPage('job_process_stop', $(this).data('id'), null, null, null, function(e) {
+    request_list();
+  });
+});
+
+
+</script>    
+{% endblock %}

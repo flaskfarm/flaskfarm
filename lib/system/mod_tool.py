@@ -1,14 +1,15 @@
 from support import SupportFile
 
+from .page_command import PageCommand
 from .setup import *
 
 name = 'tool'
 
 class ModuleTool(PluginModuleBase):
     def __init__(self, P):
-        super(ModuleTool, self).__init__(P, name=name, first_menu='upload')
-        self.set_page_list([PageUpload, PageCrypt])
-
+        super(ModuleTool, self).__init__(P, name=name, first_menu='command')
+        
+        self.set_page_list([PageUpload, PageCrypt, PagePython, PageCommand])
 
 
 
@@ -23,8 +24,6 @@ class PageUpload(PluginPageBase):
 
 
 class PageCrypt(PluginPageBase):
-    
-
     def __init__(self, P, parent):
         super(PageCrypt, self).__init__(P, parent, name='crypt')
 
@@ -33,3 +32,8 @@ class PageCrypt(PluginPageBase):
             f'{self.parent.name}_{self.name}_user_key': '',
             f'{self.parent.name}_{self.name}_user_key': '',
         } 
+
+class PagePython(PluginPageBase):
+    def __init__(self, P, parent):
+        super(PagePython, self).__init__(P, parent, name='python')
+

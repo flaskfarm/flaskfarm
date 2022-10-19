@@ -140,6 +140,65 @@
   {{ setting_bottom(desc) }}
 {% endmacro %}
 
+{% macro setting_input_textarea_wide(id, left, value='', col='12', row='3', desc='', disabled=False, padding='10') %}
+  <div class='row' style="padding-top: {{padding}}px; padding-bottom:{{padding}}px; align-items: center;">
+    <div class='col-sm-12'>
+      {% if left != '' %}
+        <div class="input-group col-sm-{{col}}">
+          <strong>{{ left }}</strong>
+        </div>
+      {% endif %}
+      <div class="input-group col-sm-{{col}}">
+        <textarea id="{{id}}" name="{{id}}" class="col-md-12" rows="{{row}}" 
+          {% if disabled %}
+            disabled
+          {% endif %}
+        >{{ value }}</textarea>
+      </div>  
+      {% if desc is not none %}
+        <div style="padding-left:20px; padding-top:{{padding_top}}}px;">
+        <em>
+        {% if desc is string %}
+          {{ desc }}      
+        {% elif desc is iterable %}
+          {% for d in desc %}
+          {{ d }}<br>
+          {% endfor %}
+        {% endif %}
+        </em>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+
+{% macro setting_input_textarea_and_buttons(id, left, buttons, value='', col='9', row='3', desc='', disabled=False) %}
+  {{ setting_top(left) }}
+  <div class="input-group col-sm-{{col}}">
+    <textarea id="{{id}}" name="{{id}}" class="col-md-12" rows="{{row}}" 
+      {% if disabled %}
+        disabled
+      {% endif %}
+    >{{ value }}</textarea>
+    <div class="btn-group btn-group-sm flex-wrap mr-2" role="group" style="padding-left:5px; padding-top:0px">
+      {% for b in buttons %}
+        <button id="{{b[0]}}" class="btn btn-sm btn-outline-primary" 
+        {% if b|length > 2 %}
+          {% for d in b[2] %}
+            data-{{d[0]}}="{{d[1]}}""
+          {% endfor %}
+        {% endif %}
+        >{{b[1]}}</button>
+      {% endfor %}
+    </div>
+  </div>
+  {{ setting_bottom(desc) }}
+{% endmacro %}
+<!-- TEXTAREA -->
+
+
+
 <!-- 라디오버튼 -->
 {% macro setting_radio_with_value(id, title, radios, value=None, desc=None, disabled=False) %}
   {{ setting_top(title) }}
@@ -635,61 +694,7 @@ macros.setting_button_with_info([['toggle_btn', 'Toggle', [{'key':'category', 'v
 
 
 
-{% macro setting_input_textarea_wide(id, left, value='', col='12', row='3', desc='', disabled=False, padding='10') %}
-  <div class='row' style="padding-top: {{padding}}px; padding-bottom:{{padding}}px; align-items: center;">
-    <div class='col-sm-12'>
-      {% if left != '' %}
-        <div class="input-group col-sm-{{col}}">
-          <strong>{{ left }}</strong>
-        </div>
-      {% endif %}
-      <div class="input-group col-sm-{{col}}">
-        <textarea id="{{id}}" name="{{id}}" class="col-md-12" rows="{{row}}" 
-          {% if disabled %}
-            disabled
-          {% endif %}
-        >{{ value }}</textarea>
-      </div>  
-      {% if desc is not none %}
-        <div style="padding-left:20px; padding-top:{{padding_top}}}px;">
-        <em>
-        {% if desc is string %}
-          {{ desc }}      
-        {% elif desc is iterable %}
-          {% for d in desc %}
-          {{ d }}<br>
-          {% endfor %}
-        {% endif %}
-        </em>
-        </div>
-      {% endif %}
-    </div>
-  </div>
-{% endmacro %}
 
-
-{% macro setting_input_textarea_and_buttons(id, left, buttons, value='', col='9', row='3', desc='', disabled=False) %}
-  {{ setting_top(left) }}
-  <div class="input-group col-sm-{{col}}">
-    <textarea id="{{id}}" name="{{id}}" class="col-md-12" rows="{{row}}" 
-      {% if disabled %}
-        disabled
-      {% endif %}
-    >{{ value }}</textarea>
-    <div class="btn-group btn-group-sm flex-wrap mr-2" role="group" style="padding-left:5px; padding-top:0px">
-      {% for b in buttons %}
-        <button id="{{b[0]}}" class="btn btn-sm btn-outline-primary" 
-        {% if b|length > 2 %}
-          {% for d in b[2] %}
-            data-{{d[0]}}="{{d[1]}}""
-          {% endfor %}
-        {% endif %}
-        >{{b[1]}}</button>
-      {% endfor %}
-    </div>
-  </div>
-  {{ setting_bottom(desc) }}
-{% endmacro %}
 
 
 

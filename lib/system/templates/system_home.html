@@ -159,13 +159,13 @@ function make_scheduler_list(data) {
     TD_STR = '<td scope="col" style="width:10%; text-align:center;">';
     for(var i in data) {
       if (data[i].is_running) {
-        str += '<tr class="bg-light">';
+        str += '<tr class="bg-dark text-white">';
       } else {
         str += '<tr>';
       }
       str += '<td scope="col" style="width:5%; text-align:center;">' + (parseInt(i)+1) + '</td>';
       str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].plugin) + '<br>' + (data[i].id) + '</td>';
-      str += '<td scope="col" style="width:10%; text-align:center;">' + ((data[i].is_running) ?'실행중':'대기중') + '</td>';
+      str += '<td scope="col" style="width:10%; text-align:center;">' + ((data[i].is_running) ? '실행중':'대기중') + '</td>';
       str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].next_run_time) + '</td>';
       str += '<td scope="col" style="width:10%; text-align:center;">' + (data[i].remain_time) + '</td>';
 
@@ -180,54 +180,6 @@ function make_scheduler_list(data) {
 
   $("#scheduler_list_div").html(str);
   return; 
-
-
-  str = m_row_start(p='0');
-  str += m_col(1, '<strong>NO</strong>');
-  str += m_col(2, '<strong>플러그인 & ID</strong>');
-  //str += m_col(2, '<strong>생성 & 다음 실행</strong>');
-  str += m_col(2, '<strong>다음 실행 (남은시간)</strong>');
-  str += m_col(1, '<strong>이전소요/횟수</strong>');
-  str += m_col(2, '<strong>Interval & Cron</strong>');
-  str += m_col(1, '<strong>상태</strong>');
-  str += m_col(3, '<strong>설 명</strong>');
-  str += m_row_end();
-  str += m_hr();
-
-  for(var i in data) {
-    if (data[i].is_running) {
-      str += m_row_start_color2(0);
-    } else {
-      str += m_row_start(p='0');
-    }
-    
-    str += m_col(1, data[i].no);
-    tmp = '<strong>'+data[i].plugin+'</strong><br>' + data[i].id;
-    str += m_col(2, tmp);
-
-    //tmp = ''+''+'' + data[i].make_time + '<br>';
-    //tmp += ''+''+'' + data[i].next_run_time + '<br>';
-    tmp = ''+''+'' + data[i].next_run_time + '<br>';
-    if (data[i].remain_time != '') {
-      tmp += '('+data[i].remain_time+')';
-    }
-    str += m_col(2, tmp);
-    tmp = ''+''+'' + data[i].running_timedelta + '초 / ';
-    tmp += ''+''+'' + data[i].count + '회';
-    str += m_col(1, tmp);
-    
-    tmp = ''+''+'' + data[i].interval + ' <br>';
-    str += m_col(2, tmp);
-    tmp = ''+''+'' + ((data[i].is_running) ?'실행중':'대기중') + '';
-    if (data[i].run == false) {
-      tmp += '(F)'
-    }
-    str += m_col(1, tmp);
-    str += m_col(3, data[i].description);
-    str += m_row_end();
-    str += m_hr();
-  }
-  document.getElementById("scheduler_list_div").innerHTML = str;
 }
 
 
