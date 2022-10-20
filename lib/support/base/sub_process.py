@@ -19,6 +19,19 @@ def demote(user_uid, user_gid):
 
 class SupportSubprocess(object):
 
+    @classmethod 
+    def command_for_windows(cls, command: list) -> str or list: 
+        if platform.system() == 'Windows':
+            tmp = []
+            if type(command) == type([]):
+                for x in command:
+                    if x.find(' ') == -1:
+                        tmp.append(x)
+                    else:
+                        tmp.append(f'"{x}"')
+                command = ' '.join(tmp)
+        return command
+
     # 2021-10-25
     # timeout 적용
     @classmethod
@@ -26,15 +39,7 @@ class SupportSubprocess(object):
 
         try:
             logger.debug(f"execute_command_return : {' '.join(command)}")
-            if platform.system() == 'Windows':
-                tmp = []
-                if type(command) == type([]):
-                    for x in command:
-                        if x.find(' ') == -1:
-                            tmp.append(x)
-                        else:
-                            tmp.append(f'"{x}"')
-                    command = ' '.join(tmp)
+            command = cls.command_for_windows(command)
 
             iter_arg =  ''
             if platform.system() == 'Windows':
@@ -119,16 +124,7 @@ class SupportSubprocess(object):
 
     def __execute_thread_function(self):
         try:
-            if platform.system() == 'Windows':
-                tmp = []
-                if type(self.command) == type([]):
-                    for x in self.command:
-                        if x.find(' ') == -1:
-                            tmp.append(x)
-                        else:
-                            tmp.append(f'"{x}"')
-                    self.command = ' '.join(tmp)
-
+            self.command = self.command_for_windows(self.command)
             logger.debug(f"{self.command=}")
             if platform.system() == 'Windows':
                 self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
@@ -141,7 +137,11 @@ class SupportSubprocess(object):
             self.__start_communicate()
             self.__start_send_callback()
             if self.process is not None:
-                self.process.wait()
+                if self.timeout != None:
+                    self.process.wait(timeout=self.timeout)
+                    self.process_close()
+                else:
+                    self.process.wait()
             logger.info(f"{self.command} END")
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')

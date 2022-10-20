@@ -19,6 +19,7 @@ class PluginBase(object):
     logic = None
     module_list = None
     home_module = None
+    vars = []
 
     def __init__(self, setting):
         try:

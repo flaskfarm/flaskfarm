@@ -38,20 +38,6 @@ class Util(object):
             F.logger.debug('Exception:%s', exception)
             F.logger.debug(traceback.format_exc())
     
-    
-
-    @staticmethod
-    def save_from_dict_to_json(d, filename):
-        from tool_base import ToolUtil
-        ToolUtil.save_dict(d, filename)
-
-
-    
-    @staticmethod
-    def change_text_for_use_filename(text):
-        from tool_base import ToolBaseFile
-        return ToolBaseFile.text_for_filename(text)
-
 
     # 토렌트 인포에서 최대 크기 파일과 폴더명을 리턴한다
     @staticmethod

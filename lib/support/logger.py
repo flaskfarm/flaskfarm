@@ -72,9 +72,7 @@ def get_logger(name=None, log_path=None):
         file_max_bytes = 1 * 1024 * 1024 
         if log_path == None:
             log_path = os.path.join(os.getcwd(), 'tmp')
-            #os.makedirs(log_path, exist_ok=True)
-        else:
-            os.makedirs(log_path, exist_ok=True)
+        os.makedirs(log_path, exist_ok=True)
         fileHandler = logging.handlers.RotatingFileHandler(filename=os.path.join(log_path, f'{name}.log'), maxBytes=file_max_bytes, backupCount=5, encoding='utf8', delay=True)
         streamHandler = logging.StreamHandler() 
 

@@ -20,22 +20,7 @@
       </div>
     </div>
   </div>
-  <div class="modal fade" id="normal_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="normal_modal_title"></h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="modal-body" id="normal_modal_body" style="word-break:break-all;">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-          <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-        </div>
-      </div>
-    </div>
-  </div>
+  
   <div id="confirm_modal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -91,27 +76,6 @@
       </div>
     </div>
   </div>
-
-  
-  <!-- 예고편 Player Modal: START -->
-  <div class="modal fade" id="video_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="video_modal_title" style="word-break:break-all;">예고편 재생: </h4>
-        </div>
-        <div class="modal-body" id="modal_body" style="word-break:break-all;">
-          <span id="video_player_body"></span>
-        </div>
-        <!--</div>-->
-        <div class="modal-footer">
-          <button type="button" id='video_close_btn' class="btn btn-default" data-dismiss="modal">닫기</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- 예고편 Player Modal: END -->
-
 
   <!--command modal-->
   {{ macros.m_modal_start('command_modal', '', 'modal-lg') }}

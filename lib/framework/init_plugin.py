@@ -388,3 +388,11 @@ class PluginManager:
         except Exception as exception: 
             F.logger.error('Exception:%s', exception)
             F.logger.error(traceback.format_exc())
+
+
+    @classmethod
+    def get_plugin_instance(cls, package_name):
+        try:
+            return cls.all_package_list[package_name]['P']
+        except:
+            pass

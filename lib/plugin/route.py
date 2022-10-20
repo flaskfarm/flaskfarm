@@ -55,8 +55,8 @@ def default_route(P):
         try:
             plugin_root = os.path.dirname(P.blueprint.template_folder)
             filepath = os.path.join(plugin_root,  *path.split('/'))
-            from tool_base import ToolBaseFile
-            data = ToolBaseFile.read(filepath)
+            from support import SupportFile
+            data = SupportFile.read_file(filepath)
             return render_template('manual.html', data=data)
         except Exception as exception:
             P.logger.error('Exception:%s', exception)
@@ -321,16 +321,18 @@ def default_route_single_module(P):
 
 
 
-
-def default_route_socketio_module(module):
+# 웹은 페이지
+# 파이썬은 모듈 단위일 떄 attach 사용
+#   var socket11 = io.connect(window.location.href);
+def default_route_socketio_module(module, attach=''):
     P = module.P
     if module.socketio_list is None:
         module.socketio_list = []
 
-    @F.socketio.on('connect', namespace=f'/{P.package_name}/{module.name}')
+    @F.socketio.on('connect', namespace=f'/{P.package_name}/{module.name}{attach}')
     def connect():
         try:
-            P.logger.debug(f'socket_connect : {P.package_name} - {module.name}')
+            P.logger.debug(f'socket_connect : {P.package_name} - {module.name}{attach}')
             module.socketio_list.append(request.sid)
             socketio_callback('start', '')
             module.socketio_connect()
@@ -339,10 +341,10 @@ def default_route_socketio_module(module):
             P.logger.error(traceback.format_exc())
 
 
-    @F.socketio.on('disconnect', namespace='/{package_name}/{sub}'.format(package_name=P.package_name, sub=module.name))
+    @F.socketio.on('disconnect', namespace=f'/{P.package_name}/{module.name}{attach}')
     def disconnect():
         try:
-            P.logger.debug('socket_disconnect : %s - %s', P.package_name, module.name)
+            P.logger.debug(f'socket_disconnect : {P.package_name} - {module.name}{attach}')
             module.socketio_list.remove(request.sid)
             module.socketio_disconnect()
         except Exception as exception: 
@@ -355,7 +357,7 @@ def default_route_socketio_module(module):
             if encoding:
                 data = json.dumps(data, cls=AlchemyEncoder)
                 data = json.loads(data)
-            F.socketio.emit(cmd, data, namespace='/{package_name}/{sub}'.format(package_name=P.package_name, sub=module.name), broadcast=True)
+            F.socketio.emit(cmd, data, namespace=f'/{P.package_name}/{module.name}{attach}', broadcast=True)
 
     module.socketio_callback = socketio_callback
 

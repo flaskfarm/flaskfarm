@@ -1,14 +1,16 @@
-import os, sys, traceback
+import os
+import sys
+import traceback
+
 try:
     import oauth2client
 except:
     os.system('pip install oauth2client')
     import oauth2client
 
-
-from oauth2client.file import Storage
 from oauth2client import tools
 from oauth2client.client import flow_from_clientsecrets
+from oauth2client.file import Storage
 
 try:
     from apiclient.discovery import build
@@ -17,14 +19,18 @@ except:
     from apiclient.discovery import build
 
 try:
-    import gspread, time
-    from gspread_formatting  import cellFormat, textFormat, color, format_cell_range
+    import time
+
+    import gspread
+    from gspread_formatting import (cellFormat, color, format_cell_range,
+                                    textFormat)
 except:
     os.system('pip3 install gspread')
     os.system('pip3 install gspread_formatting')
     import gspread, time
     from gspread_formatting  import cellFormat, textFormat, color, format_cell_range
-from support.base import get_logger, d
+
+from support import d, get_logger
 
 logger = get_logger()
 

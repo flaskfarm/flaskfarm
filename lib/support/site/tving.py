@@ -1,4 +1,15 @@
-import os, sys, traceback, time, urllib.parse, requests, json, base64, re, platform
+import base64
+import json
+import os
+import platform
+import re
+import sys
+import time
+import traceback
+import urllib.parse
+
+import requests
+
 if __name__ == '__main__':
     if platform.system() == 'Windows':
         sys.path += ["C:\SJVA3\lib2", "C:\SJVA3\data\custom", "C:\SJVA3_DEV"]
@@ -6,7 +17,6 @@ if __name__ == '__main__':
         sys.path += ["/root/SJVA3/lib2", "/root/SJVA3/data/custom"]
 
 from support import d, logger
-
 
 apikey = '1e7952d0917d6aab1f0293a063697610'
 #apikey = '95a64ebcd8e154aeb96928bf34848826'
@@ -352,7 +362,7 @@ class SupportTving:
                 ret = f"{title}.{qualityRes}-ST.mp4"
             #if episode_data['drm']:
             #    ret = ret.replace('.mp4', '.mkv')
-            from support.base import SupportFile
+            from support import SupportFile
             return SupportFile.text_for_filename(ret)
         except Exception as e:
             logger.error(f"Exception:{str(e)}")
@@ -411,6 +421,7 @@ class SupportTving:
 
 if __name__ == '__main__':
     import argparse
+
     #from support.base import d, get_logger
     from lib_wvtool import WVDownloader
 
