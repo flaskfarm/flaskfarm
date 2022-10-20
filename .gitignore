@@ -143,5 +143,5 @@ false
 *copy.py
 *.sh
 data/
-lib/support/site/1tving.py
+lib/support/site/tving.py
 lib/support/site/wavve.py
