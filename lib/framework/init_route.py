@@ -118,10 +118,12 @@ def videojs():
 
 
 
-
-
-
-
+@F.app.route("/headers", methods=['GET', 'POST'])
+def headers():
+    from support import d
+    F.logger.info(d(request.headers))
+    return jsonify(d(request.headers))
+    
 
 # 3.10에서 이거 필수
 @F.socketio.on('connect', namespace=f'/framework')

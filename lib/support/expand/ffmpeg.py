@@ -5,10 +5,11 @@ import re
 import shutil
 import subprocess
 import threading
+import time
 import traceback
 from datetime import datetime
 
-from support import SupportSubprocess, SupportUtil, logger
+from support import SupportFile, SupportSubprocess, SupportUtil, logger
 
 
 class SupportFfmpeg(object):
@@ -92,6 +93,7 @@ class SupportFfmpeg(object):
         try:
             self.status = SupportFfmpeg.Status.USER_STOP
             self.kill()
+            logger.warning('stop')
         except Exception as e:
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
@@ -111,22 +113,29 @@ class SupportFfmpeg(object):
 
     def thread_fuction(self):
         try:
+            header_count = 0
             if self.proxy is None:
                 if self.headers is None:
                     command = [self.__ffmpeg_path, '-y', '-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
                 else:
                     headers_command = []
+                    tmp = ""
                     for key, value in self.headers.items():
                         if key.lower() == 'user-agent':
                             headers_command.append('-user_agent')
-                            headers_command.append(value)
+                            headers_command.append(f"{value}")
                             pass
                         else:
-                            headers_command.append('-headers')
+                            #headers_command.append('-headers')
                             if platform.system() == 'Windows':
-                                headers_command.append('\'%s:%s\''%(key,value))
+                                tmp += f'{key}:{value}\r\n'
+                                header_count += 1
                             else:
-                                headers_command.append(f'{key}:{value}')
+                                #tmp.append(f'{key}:{value}')
+                                tmp += f'{key}:{value}\r\n'
+                    if len(tmp) > 0:
+                        headers_command.append('-headers')
+                        headers_command.append(f'{tmp}')
                     command = [self.__ffmpeg_path, '-y'] + headers_command + ['-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
             else:
                 command = [self.__ffmpeg_path, '-y', '-http_proxy', self.proxy, '-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
@@ -140,8 +149,9 @@ class SupportFfmpeg(object):
             else:
                 command.append(self.temp_fullpath)
             
+
             try:
-                logger.debug(' '.join(command))
+                #logger.debug(' '.join(command))
                 if os.path.exists(self.temp_fullpath):
                     for f in SupportFfmpeg.__instance_list:
                         if f.__idx != self.__idx and f.temp_fullpath == self.temp_fullpath and f.status in [SupportFfmpeg.Status.DOWNLOADING, SupportFfmpeg.Status.READY]:
@@ -149,8 +159,24 @@ class SupportFfmpeg(object):
                             return
             except:
                 pass
-            logger.error(' '.join(command))
+            #logger.error(' '.join(command))
             command = SupportSubprocess.command_for_windows(command)
+
+            if platform.system() == 'Windows' and header_count > 1:
+                if os.environ.get('FF'):
+                    from framework import F
+                    batfilepath = os.path.join(F.config['path_data'], 'tmp', f"{time.time()}.bat")
+                else:
+                    batfilepath = f"{time.time()}.bat"
+                tmp = command.replace('\r\n', '!CRLF!')
+                text = f"""setlocal enabledelayedexpansion
+SET CRLF=^
+
+
+{tmp}"""
+                SupportFile.write_file(batfilepath, text)
+                command = batfilepath
+            
             self.process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, encoding='utf8')
 
             self.status = SupportFfmpeg.Status.READY
@@ -320,7 +346,7 @@ class SupportFfmpeg(object):
     def send_to_listener(self, **arg):
         if self.total_callback_function != None:
             self.total_callback_function(**arg)
-        if self.callback_function is not None:
+        if self.callback_function is not None and self.callback_function != self.total_callback_function:
             arg['callback_id'] = self.callback_id
             self.callback_function(**arg)          
 

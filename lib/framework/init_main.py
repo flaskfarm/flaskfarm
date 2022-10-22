@@ -113,8 +113,14 @@ class Framework:
         if os.path.exists(_):
             plugins = os.listdir(_)
         
-        if self.config['path_dev'] != None and os.path.exists(self.config['path_dev']):
-            plugins += os.listdir(self.config['path_dev'])
+        if self.config['path_dev'] != None:
+            if type(self.config['path_dev']) == type(''):
+                plugin_path_list = [self.config['path_dev']]
+            elif type(self.config['path_dev']) == type([]):
+                plugin_path_list = self.config['path_dev']
+            for __ in plugin_path_list:
+                if os.path.exists(__):
+                    plugins += os.listdir(__)
         
         for package_name in plugins:
             db_path = os.path.join(self.config['path_data'], 'db', f'{package_name}.db')

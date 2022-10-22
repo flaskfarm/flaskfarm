@@ -64,7 +64,7 @@ class PluginBase(object):
                 self.module_list.append(mod_ins)
             
         except Exception as e:
-            F.logger.error(f'Exception:{str(e)}')
+            F.logger.error(f'[{self.package_name}] Exception:{str(e)}')
             F.logger.error(traceback.format_exc())
 
             

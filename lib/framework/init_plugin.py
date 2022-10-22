@@ -46,16 +46,23 @@ class PluginManager:
         try:
             #plugin_path = F.SystemModelSetting.get('plugin_dev_path')
             plugin_path = F.config['path_dev']
-            if plugin_path != None and plugin_path != '':
-                if os.path.exists(plugin_path):
-                    sys.path.insert(0, plugin_path)
-                    tmps = os.listdir(plugin_path)
-                    add_plugin_list = []
-                    for t in tmps:
-                        if not t.startswith('_')  and os.path.isdir(os.path.join(plugin_path, t)):
-                            add_plugin_list.append(t)
-                            cls.all_package_list[t] = {'pos':'dev', 'path':os.path.join(plugin_path, t), 'loading':True}
-                    plugins = plugins + add_plugin_list
+            
+            if type(plugin_path) == type(''):
+                plugin_path_list = [plugin_path]
+            elif type(plugin_path) == type([]):
+                plugin_path_list = plugin_path
+
+            for __ in plugin_path_list:
+                if __ != None and __ != '':
+                    if os.path.exists(__):
+                        sys.path.insert(0, __)
+                        tmps = os.listdir(__)
+                        add_plugin_list = []
+                        for t in tmps:
+                            if not t.startswith('_')  and os.path.isdir(os.path.join(__, t)):
+                                add_plugin_list.append(t)
+                                cls.all_package_list[t] = {'pos':'dev', 'path':os.path.join(__, t), 'loading':True}
+                        plugins = plugins + add_plugin_list
         except Exception as exception:
             F.logger.error('Exception:%s', exception)
             F.logger.error(traceback.format_exc())
