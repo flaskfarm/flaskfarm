@@ -15,10 +15,6 @@
 
 
 
-
-
-
-
 {% macro m_row_start(padding='10', align='center') %}
   <div class="row" style="padding:{{ padding}}px; align-items:{{align}};">
 {% endmacro %}
@@ -375,7 +371,7 @@ option을 script로 넣을 때 사용
 
 
 <!-- 삭제해야함 --------------------------------------------------------->
-
+<!--
 {% macro setting_radio(id, title, radios, value=None, desc=None, disabled=False) %}
   {{ setting_top(title) }}
     <div class="input-group col-sm-9">
@@ -392,8 +388,10 @@ option을 script로 넣을 때 사용
     </div>
   {{ setting_bottom(desc) }}
 {% endmacro %}
+-->
 
 <!--  그룹화 하지 않음.. 삭제-->
+<!--
 {% macro setting_button(buttons, left='', desc='') %}
   {{ setting_top(left) }}
     <div class="input-group col-sm-9">
@@ -407,7 +405,7 @@ option을 script로 넣을 때 사용
     </div> 
   {{ setting_bottom(desc) }}
 {% endmacro %}
-
+-->
 <!----------------------------------------------------------------->
 
 
