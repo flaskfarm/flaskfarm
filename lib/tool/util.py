@@ -16,3 +16,8 @@ class ToolUtil(object):
             url += f"apikey={F.SystemModelSetting.get('apikey')}"
         return url
     
+    @classmethod
+    def make_path(cls, data):
+        from framework import F
+        return data.replace('{PATH_DATA}', F.config['path_data'])
+        

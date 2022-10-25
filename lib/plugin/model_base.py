@@ -2,12 +2,12 @@ import traceback
 from datetime import datetime, timedelta
 
 from framework import F
+from sqlalchemy import desc, or_
 
 
 class ModelBase(F.db.Model):
     __abstract__ = True
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
-    model_setting = None
     P = None
 
     def __repr__(self):
@@ -96,16 +96,12 @@ class ModelBase(F.db.Model):
                     F.db.session.query(cls).delete()
                     F.db.session.commit()
                 else:
-                    now = datetime.datetime.now()
-                    ago = now - datetime.timedelta(days=days)
-
+                    now = datetime.now()
+                    ago = now - timedelta(days=int(days))
+                    #ago.hour = 0
+                    #ago.minute = 0
                     ret = F.db.session.query(cls).filter(cls.created_time > ago).delete()
                     cls.P.debug(ret)
-
-
-
-
-
                 return True
         except Exception as e:
             cls.P.logger.error(f'Exception:{str(e)}')
@@ -131,7 +127,7 @@ class ModelBase(F.db.Model):
             query = cls.make_query(req, order=order, search=search, option1=option1, option2=option2)
             count = query.count()
             query = query.limit(page_size).offset((page-1)*page_size)
-            F.logger.debug('cls count:%s', count)
+            #F.logger.debug('cls count:%s', count)
             lists = query.all()
             ret['list'] = [item.as_dict() for item in lists]
             ret['paging'] = cls.get_paging_info(count, page, page_size)
@@ -155,3 +151,23 @@ class ModelBase(F.db.Model):
             query = F.db.session.query(cls)
             return query 
         
+    
+    @classmethod
+    def make_query_search(cls, query, search, field):
+        if search is not None and search != '':
+            if search.find('|') != -1:
+                tmp = search.split('|')
+                conditions = []
+                for tt in tmp:
+                    if tt != '':
+                        conditions.append(field.like('%'+tt.strip()+'%') )
+                query = query.filter(or_(*conditions))
+            elif search.find(',') != -1:
+                tmp = search.split(',')
+                for tt in tmp:
+                    if tt != '':
+                        query = query.filter(field.like('%'+tt.strip()+'%'))
+            else:
+                query = query.filter(field.like('%'+search+'%'))
+            #query = query1.union(query2)
+        return query

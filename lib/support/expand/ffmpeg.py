@@ -93,7 +93,7 @@ class SupportFfmpeg(object):
         try:
             self.status = SupportFfmpeg.Status.USER_STOP
             self.kill()
-            logger.warning('stop')
+            #logger.warning('stop')
         except Exception as e:
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
@@ -192,6 +192,9 @@ SET CRLF=^
                 self.kill()
             else:
                 process_ret = self.process.wait(timeout=60*self.timeout_minute)
+                # 2022-10-25
+                time.sleep(3)
+                logger.info(f"{process_ret=}")
                 if process_ret is None: # timeout
                     if self.status != SupportFfmpeg.Status.COMPLETED and self.status != SupportFfmpeg.Status.USER_STOP and self.status != SupportFfmpeg.Status.PF_STOP:
                         self.status = SupportFfmpeg.Status.TIME_OVER
@@ -361,6 +364,19 @@ SET CRLF=^
         except Exception as e:
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
+    
+
+    @classmethod
+    def stop_by_callback_id(cls, callback_id):
+        try:
+            for __instance in SupportFfmpeg.__instance_list:
+                if __instance.callback_id == callback_id:
+                    __instance.stop()
+                    break
+        except Exception as e:
+            logger.error(f'Exception:{str(e)}')
+            logger.error(traceback.format_exc())
+
 
     @classmethod
     def get_instance_by_idx(cls, idx):
