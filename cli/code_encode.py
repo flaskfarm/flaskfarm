@@ -38,6 +38,8 @@ class CodeEncode:
                 self.start_folder(args.source)
             elif os.path.isfile(args.source):
                 self.encode_file(args.source)
+        else:
+            logger.error("wrong source path!!")
 
 
 if __name__== "__main__":
