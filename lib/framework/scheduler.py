@@ -167,6 +167,11 @@ class Scheduler(object):
                 entity['is_running'] = job.is_running
                 entity['description'] = job.description
                 entity['running_timedelta'] = job.running_timedelta.seconds if job.running_timedelta is not None else '-'
+                if entity['running_timedelta'] != '-':
+                    tmp = entity['running_timedelta']
+                    _min = entity['running_timedelta'] / 60
+                    _sec = entity['running_timedelta'] % 60
+                    entity['running_timedelta'] = "%2d분 %2d초" % (_min, _sec)
                 entity['make_time'] = job.make_time.strftime('%m-%d %H:%M:%S')
                 entity['run'] = job.run
             else:
