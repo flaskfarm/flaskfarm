@@ -46,7 +46,7 @@ class PluginManager:
         try:
             #plugin_path = F.SystemModelSetting.get('plugin_dev_path')
             plugin_path = F.config['path_dev']
-            
+            plugin_path_list = []
             if type(plugin_path) == type(''):
                 plugin_path_list = [plugin_path]
             elif type(plugin_path) == type([]):
