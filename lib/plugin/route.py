@@ -92,42 +92,37 @@ def default_route(P):
                 for module in P.module_list:
                     module.setting_save_after(change_list)
                 return jsonify(ret)
-            elif sub == 'scheduler':
-                sub = request.form['sub']
-                go = request.form['scheduler']
-                P.logger.debug('scheduler :%s', go)
-                if go == 'true':
-                    P.logic.scheduler_start(sub)
-                else:
-                    P.logic.scheduler_stop(sub)
-                return jsonify(go)
-            elif sub == 'reset_db':
-                sub = request.form['sub']
-                ret = P.logic.reset_db(sub)
-                return jsonify(ret)
-            elif sub == 'one_execute':
-                sub = request.form['sub']
-                ret = P.logic.one_execute(sub)
-                return jsonify(ret)
-            elif sub == 'immediately_execute':
-                sub = request.form['sub']
-                ret = P.logic.immediately_execute(sub)
-                return jsonify(ret)
+            
         except Exception as exception: 
             P.logger.error('Exception:%s', exception)
             P.logger.error(traceback.format_exc())  
 
-    @P.blueprint.route('/ajax/<mod>/<cmd>', methods=['GET', 'POST'])
+    @P.blueprint.route('/ajax/<module_name>/<cmd>', methods=['GET', 'POST'])
     @login_required
-    def second_ajax(mod, cmd):
+    def second_ajax(module_name, cmd):
         try:
             for module in P.module_list:
-                if mod == module.name:
+                if module_name == module.name:
                     if cmd == 'command':
                         return module.process_command(request.form['command'], request.form.get('arg1'), request.form.get('arg2'), request.form.get('arg3'), request)
                     else:
                         return module.process_ajax(cmd, request)
-
+                elif cmd == 'scheduler':
+                    go = request.form['scheduler']
+                    if go == 'true':
+                        P.logic.scheduler_start(module_name)
+                    else:
+                        P.logic.scheduler_stop(module_name)
+                    return jsonify(go)
+                elif cmd == 'reset_db':
+                    ret = P.logic.reset_db(module_name)
+                    return jsonify(ret)
+                elif cmd == 'one_execute':
+                    ret = P.logic.one_execute(module_name)
+                    return jsonify(ret)
+                elif cmd == 'immediately_execute':
+                    ret = P.logic.immediately_execute(module_name)
+                    return jsonify(ret)
         except Exception as exception: 
             P.logger.error('Exception:%s', exception)
             P.logger.error(traceback.format_exc())

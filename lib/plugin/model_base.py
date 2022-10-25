@@ -1,5 +1,5 @@
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from framework import F
 
@@ -8,7 +8,7 @@ class ModelBase(F.db.Model):
     __abstract__ = True
     __table_args__ = {'mysql_collate': 'utf8_general_ci'}
     model_setting = None
-    logger = None
+    P = None
 
     def __repr__(self):
         return repr(self.as_dict())
@@ -24,8 +24,8 @@ class ModelBase(F.db.Model):
                 F.db.session.commit()
                 return self
         except Exception as e:
-            self.logger.error(f'Exception:{str(e)}')
-            self.logger.error(traceback.format_exc())
+            self.P.logger.error(f'Exception:{str(e)}')
+            self.P.logger.error(traceback.format_exc())
 
     @classmethod
     def get_paging_info(cls, count, current_page, page_size):
@@ -48,8 +48,8 @@ class ModelBase(F.db.Model):
             F.logger.debug('paging : c:%s %s %s %s %s %s', count, paging['total_page'], paging['prev_page'], paging['next_page'] , paging['start_page'], paging['last_page'])
             return paging
         except Exception as e:
-            F.logger.error(f'Exception:{str(e)}')
-            F.logger.error(traceback.format_exc())
+            cls.P.logger.error(f'Exception:{str(e)}')
+            cls.P.logger.error(traceback.format_exc())
 
     
     @classmethod
@@ -58,8 +58,8 @@ class ModelBase(F.db.Model):
             with F.app.app_context():
                 return F.db.session.query(cls).filter_by(id=int(id)).first()
         except Exception as e:
-            F.logger.error(f'Exception:{str(e)}')
-            F.logger.error(traceback.format_exc())
+            cls.P.logger.error(f'Exception:{str(e)}')
+            cls.P.logger.error(traceback.format_exc())
 
 
     @classmethod
@@ -71,8 +71,8 @@ class ModelBase(F.db.Model):
                     tmp = [x.as_dict() for x in tmp]
                 return tmp
         except Exception as e:
-            F.logger.error(f'Exception:{str(e)}')
-            F.logger.error(traceback.format_exc())
+            cls.P.logger.error(f'Exception:{str(e)}')
+            cls.P.logger.error(traceback.format_exc())
 
 
 
@@ -84,20 +84,32 @@ class ModelBase(F.db.Model):
                 F.db.session.commit()
                 return True
         except Exception as e:
-            F.logger.error(f'Exception:{str(e)}')
-            F.logger.error(traceback.format_exc())
+            cls.P.logger.error(f'Exception:{str(e)}')
+            cls.P.logger.error(traceback.format_exc())
         return False
 
     @classmethod
-    def delete_all(cls):
+    def delete_all(cls, days=None):
         try:
             with F.app.app_context():
-                F.db.session.query(cls).delete()
-                F.db.session.commit()
+                if days == None:
+                    F.db.session.query(cls).delete()
+                    F.db.session.commit()
+                else:
+                    now = datetime.datetime.now()
+                    ago = now - datetime.timedelta(days=days)
+
+                    ret = F.db.session.query(cls).filter(cls.created_time > ago).delete()
+                    cls.P.debug(ret)
+
+
+
+
+
                 return True
         except Exception as e:
-            F.logger.error(f'Exception:{str(e)}')
-            F.logger.error(traceback.format_exc())
+            cls.P.logger.error(f'Exception:{str(e)}')
+            cls.P.logger.error(traceback.format_exc())
         return False
     
 
@@ -111,12 +123,12 @@ class ModelBase(F.db.Model):
             if 'page' in req.form:
                 page = int(req.form['page'])
             if 'keyword' in req.form:
-                search = req.form['keyword']
+                search = req.form['keyword'].strip()
             option1 = req.form.get('option1', 'all')
             option2 = req.form.get('option2', 'all')
             order = req.form['order'] if 'order' in req.form else 'desc'
 
-            query = cls.make_query(order=order, search=search, option1=option1, option2=option2)
+            query = cls.make_query(req, order=order, search=search, option1=option1, option2=option2)
             count = query.count()
             query = query.limit(page_size).offset((page-1)*page_size)
             F.logger.debug('cls count:%s', count)
@@ -124,21 +136,21 @@ class ModelBase(F.db.Model):
             ret['list'] = [item.as_dict() for item in lists]
             ret['paging'] = cls.get_paging_info(count, page, page_size)
             try:
-                if cls.model_setting is not None and cls.__tablename__ is not None:
-                    cls.model_setting.set(f'{cls.__tablename__}_last_list_option', f'{order}|{page}|{search}|{option1}|{option2}')
+                if cls.P.ModelSetting is not None and cls.__tablename__ is not None:
+                    cls.P.ModelSetting.set(f'{cls.__tablename__}_last_list_option', f'{order}|{page}|{search}|{option1}|{option2}')
             except Exception as e:
                 F.logger.error('Exception:%s', e)
                 F.logger.error(traceback.format_exc())
                 F.logger.error(f'{cls.__tablename__}_last_list_option ERROR!' )
             return ret
         except Exception as e:
-            F.logger.error('Exception:%s', e)
-            F.logger.error(traceback.format_exc())
+            cls.P.logger.error('Exception:%s', e)
+            cls.P.logger.error(traceback.format_exc())
 
 
     # 오버라이딩
     @classmethod
-    def make_query(cls, order='desc', search='', option1='all', option2='all'):
+    def make_query(cls, req, order='desc', search='', option1='all', option2='all'):
         with F.app.app_context():
             query = F.db.session.query(cls)
             return query 

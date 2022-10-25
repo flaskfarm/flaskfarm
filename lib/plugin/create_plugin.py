@@ -44,7 +44,7 @@ class PluginBase(object):
             self.ModelSetting = None
             if setting.get('use_db', True):
                 db_path = os.path.join(F.config['path_data'], 'db', f'{self.package_name}.db')
-                F.app.config['SQLALCHEMY_BINDS'][self.package_name] = f"sqlite:///{db_path}"
+                F.app.config['SQLALCHEMY_BINDS'][self.package_name] = f"sqlite:///{db_path}?check_same_thread=False"
             if setting.get('use_default_setting', True):
                 self.ModelSetting = get_model_setting(self.package_name, self.logger)
             

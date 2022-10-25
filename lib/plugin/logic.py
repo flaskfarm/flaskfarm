@@ -84,47 +84,47 @@ class Logic(object):
             self.P.logger.error(traceback.format_exc())
 
 
-    def scheduler_start(self, sub):
+    def scheduler_start(self, module_name):
         try:
-            job_id = '%s_%s' % (self.P.package_name, sub)
-            module = self.get_module(sub)
-            job = Job(self.P.package_name, job_id, module.get_scheduler_interval(), self.scheduler_function, module.get_scheduler_desc(), args=sub)
+            job_id = '%s_%s' % (self.P.package_name, module_name)
+            module = self.get_module(module_name)
+            job = Job(self.P.package_name, job_id, module.get_scheduler_interval(), self.scheduler_function, module.get_scheduler_desc(), args=module_name)
             F.scheduler.add_job_instance(job)
         except Exception as e: 
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
     
-    def scheduler_stop(self, sub):
+    def scheduler_stop(self, module_name):
         try:
-            job_id = '%s_%s' % (self.P.package_name, sub)
+            job_id = '%s_%s' % (self.P.package_name, module_name)
             F.scheduler.remove_job(job_id)
         except Exception as e: 
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
 
-    def scheduler_function(self, sub):
+    def scheduler_function(self, module_name):
         try:
-            module = self.get_module(sub)
+            module = self.get_module(module_name)
             module.scheduler_function()
         except Exception as e: 
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
-    def reset_db(self,sub):
+    def reset_db(self, module_name):
         try:
-            module = self.get_module(sub)
+            module = self.get_module(module_name)
             return module.reset_db()
         except Exception as e: 
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
 
-    def one_execute(self, sub):
-        self.P.logger.debug('one_execute :%s', sub)
+    def one_execute(self, module_name):
+        self.P.logger.debug('one_execute :%s', module_name)
         try:
-            job_id = '%s_%s' % (self.P.package_name, sub)
+            job_id = '%s_%s' % (self.P.package_name, module_name)
             if F.scheduler.is_include(job_id):
                 if F.scheduler.is_running(job_id):
                     ret = 'is_running'
@@ -134,7 +134,7 @@ class Logic(object):
             else:
                 def func():
                     time.sleep(2)
-                    self.scheduler_function(sub)
+                    self.scheduler_function(module_name)
                 threading.Thread(target=func, args=()).start()
                 ret = 'thread'
         except Exception as e: 
@@ -143,12 +143,12 @@ class Logic(object):
             ret = 'fail'
         return ret
     
-    def immediately_execute(self, sub):
-        self.P.logger.debug('immediately_execute :%s', sub)
+    def immediately_execute(self, module_name):
+        self.P.logger.debug('immediately_execute :%s', module_name)
         try:
             def func():
                 time.sleep(1)
-                self.scheduler_function(sub)
+                self.scheduler_function(module_name)
             threading.Thread(target=func, args=()).start()
             ret = {'ret':'success', 'msg':'실행합니다.'}
         except Exception as e: 
@@ -174,6 +174,65 @@ class Logic(object):
         except Exception as e:
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     #######################################################
     # 플러그인 - 모듈 - 페이지  구조하에서 서브 관련 함수

@@ -104,8 +104,8 @@ class Framework:
         # https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/config/#flask_sqlalchemy.config.SQLALCHEMY_BINDS
         # 어떤 편법도 불가. db를 사용하지 않아도 파일이 생김.
         db_path = os.path.join(self.config['path_data'], 'db', 'system.db')
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}' # 3.0에서 필수
-        self.app.config['SQLALCHEMY_BINDS'] = {'system':f'sqlite:///{db_path}'}
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}?check_same_thread=False' # 3.0에서 필수
+        self.app.config['SQLALCHEMY_BINDS'] = {'system':f'sqlite:///{db_path}?check_same_thread=False'}
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
         _ = os.path.join(self.config['path_data'], 'plugins')
@@ -124,7 +124,7 @@ class Framework:
         
         for package_name in plugins:
             db_path = os.path.join(self.config['path_data'], 'db', f'{package_name}.db')
-            self.app.config['SQLALCHEMY_BINDS'][package_name] = f'sqlite:///{db_path}'
+            self.app.config['SQLALCHEMY_BINDS'][package_name] = f'sqlite:///{db_path}?check_same_thread=False'
         self.db = SQLAlchemy(self.app, session_options={"autoflush": False, "expire_on_commit": False})  
         #with self.app.app_context():
         #    self.db.session.expunge_all()

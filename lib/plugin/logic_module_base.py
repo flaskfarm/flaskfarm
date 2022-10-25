@@ -14,6 +14,16 @@ class PluginModuleBase(object):
         self.socketio_list = None
         self.page_list = None
     
+    def get_module(self, module_name):
+        try:
+            for module in self.P.module_list:
+                if module.name == module_name:
+                    return module
+        except Exception as e:
+            self.P.logger.error(f'Exception:{str(e)}')
+            self.P.logger.error(traceback.format_exc())
+
+
     # set_module_list 대응
     def set_page_list(self, page_list):
         try:
@@ -87,7 +97,7 @@ class PluginModuleBase(object):
     def get_first_menu(self):
         return self.first_menu
 
-    def get_scheduler_name(self):
+    def get_scheduler_id(self):
         return '%s_%s' % (self.P.package_name, self.name)
 
     def dump(self, data):

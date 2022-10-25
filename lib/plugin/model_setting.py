@@ -101,7 +101,7 @@ def get_model_setting(package_name, logger, table_name=None):
                 for key, value in req.form.items():
                     if key in ['scheduler', 'is_running']:
                         continue
-                    if key.startswith('global_') or key.startswith('tmp_') or key.startswith('_'):
+                    if key.startswith('global') or key.startswith('tmp_') or key.startswith('_'):
                         continue
                     #logger.debug('Key:%s Value:%s', key, value)
                     if ModelSetting.get(key) != value:

@@ -143,6 +143,7 @@ false
 *copy.py
 *.sh
 data/
+tmp/
 lib/support/site/tving.py
 lib/support/site/wavve.py
 
