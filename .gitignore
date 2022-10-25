@@ -146,6 +146,5 @@ data/
 tmp/
 lib/support/site/tving.py
 lib/support/site/wavve.py
+*.bat
 
-
-# python -m flaskfarm.cli.code_encode --source C:\work\FlaskFarm\flaskfarm\lib\support\site
