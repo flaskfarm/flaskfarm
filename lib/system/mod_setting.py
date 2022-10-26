@@ -181,6 +181,10 @@ class ModuleSetting(PluginModuleBase):
             enc = hashlib.md5()
             enc.update(SystemModelSetting.get('web_pw').encode())
             SystemModelSetting.set('web_pw', enc.hexdigest())
+        elif 'restart_interval' in change_list:
+            if SystemModelSetting.get('restart_interval') == '':
+                SystemModelSetting.set('restart_interval', '0')
+            self.__set_restart_scheduler()
 
 
     def __set_restart_scheduler(self):

@@ -146,5 +146,6 @@ data/
 tmp/
 lib/support/site/tving.py
 lib/support/site/wavve.py
+lib/support/site/seezn.py
 *.bat
 

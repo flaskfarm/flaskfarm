@@ -17,7 +17,7 @@ class ToolNotify(object):
             if F.SystemModelSetting.get_bool('notify_telegram_use'):
                 SupportTelegram.send_telegram_message(text, image_url=image_url, bot_token=F.SystemModelSetting.get('notify_telegram_token'), chat_id=F.SystemModelSetting.get('notify_telegram_chat_id'))
             if F.SystemModelSetting.get_bool('notify_discord_use'):
-                cls.send_discord_message(text, image_url=image_url, webhook_url=F.SystemModelSetting.get('notify_discord_webhook')) 
+                SupportDiscord.send_discord_message(text, image_url=image_url, webhook_url=F.SystemModelSetting.get('notify_discord_webhook')) 
 
 
     @classmethod

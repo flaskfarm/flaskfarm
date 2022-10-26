@@ -262,6 +262,7 @@ class Framework:
                 self.config['running_type'] = os.environ.get('RUNNING_TYPE')
             self.config['export_filepath'] = os.path.join(self.config['path_app'], 'export.sh')
             self.config['exist_export'] = os.path.exists(self.config['export_filepath'])
+            self.config['recent_version'] = '--'
             self.__process_args()
             self.__load_config()
             self.__init_define()
