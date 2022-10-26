@@ -31,6 +31,30 @@ class SupportFile(object):
             logger.error('Exception:%s', exception)
             logger.error(traceback.format_exc()) 
 
+    @classmethod
+    def read_json(cls, filepath):
+        try:
+            with open(filepath, "r", encoding='utf8') as json_file:
+                data = json.load(json_file)
+                return data
+        except Exception as exception: 
+            logger.error('Exception:%s', exception)
+            logger.error(traceback.format_exc()) 
+
+    @classmethod
+    def write_json(cls, filepath, data):
+        try:
+            if os.path.dirname(filepath) != '':
+                os.makedirs(os.path.dirname(filepath), exist_ok=True)
+            with open(filepath, "w", encoding='utf8') as json_file:
+                json.dump(data, json_file, indent=4, ensure_ascii=False)
+        except Exception as exception: 
+            logger.error('Exception:%s', exception)
+            logger.error(traceback.format_exc()) 
+
+    
+
+
 
     @classmethod
     def download_file(cls, url, filepath):
@@ -244,26 +268,7 @@ class SupportFile(object):
             return False
           
     
-    @classmethod
-    def write_json(cls, filepath, data):
-        try:
-            if os.path.dirname(filepath) != '':
-                os.makedirs(os.path.dirname(filepath), exist_ok=True)
-            with open(filepath, "w", encoding='utf8') as json_file:
-                json.dump(data, json_file, indent=4, ensure_ascii=False)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
-            logger.error(traceback.format_exc()) 
 
-    @classmethod
-    def read_json(cls, filepath):
-        try:
-            with open(filepath, "r", encoding='utf8') as json_file:
-                data = json.load(json_file)
-                return data
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
-            logger.error(traceback.format_exc()) 
     
 
     
