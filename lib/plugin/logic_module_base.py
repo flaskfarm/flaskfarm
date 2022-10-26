@@ -13,6 +13,7 @@ class PluginModuleBase(object):
         self.name = name
         self.socketio_list = None
         self.page_list = None
+        self.web_list_model = None
     
     def get_module(self, module_name):
         try:
@@ -143,6 +144,7 @@ class PluginPageBase(object):
         self.name = name
         self.scheduler_desc = scheduler_desc
         self.socketio_list = None
+        self.web_list_model = None
 
     def process_menu(self, req):
         try:

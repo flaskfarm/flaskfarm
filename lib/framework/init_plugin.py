@@ -76,8 +76,8 @@ class PluginManager:
                     if _ in plugin_loading_list:
                         new_plugins.append(_)
                     else:
-                        cls.all_package_list[t]['loading'] = False
-                        cls.all_package_list[t]['status'] = 'not_include_loading_list'
+                        cls.all_package_list[_]['loading'] = False
+                        cls.all_package_list[_]['status'] = 'not_include_loading_list'
                 plugins = new_plugins
         except Exception as exception:
             F.logger.error('Exception:%s', exception)
@@ -92,8 +92,8 @@ class PluginManager:
                     if _ not in plugin_except_list:
                         new_plugins.append(_)
                     else:
-                        cls.all_package_list[t]['loading'] = False
-                        cls.all_package_list[t]['status'] = 'include_except_list'
+                        cls.all_package_list[_]['loading'] = False
+                        cls.all_package_list[_]['status'] = 'include_except_list'
                 plugins = new_plugins
         except Exception as exception:
             F.logger.error('Exception:%s', exception)

@@ -102,12 +102,7 @@ def default_route(P):
     def second_ajax(module_name, cmd):
         try:
             for module in P.module_list:
-                if module_name == module.name:
-                    if cmd == 'command':
-                        return module.process_command(request.form['command'], request.form.get('arg1'), request.form.get('arg2'), request.form.get('arg3'), request)
-                    else:
-                        return module.process_ajax(cmd, request)
-                elif cmd == 'scheduler':
+                if cmd == 'scheduler':
                     go = request.form['scheduler']
                     if go == 'true':
                         P.logic.scheduler_start(module_name)
@@ -123,6 +118,16 @@ def default_route(P):
                 elif cmd == 'immediately_execute':
                     ret = P.logic.immediately_execute(module_name)
                     return jsonify(ret)
+                elif cmd == 'web_list':
+                    model = P.logic.get_module(module_name).web_list_model
+                    if model != None:
+                        return jsonify(model.web_list(request))
+                    
+                if module_name == module.name:
+                    if cmd == 'command':
+                        return module.process_command(request.form['command'], request.form.get('arg1'), request.form.get('arg2'), request.form.get('arg3'), request)
+                    else:
+                        return module.process_ajax(cmd, request)
         except Exception as exception: 
             P.logger.error('Exception:%s', exception)
             P.logger.error(traceback.format_exc())
