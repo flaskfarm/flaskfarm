@@ -102,3 +102,7 @@ background-color: #ffff0080 !important;
         margin-left:0.7rem; margin-right:0.7rem; margin-bottom: .5rem;
 }
 }	
+
+.dropdown-menu {
+    margin:-2px;
+}
