@@ -49,7 +49,8 @@ class PagePython(PluginPageBase):
             if result['status'] == 'finish':
                 ret['data'] = []
                 for tmp in result['log'].split('\n'):
-                    ret['data'].append(tmp.split('=='))
+                    if '==' in tmp:
+                        ret['data'].append(tmp.split('=='))
             else:
                 ret['ret'] = 'danger'
                 ret['msg'] = "실패"
