@@ -14,7 +14,6 @@ from flask_cors import CORS
 from flask_login import LoginManager, login_required
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
-from flaskext.markdown import Markdown
 from pytz import timezone, utc
 
 from .init_declare import CustomFormatter, check_api
@@ -82,7 +81,6 @@ class Framework:
             self.socketio = SocketIO(self.app, cors_allowed_origins="*", async_mode='threading')
         
         CORS(self.app)
-        Markdown(self.app)
 
         self.login_manager = LoginManager()
         self.login_manager.init_app(self.app)
@@ -270,7 +268,7 @@ class Framework:
             self.config['notify_yaml_filepath'] = os.path.join(self.config['path_data'], 'db', 'notify.yaml')
             if 'running_type' not in self.config:
                 self.config['running_type'] = 'native'
-
+            self.pip_install()
         elif mode == "flask":
             self.app.secret_key = os.urandom(24)
             self.app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -532,3 +530,11 @@ class Framework:
             self.logger.error(traceback.format_exc())
             self.config['recent_version'] =  '확인 실패'
         return False        
+
+
+    # dev 도커용. package는 setup에 포함.
+    def pip_install(self):
+        try:
+            import json_fix
+        except:
+            os.system('pip install json_fix')

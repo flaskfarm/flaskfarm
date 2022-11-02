@@ -3,7 +3,7 @@ Flask
 Flask-SQLAlchemy
 Flask-Login
 Flask-Cors
-Flask-Markdown
+#Flask-Markdown
 Flask-SocketIO
 python-engineio
 python-socketio
@@ -26,3 +26,4 @@ pillow
 gevent
 gevent-websocket
 pycryptodome
+json_fix
