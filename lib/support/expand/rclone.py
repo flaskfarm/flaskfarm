@@ -42,7 +42,7 @@ class SupportRclone(object):
                 rclone_path = cls.__rclone_path
             if rclone_config_path == None:
                 rclone_config_path = cls.__rclone_config_path
-            if os.path.exists(rclone_path) == False or os.path.exists(rclone_config_path) == False:
+            if os.path.exists(rclone_config_path) == False:
                 return
             command = [rclone_path, '--config', rclone_config_path, 'config', 'dump']
             if option is not None:
