@@ -74,7 +74,7 @@ class ToolModalCommand(object):
                     #if command[0] == 'hide':
                     #    show_command = False
                     #    command = command[1:]
-                    cls.__ss_process = SupportSubprocess(command, stdout_callback=cls.process_callback)
+                    cls.__ss_process = SupportSubprocess(command, stdout_callback=cls.process_callback, callback_line=False)
                     cls.__ss_process.start()
                     cls.__ss_process.process_close()
                     cls.__ss_process = None

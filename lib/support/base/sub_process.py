@@ -209,7 +209,7 @@ class SupportSubprocess(object):
         def func():
             while self.stdout_queue:
                 line = self.stdout_queue.get()
-                logger.error(line)
+                #logger.error(line)
                 if line == '<END>':
                     self.send_stdout_callback(self.call_id, 'END', None)
                     break
