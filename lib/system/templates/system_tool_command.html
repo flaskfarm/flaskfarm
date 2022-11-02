@@ -63,7 +63,7 @@ $("body").on('click', '#foreground_command_btn', function(e){
 
 $("body").on('click', '#job_new_btn', function(e){
   e.preventDefault();
-  globalSendCommandPage('job_new', $('#command').val(), null, null, null, function(ret){
+  globalSendCommandPage('job_new', $('#command').val(), null, null, function(ret){
     request_list();
   });
 });
@@ -79,7 +79,7 @@ $("body").on('click', '#select_file_btn', function(e){
 
 
 function request_list() {
-  globalSendCommandPage('job_list', null, null, null, null, function(ret){
+  globalSendCommandPage('job_list', null, null, null, function(ret){
     make_list(ret.data);
   });
 }
@@ -92,7 +92,7 @@ function make_list(data) {
     <th style="width:60%; text-align:center;">Command & arg & Desc</th> \
     <th style="width:5%; text-align:center;">자동</th> \
     <th colspan="2"  style="width:20%; text-align:center;">스케쥴 상태</th> \
-    <th style="width:10%; text-align:center;">스케쥴</th> \
+    <th style="width:10%; text-align:center;">스케쥴주기</th> \
     </tr></thead><tbody id="list">';
   
   if (data.length == 0) str += '<tr><td colspan="6"><h4>작업이 없습니다.</h4></td></tr>';
@@ -123,7 +123,7 @@ function make_list(data) {
       tmp1 = "시작시 한번 실행";
     } else if (data[i].schedule_mode == 'scheduler') { 
       tmp1 = "스케쥴링";
-      tmp2 = '<input id="use_checkbox|'+data[i].id+'" type="checkbox" data-id='+data[i].id+' data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="info" data-offstyle="danger" data-size="small" ' + ((data[i].scheduler_is_include) ? 'checked' : '') + '>';
+      tmp2 = '<input id="use_checkbox|'+data[i].id+'" type="checkbox" data-id='+data[i].id+' data-toggle="toggle" data-on="On" data-off="Off" data-onstyle="danger" data-offstyle="info" data-size="small" ' + ((data[i].scheduler_is_include) ? 'checked' : '') + '>';
       if (data[i].scheduler_is_include) {
         tmp2 += (data[i].scheduler_is_running) ? "<br>실행중" : "<br>대기중";
       }
@@ -152,7 +152,7 @@ function make_list(data) {
       btn += j_button('job_process_stop_btn', '실행중인 Process 중지', {'id':data[i].id}, 'danger', false, true);
     tmp += j_col('12', j_button_group(btn));
     tmp += j_row_end();
-    str += '<td colspan="1" scope="col" style="width:5%; text-align:center;">'+ tmp + '</td>';
+    str += '<td 0colspan="1" scope="col" style="width:5%; text-align:center;">'+ tmp + '</td>';
     str += '</tr>'
   }
   str += '</table>';
@@ -197,7 +197,7 @@ $("body").on('click', '#job_save_btn', function(e){
   }
 
   var formData = getFormdata('#item_setting');
-  globalSendCommandPage('job_save', formData, null, null, null, function(ret){
+  globalSendCommandPage('job_save', formData, null, null,  function(ret){
     if (ret.ret == 'success') {
       $('#job_modal').modal('hide');
       request_list();
@@ -216,7 +216,7 @@ $("body").on('click', '#job_remove_btn', function(e){
 });
 
 function remove_job(job_id) {
-  globalSendCommandPage('job_remove', job_id, null, null, null, function(ret){
+  globalSendCommandPage('job_remove', job_id, null, null,  function(ret){
     if (ret.ret == 'success') {
       $('#job_modal').modal('hide');
       request_list();
@@ -267,14 +267,14 @@ $("body").on('click', '#job_fore_execute_btn', function(e){
 
 $("body").on('click', '#job_back_execute_btn', function(e){
   e.preventDefault();
-  globalSendCommandPage('job_back_execute', $(this).data('id'), null, null, null, function(e) {
+  globalSendCommandPage('job_back_execute', $(this).data('id'), null, null, function(e) {
     request_list();
   });
 });
 
 $("body").on('click', '#job_log_btn', function(e){
   e.preventDefault();
-  globalSendCommandPage('job_log', $(this).data('id'), null, null, null, function(data){
+  globalSendCommandPage('job_log', $(this).data('id'), null, null, function(data){
     if (data.ret == 'success')  {
         redirect = '/system/all_log/list';
         $.redirectPost(redirect, {filename: data.filename});
@@ -293,14 +293,14 @@ $("body").on('click', '#job_cmd_input_btn', function(e){
 
 $("body").on('change', 'input[id^="use_checkbox|"]', function(e){
   e.preventDefault();
-  globalSendCommandPage('task_sched', $(this).data('id'), $(this).prop('checked'), null, null, function(e) {
+  globalSendCommandPage('task_sched', $(this).data('id'), $(this).prop('checked'), null, function(e) {
     request_list();
   });
 });
 
 $("body").on('click', '#job_process_stop_btn', function(e){
   e.preventDefault();
-  globalSendCommandPage('job_process_stop', $(this).data('id'), null, null, null, function(e) {
+  globalSendCommandPage('job_process_stop', $(this).data('id'), null, null, function(e) {
     request_list();
   });
 });

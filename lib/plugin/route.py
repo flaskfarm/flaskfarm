@@ -61,6 +61,20 @@ def default_route(P):
         except Exception as exception:
             P.logger.error('Exception:%s', exception)
             P.logger.error(traceback.format_exc())
+    
+    @P.blueprint.route('/<module_name>/manual/<path:path>', methods=['GET', 'POST'])
+    @login_required
+    def module_manual(module_name, path):
+        try:
+            plugin_root = os.path.dirname(P.blueprint.template_folder)
+            filepath = os.path.join(plugin_root,  *path.split('/'))
+            from support import SupportFile
+            data = SupportFile.read_file(filepath)
+            return render_template('manual.html', data=data)
+        except Exception as exception:
+            P.logger.error('Exception:%s', exception)
+            P.logger.error(traceback.format_exc())
+
 
     @P.blueprint.route('/<sub>/<sub2>', methods=['GET', 'POST'])
     @login_required
@@ -394,7 +408,7 @@ def default_route_socketio_page(page):
     @F.socketio.on('connect', namespace=f'/{P.package_name}/{module.name}/{page.name}')
     def page_socketio_connect():
         try:
-            P.logger.debug(f'socket_connect : {P.package_name}/{module.name}/{page.name}')
+            #P.logger.debug(f'socket_connect : {P.package_name}/{module.name}/{page.name}')
             page.socketio_list.append(request.sid)
             page_socketio_socketio_callback('start', '')
         except Exception as e: 
@@ -405,7 +419,7 @@ def default_route_socketio_page(page):
     @F.socketio.on('disconnect', namespace=f'/{P.package_name}/{module.name}/{page.name}')
     def page_socketio_disconnect():
         try:
-            P.logger.debug(f'socket_disconnect : {P.package_name}/{module.name}/{page.name}')
+            #P.logger.debug(f'socket_disconnect : {P.package_name}/{module.name}/{page.name}')
             page.socketio_list.remove(request.sid)
         except Exception as e: 
             P.logger.error(f'Exception:{str(e)}')

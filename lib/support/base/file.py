@@ -3,6 +3,7 @@ import json
 import os
 import re
 import traceback
+import zipfile
 
 from . import logger
 
@@ -87,11 +88,10 @@ class SupportFile(object):
         return text
 
 
-
-
-
-
-
+    @classmethod
+    def unzip(cls, zip_filepath, extract_folderpath):
+        with zipfile.ZipFile(zip_filepath, 'r') as zip_ref:
+            zip_ref.extractall(extract_folderpath)
 
 
 

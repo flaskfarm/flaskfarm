@@ -233,7 +233,7 @@ class Job(object):
             if self.args is None:
                 self.thread = threading.Thread(target=self.target_function, args=())
             else:
-                self.thread = threading.Thread(target=self.target_function, args=(self.args,))
+                self.thread = threading.Thread(target=self.target_function, args=self.args)
             self.thread.daemon = True
             self.thread.start()
             F.socketio.emit('notify', {'type':'success', 'msg':f"{self.description}<br>작업을 시작합니다." }, namespace='/framework', broadcast=True)

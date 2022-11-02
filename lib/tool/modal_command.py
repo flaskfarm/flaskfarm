@@ -86,7 +86,7 @@ class ToolModalCommand(object):
                 F.socketio.emit("command_modal_add_text", str(traceback.format_exc()), namespace='/framework', broadcast=True)
 
     @classmethod
-    def process_callback(cls, mode, text):
+    def process_callback(cls, call_id, mode, text):
         #F.logger.warning(text)
         if cls.__show_modal == False:
             return
@@ -114,3 +114,7 @@ class ToolModalCommand(object):
         if cls.__ss_process != None:
             cls.__ss_process.input_command(cmd)
 
+
+    @classmethod
+    def send_message(cls, text):
+        F.socketio.emit("command_modal_add_text", '%s\n\n' % text, namespace='/framework', broadcast=True)

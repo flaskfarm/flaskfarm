@@ -49,9 +49,6 @@ class SupportSubprocess(object):
                     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8')
                 else:
                     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, preexec_fn=demote(uid, gid), encoding='utf8')
-                
-                
-
             new_ret = {'status':'finish', 'log':None}
             try:
                 process_ret = process.wait(timeout=timeout) # wait for the subprocess to exit
@@ -70,6 +67,7 @@ class SupportSubprocess(object):
                     if log:
                         logger.debug(ret[-1])
 
+            #logger.error(ret)
             if format is None:
                 ret2 = '\n'.join(ret)
             elif format == 'json':
@@ -82,7 +80,7 @@ class SupportSubprocess(object):
                             break
                     ret2 = json.loads(''.join(ret[index:]))
                 except:
-                    ret2 = None
+                    ret2 = ret
 
             new_ret['log'] = ret2
             return new_ret
@@ -95,7 +93,7 @@ class SupportSubprocess(object):
     __instance_list = []
 
 
-    def __init__(self, command,  print_log=False, shell=False, env=None, timeout=None, uid=None, gid=None, stdout_callback=None, call_id=None):
+    def __init__(self, command,  print_log=False, shell=False, env=None, timeout=None, uid=None, gid=None, stdout_callback=None, call_id=None, callback_line=True):
         self.command = command
         self.print_log = print_log
         self.shell = shell
@@ -108,6 +106,7 @@ class SupportSubprocess(object):
         self.stdout_queue = None
         self.call_id = call_id
         self.timestamp = time.time()
+        self.callback_line = callback_line
         
 
     def start(self, join=True):
@@ -127,13 +126,15 @@ class SupportSubprocess(object):
             self.command = self.command_for_windows(self.command)
             logger.debug(f"{self.command=}")
             if platform.system() == 'Windows':
-                self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
+                self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
+
             else:
                 if self.uid == None:
-                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
+                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
                 else:
-                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, shell=self.shell, env=self.env, preexec_fn=demote(self.uid, self.gid), encoding='utf8', bufsize=0)
+                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, preexec_fn=demote(self.uid, self.gid), encoding='utf8', bufsize=0)
             SupportSubprocess.__instance_list.append(self)
+            self.send_stdout_callback(self.call_id, 'START', None)
             self.__start_communicate()
             self.__start_send_callback()
             if self.process is not None:
@@ -142,17 +143,18 @@ class SupportSubprocess(object):
                     self.process_close()
                 else:
                     self.process.wait()
+            self.remove_instance(self)
             logger.info(f"{self.command} END")
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
             logger.warning(self.command)
-            if self.stdout_callback != None:
-                self.stdout_callback('error', str(e))
-                self.stdout_callback('error', str(traceback.format_exc()))
+            self.send_stdout_callback(self.call_id, 'ERROR', str(e))
+            self.send_stdout_callback(self.call_id, 'ERROR', str(traceback.format_exc()))
         finally:
             if self.stdout_callback != None:
-                self.stdout_callback('thread_end', None)
+                #self.stdout_callback(self.call_id, 'thread_end', None)
+                pass
     
 
     def __start_communicate(self):
@@ -165,6 +167,7 @@ class SupportSubprocess(object):
             def rdr():
                 while True:
                     buf = self.process.stdout.read(1)
+                    #print(buf)
                     if buf:
                         _queue.put( buf )
                     else: 
@@ -192,7 +195,9 @@ class SupportSubprocess(object):
                     if r is not None:
                         #print(f"{r=}")
                         self.stdout_queue.put(r)
+                self.stdout_queue.put('\n')
                 self.stdout_queue.put('<END>')
+                self.stdout_queue.put('\n')
             for tgt in [rdr, clct]:
                 th = threading.Thread(target=tgt)
                 th.setDaemon(True)
@@ -204,16 +209,38 @@ class SupportSubprocess(object):
         def func():
             while self.stdout_queue:
                 line = self.stdout_queue.get()
+                logger.error(line)
                 if line == '<END>':
-                    if self.stdout_callback != None:
-                        self.stdout_callback('end', None)
+                    self.send_stdout_callback(self.call_id, 'END', None)
                     break
                 else:
-                    if self.stdout_callback != None:
-                        self.stdout_callback('log', line)
+                    self.send_stdout_callback(self.call_id, 'LOG', line)
             self.remove_instance(self)
 
-        th = threading.Thread(target=func, args=())
+        def func_callback_line():
+            previous = ''
+            while self.stdout_queue:
+                #logger.info(previous)
+                receive = previous + self.stdout_queue.get()
+                #lines = receive.splitlines()
+                lines = receive.split('\n')
+                #logger.info((lines))
+                previous = lines[-1]
+
+                for line in lines[:-1]:
+                    line = line.strip()
+                    #logger.error(line)
+                    if line == '<END>':
+                        self.send_stdout_callback(self.call_id, 'END', None)
+                        break
+                    else:
+                        self.send_stdout_callback(self.call_id, 'LOG', line)
+            self.remove_instance(self)
+
+        if self.callback_line:
+            th = threading.Thread(target=func_callback_line, args=())
+        else:
+            th = threading.Thread(target=func, args=())
         th.setDaemon(True)
         th.start()
 
@@ -243,6 +270,15 @@ class SupportSubprocess(object):
             self.process.stdin.write(f'{cmd}\n')
             self.process.stdin.flush()
 
+    def send_stdout_callback(self, call_id, mode, data):
+        try:
+            if self.stdout_callback != None:
+                self.stdout_callback(self.call_id, mode, data)
+        except Exception as e: 
+            logger.error(f'Exception:{str(e)}')
+            logger.error(f"[{call_id}] [{mode}] [{data}]")
+            #logger.error(traceback.format_exc())   
+
 
     @classmethod
     def all_process_close(cls):
@@ -271,4 +307,7 @@ class SupportSubprocess(object):
         for instance in cls.__instance_list:
             if instance.call_id == call_id:
                 return instance
-           
+    
+    @classmethod
+    def get_list(cls):
+        return cls.__instance_list

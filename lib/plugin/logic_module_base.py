@@ -39,6 +39,8 @@ class PluginModuleBase(object):
     
     def get_page(self, page_name):
         try:
+            if self.page_list == None:
+                return
             for page in self.page_list:
                 if page_name == page.name:
                     return page
@@ -115,7 +117,8 @@ class PluginModuleBase(object):
         pass
 
 
-
+    def arg_to_dict(self, arg):
+        return self.P.logic.arg_to_dict(arg)
 
 
 
@@ -153,7 +156,8 @@ class PluginPageBase(object):
                 arg = self.P.ModelSetting.to_dict()
             return render_template(f'{self.P.package_name}_{self.parent.name}_{self.name}.html', arg=arg)
         except Exception as e:
-            pass
+            self.P.logger.error(f'Exception:{str(e)}')
+            self.P.logger.error(traceback.format_exc())
             
         return render_template('sample.html', title=f"PluginPageBase-process_menu --- {self.P.package_name}/{self.parent.name}/{self.name}")
 
@@ -207,3 +211,13 @@ class PluginPageBase(object):
         pass
 
 
+    def arg_to_dict(self, arg):
+        return self.P.logic.arg_to_dict(arg)
+
+
+    def get_page(self, page_name):
+        return self.parent.get_page(page_name)
+
+
+    def get_module(self, module_name):
+        return self.parent.get_module(module_name)

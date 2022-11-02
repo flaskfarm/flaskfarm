@@ -45,7 +45,6 @@ $("body").on('click', '#login_btn', function(e){
     $('#username').val(),
     $('#password').val(),
     $("#remember").is(":checked"),
-    '',
     function(data) {
       if (data == 'redirect') {
         next = document.getElementById("next").value;

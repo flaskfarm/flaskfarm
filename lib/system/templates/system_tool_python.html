@@ -16,7 +16,7 @@ $(document).ready(function(){
 });
 
 function refresh() {
-  globalSendCommandPage('get_freeze', null, null, null, null, function(ret){
+  globalSendCommandPage('get_freeze', null, null, null, function(ret){
     make_list(ret.data);
   });
 }

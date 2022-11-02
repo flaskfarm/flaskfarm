@@ -1,22 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div>
-  {{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장']])}}
-  {{ macros.m_row_start('5') }}
-  {{ macros.m_row_end() }}
-  {{ macros.m_hr() }}
+{{ macros.m_button_group([['globalSettingSaveBtn', '설정 저장']])}}
+{{ macros.m_row_start('5') }}
+{{ macros.m_row_end() }}
+{{ macros.m_hr() }}
 
-  <form id='setting' name='setting'>
-    {{ macros.setting_input_int('port', 'Port', value=arg['port'], min='1', placeholder='Port', desc=['포트 번호입니다.', '네이티브 설치 혹은 도커  네트워크 타입이 호스트일 경우 반영됩니다.', '도커 브릿지 모드인 경우는 docker run -p 옵션에서 변경하시기 바랍니다.', '경고 : -p 브릿지 모드로 사용중 일 경우 9999번을 변경하지 마세요.']) }}
-    {{ macros.setting_input_text_and_buttons('ddns', 'DDNS', [['ddns_test_btn', '테스트']], value=arg['ddns'], desc=['외부에서 접근시 사용할 DDNS. http:// 나 https:// 로 시작해야합니다.', 'URL생성시 사용합니다.', '테스트 버튼 클릭 후 버전을 확인 할 수 있어야 합니다.']) }}
-    {{ macros.setting_input_text('restart_interval', '자동 재시작 시간', value=arg['restart_interval'], col='3', desc=['자동 재시작 간격(시간단위)이나 Cron 설정을 입력합니다.', '0이면 재시작 안함.']) }}
-    {{ macros.setting_checkbox('restart_notify', '시작시 알림', value=arg['restart_notify'], desc=['메시지 ID: system_start']) }}
-    {{ macros.setting_select('log_level', '로그 레벨', [['10', 'DEBUG'],['20', 'INFO'],['30', 'WARNING'],['40', 'ERROR'], ['50', 'CRITICAL'] ], value=arg['log_level'], col='3') }}
-    {{ macros.m_hr() }}
-    {{ macros.setting_input_text_and_buttons('command_text', 'Command', [['command_run_btn', 'Run']], value='', desc='') }}
-  </form>
-</div><!--전체-->
+<form id='setting' name='setting'>
+  {{ macros.setting_input_int('port', 'Port', value=arg['port'], min='1', placeholder='Port', desc=['포트 번호입니다.', '네이티브 설치 혹은 도커  네트워크 타입이 호스트일 경우 반영됩니다.', '도커 브릿지 모드인 경우는 docker run -p 옵션에서 변경하시기 바랍니다.', '경고 : -p 브릿지 모드로 사용중 일 경우 9999번을 변경하지 마세요.']) }}
+  {{ macros.setting_input_text_and_buttons('ddns', 'DDNS', [['ddns_test_btn', '테스트']], value=arg['ddns'], desc=['외부에서 접근시 사용할 DDNS. http:// 나 https:// 로 시작해야합니다.', 'URL생성시 사용합니다.', '테스트 버튼 클릭 후 버전을 확인 할 수 있어야 합니다.']) }}
+  {{ macros.setting_input_text('restart_interval', '자동 재시작 시간', value=arg['restart_interval'], col='3', desc=['자동 재시작 간격(시간단위)이나 Cron 설정을 입력합니다.', '0이면 재시작 안함.']) }}
+  {{ macros.setting_checkbox('restart_notify', '시작시 알림', value=arg['restart_notify'], desc=['메시지 ID: system_start']) }}
+  {{ macros.setting_select('log_level', '로그 레벨', [['10', 'DEBUG'],['20', 'INFO'],['30', 'WARNING'],['40', 'ERROR'], ['50', 'CRITICAL'] ], value=arg['log_level'], col='3') }}
+  {{ macros.m_hr() }}
+  {{ macros.setting_input_text_and_buttons('command_text', 'Command', [['command_run_btn', 'Run']], value='', desc='') }}
+</form>
 
 <script type="text/javascript">
 $("body").on('click', '#ddns_test_btn', function(e){ 

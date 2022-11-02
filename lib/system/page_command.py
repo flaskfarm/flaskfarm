@@ -64,8 +64,8 @@ class PageCommand(PluginPageBase):
                 ret['ret'] = 'danger'
                 ret['msg'] = "로그 파일이 없습니다."
         elif command == 'task_sched':
-            job_id = req.form['arg1']
-            flag = (req.form['arg2'] == 'true')
+            job_id = arg1
+            flag = (arg2 == 'true')
             scheduler_id = f'command_{job_id}'
             if flag and F.scheduler.is_include(scheduler_id):
                 ret['msg'] = '이미 스케쥴러에 등록되어 있습니다.'
@@ -154,11 +154,12 @@ class PageCommand(PluginPageBase):
         th = threading.Thread(target=self.execute_thread_function_by_job_id, args=(job_id,))
         th.setDaemon(True)
         th.start()
+        return th
 
 
     def execute_thread_function_by_job_id(self, *args, **kwargs):
-        P.logger.error(d(args))
-        P.logger.error(d(kwargs))
+        #P.logger.error(d(args))
+        #P.logger.error(d(kwargs))
         db_item = ModelCommand.get_by_id(args[0])
         kwargs['id'] = args[0]
         self.execute_thread_function((db_item.command + ' ' + db_item.args).strip(), **kwargs)
@@ -177,8 +178,8 @@ class PageCommand(PluginPageBase):
                     def __init__(self, logger):
                         self.logger = logger
 
-                    def stdout_callback(self, mode, text):
-                        if mode == 'log':
+                    def stdout_callback(self, call_id, mode, text):
+                        if mode == 'LOG':
                             self.logger.debug(text)
                         else:
                             self.logger.debug(mode)

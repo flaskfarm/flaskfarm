@@ -19,7 +19,7 @@
 <script type="text/javascript">
 
 $(document).ready(function(){
-  globalSendCommand('get_plugin_list', null, null, null, null, function(data){
+  globalSendCommand('get_plugin_list', null, null, null, function(data){
     make_plugin_list(data.data);
   });
 });
@@ -89,7 +89,7 @@ $("body").on('click', '#uninstall_btn', function(e){
 
 
 function uninstall(package_name) {
-  globalSendCommand('uninstall', package_name, null, null, null, function(ret) {
+  globalSendCommand('uninstall', package_name, null, null, function(ret) {
   });
 }
 

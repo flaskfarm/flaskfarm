@@ -309,6 +309,6 @@ class Logic(object):
         tmps = tmp.split('&')
         ret = {}
         for tmp in tmps:
-            _ = tmp.split('=')
+            _ = tmp.split('=', 1)
             ret[_[0]] = _[1]
         return ret

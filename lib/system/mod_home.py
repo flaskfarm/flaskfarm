@@ -31,7 +31,7 @@ class ModuleHome(PluginModuleBase):
             for key, value in F.app.config.items():
                 if key not in ['SECRET_KEY']:
                     data[key] = str(value)
-            ret = {'json':{'Framework':F.config, 'Flask':data}}
+            ret = {'json':{'Framework':F.config, 'Flask':data}, 'title':'config'}
             return jsonify(ret)
        
 

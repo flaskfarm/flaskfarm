@@ -134,10 +134,11 @@
       {% if current_menu[0] == plugin['uri'] and 'list' in plugin %}
         {% for module in plugin['list'] %}
           {% if module['uri'] == current_menu[1] and 'list' in module%}
-<!--{{ module }}-->
+<!-- {{ module }} -->
             <ul class="nav nav-pills bg-light shadow text-dark">
             {% for page in module['list'] %}
-              {% if current_menu[2] == page['uri'] %}
+<!--{{ current_menu }}-->
+              {% if current_menu[2]!= None and page['uri'].startswith(current_menu[2]) %}
                 <li class="nav-item"><a class="nav-link active" href="/{{ current_menu[0] }}/{{ current_menu[1] }}/{{ page['uri'] }}">{{page['name']}}</a></li>
               {% else %}
                 <li class="nav-item"><a class="nav-link" href="/{{ current_menu[0] }}/{{ current_menu[1] }}/{{ page['uri'] }}">{{page['name']}}</a></li>

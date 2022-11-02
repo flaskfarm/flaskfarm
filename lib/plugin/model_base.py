@@ -45,7 +45,7 @@ class ModelBase(F.db.Model):
                 paging['next_page'] = False
             paging['current_page'] = current_page
             paging['count'] = count
-            F.logger.debug('paging : c:%s %s %s %s %s %s', count, paging['total_page'], paging['prev_page'], paging['next_page'] , paging['start_page'], paging['last_page'])
+            #F.logger.debug('paging : c:%s %s %s %s %s %s', count, paging['total_page'], paging['prev_page'], paging['next_page'] , paging['start_page'], paging['last_page'])
             return paging
         except Exception as e:
             cls.P.logger.error(f'Exception:{str(e)}')
@@ -92,7 +92,7 @@ class ModelBase(F.db.Model):
     def delete_all(cls, days=None):
         try:
             with F.app.app_context():
-                if days == None:
+                if days == None or days in [0, '0']:
                     F.db.session.query(cls).delete()
                     F.db.session.commit()
                 else:

@@ -4,6 +4,10 @@ from framework import F
 
 
 def get_menu(full_query):
+    match = re.compile(r'\/(?P<package_name>.*?)\/(?P<module_name>.*?)\/manual\/(?P<sub2>.*?)($|\?)').match(full_query)
+    if match:
+        return match.group('package_name'), match.group('module_name'), 'manual'
+
     match = re.compile(r'\/(?P<menu>.*?)\/manual\/(?P<sub2>.*?)($|\?)').match(full_query)
     if match:
         return match.group('menu'), 'manual', match.group('sub2')

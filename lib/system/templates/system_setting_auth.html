@@ -33,7 +33,7 @@ $('#use_login').change(function() {
 
 $("body").on('click', '#apikey_generate_btn', function(e) {
   e.preventDefault();
-  globalSendCommand('apikey_generate', null, null, null, null, function(ret){
+  globalSendCommand('apikey_generate', null, null, null, function(ret){
     $("#apikey").val(ret);
   });
 });

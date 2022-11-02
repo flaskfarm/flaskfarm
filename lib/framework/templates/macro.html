@@ -25,11 +25,11 @@
 
 <!-- 탭 -->
 {% macro m_tab_head_start() %}
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
 {% endmacro %}
 
 {% macro m_tab_head_end() %}
-    </div>
+  </div>
 {% endmacro %}
 
 {% macro m_tab_head(name, title, active) %}
@@ -39,12 +39,25 @@
   <a class="nav-item nav-link" id="tab_{{name}}" data-toggle="tab" href="#{{name}}" role="tab">{{title}}</a>
   {% endif %}
 {% endmacro %}
-<!----------------------------------------------------------------->
 
 
-<!-- SETTING -->
-<!-- SETTING -->
-<!-- SETTING -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!------------------------------------------------------------------>
+<!-- 설정 -->
 
 <!-- SETTING  기본 틀-->
 {% macro setting_top(left='', padding='10') %}
@@ -247,7 +260,7 @@
 
 
 <!-- 스케쥴링 작동 버튼-->
-{% macro setting_global_scheduler_button(is_include, is_running, id='scheduler', left='스케쥴링 작동', desc=['On : 스케쥴링 시작','Off : 스케쥴링 중지']) %}
+{% macro global_setting_scheduler_button(is_include, is_running, id='scheduler', left='스케쥴링 작동', desc=['On : 스케쥴링 시작','Off : 스케쥴링 중지']) %}
 {{ setting_top(left) }}
 <div class="input-group col-sm-3">
   {% if is_include == True %}
@@ -269,12 +282,111 @@
 
 
 
+<!-- SELECT Dummy 
+option을 script로 넣을 때 사용
+예: 시스템 - 전체로그
+-->
+{% macro setting_select_empty(id, title, col='9', desc=None, value=None) %}
+  {{ setting_top(title) }}
+  <div class="input-group col-sm-{{col}}">
+    <div id="{{id}}_div" name="{{id}}_div"></div>
+  </div>
+  {{ setting_bottom(desc) }}
+{% endmacro %}
 
 
 
-<!-- NOT SETTING -->
-<!-- NOT SETTING -->
-<!-- NOT SETTING -->
+{% macro setting_input_int(id, left, value='', min='', max='', placeholder='', desc=None) %}
+  {{ setting_top(left) }}
+      <div class="input-group col-sm-3">
+        <input id="{{ id }}" name="{{ id }}" type="number" class="form-control form-control-sm" 
+          {% if min != '' %}
+            min="{{ min }}" 
+          {% endif %}
+          {% if max != '' %}
+            max="{{ max }}" 
+          {% endif %}
+          {% if placeholder != '' %}
+            placeholder="{{ placeholder }}" 
+          {% endif %}
+        value="{{ value }}">
+      </div>
+  {{ setting_bottom(desc) }}
+{% endmacro %}
+
+
+
+<!-- 토글버튼형식 -->
+{% macro setting_checkbox(id, left, value, desc='') %}
+  {{ setting_top(left) }}
+      <div class="input-group col-sm-3">
+        {% if value == 'True' or value == 'true' or value == 'On' %}
+        <input id="{{ id }}" name="{{ id }}" class="form-control form-control-sm" type="checkbox" data-toggle="toggle" checked>
+        {% else %}
+        <input id="{{ id }}" name="{{ id }}" class="form-control form-control-sm" type="checkbox" data-toggle="toggle">
+        {% endif %}
+      </div>
+  {{ setting_bottom(desc) }}
+{% endmacro %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!------------------------------------------------------------------>
+<!-- 설정 외 -->
+
+<!-- 리스트 div로 꾸밀때 헤드 -->
+{% macro m_hr_head_top() %}
+<div class="d-inline-block"></div>
+<hr style="width: 100%; margin:0px; background-color:#808080;">
+{% endmacro %}
+
+{% macro m_hr_head_bottom() %}
+  <hr style="width: 100%; margin:0px; margin-bottom:10px; margin-top:2px; background-color:#808080; height:2px" />
+{% endmacro %}
+
+
 <!-- 버튼 그룹 -->
 {% macro m_button_group(buttons) %}
   <div class="btn-group btn-group-sm flex-wrap mr-2" role="group">
@@ -354,219 +466,196 @@
 
 
 
-<!-- SELECT Dummy 
-option을 script로 넣을 때 사용
-예: 시스템 - 전체로그
--->
-{% macro setting_select_empty(id, title, col='9', desc=None, value=None) %}
-  {{ setting_top(title) }}
-  <div class="input-group col-sm-{{col}}">
-    <div id="{{id}}_div" name="{{id}}_div"></div>
-  </div>
-  {{ setting_bottom(desc) }}
+
+
+{% macro m_modal_start(id, title, size) %}
+<!-- Modal -->
+<div class="modal fade" id="{{id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog {{size}}">
+    <div class="modal-content">
+      
+      <div class="modal-header">
+        <h4 class="modal-title" id="{{id}}_title">{{title}}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body" id="{{id}}_modal_body" style="word-break:break-all;">
 {% endmacro %}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 삭제해야함 --------------------------------------------------------->
-<!--
-{% macro setting_radio(id, title, radios, value=None, desc=None, disabled=False) %}
-  {{ setting_top(title) }}
-    <div class="input-group col-sm-9">
-    {% for r in radios %}
-      <div class="custom-control custom-radio custom-control-inline">
-        {% if value|int == loop.index0 %}
-        <input id="{{id}}{{loop.index0}}" type="radio" class="custom-control-input" name="{{id}}" value="{{loop.index0}}" checked {% if disabled %} disabled {% endif %}>
-        {% else %}
-        <input id="{{id}}{{loop.index0}}" type="radio" class="custom-control-input" name="{{id}}" value="{{loop.index0}}" {% if disabled %} disabled {% endif %}>
-        {% endif %}
-        <label class="custom-control-label" for="{{id}}{{loop.index0}}">{{r}}</label>
+{% macro m_modal_end() %}
       </div>
-    {% endfor %}
+      <div class="modal-footer">
+        <button type="button" class="btn btn-warning" data-dismiss="modal">닫기 (취소)</button>
+      </div>
+      <div class="loading" id="modal_loading">
+        <img src="/static/img/loading.gif" />
+      </div>
     </div>
-  {{ setting_bottom(desc) }}
+  </div>
+</div>
+<!-- Modal end -->
 {% endmacro %}
--->
 
-<!--  그룹화 하지 않음.. 삭제-->
-<!--
-{% macro setting_button(buttons, left='', desc='') %}
-  {{ setting_top(left) }}
-    <div class="input-group col-sm-9">
-    {% for b in buttons %}
-      {% if not loop.first %}
-      <span class='text-left' style="padding-left:5px; padding-top:0px">
-      {% endif %}
-      <button id="{{b[0]}}" class="btn btn-sm btn-outline-primary">{{b[1]}}</button>
-      </span>  
-    {% endfor %}
-    </div> 
-  {{ setting_bottom(desc) }}
-{% endmacro %}
--->
-<!----------------------------------------------------------------->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% macro setting_input_int(id, left, value='', min='', max='', placeholder='', desc=None) %}
-  {{ setting_top(left) }}
-      <div class="input-group col-sm-3">
-        <input id="{{ id }}" name="{{ id }}" type="number" class="form-control form-control-sm" 
-          {% if min != '' %}
-            min="{{ min }}" 
-          {% endif %}
-          {% if max != '' %}
-            max="{{ max }}" 
-          {% endif %}
-          {% if placeholder != '' %}
-            placeholder="{{ placeholder }}" 
-          {% endif %}
-        value="{{ value }}">
+{% macro m_modal_end_with_button(buttons) %}
       </div>
-  {{ setting_bottom(desc) }}
-{% endmacro %}
-
-
-
-<!-- 토글버튼형식 -->
-{% macro setting_checkbox(id, left, value, desc='') %}
-  {{ setting_top(left) }}
-      <div class="input-group col-sm-3">
-        {% if value == 'True' or value == 'true' or value == 'On' %}
-        <input id="{{ id }}" name="{{ id }}" class="form-control form-control-sm" type="checkbox" data-toggle="toggle" checked>
-        {% else %}
-        <input id="{{ id }}" name="{{ id }}" class="form-control form-control-sm" type="checkbox" data-toggle="toggle">
-        {% endif %}
+      <div class="modal-footer">
+        <div class="btn-group btn-group-sm flex-wrap mr-2" role="group">
+          {% for b in buttons %}
+            <button id="{{b[0]}}" class="btn btn-sm btn-outline-primary" 
+            {% if b|length > 2 %}
+              {% for d in b[2] %}
+                data-{{d[0]}}="{{d[1]}}""
+              {% endfor %}
+            {% endif %}
+            >{{b[1]}}</button>
+          {% endfor %}
+            <button type="button" class="btn btn-sm btn-warning" data-dismiss="modal">닫기 (취소)</button>
+        </div>
       </div>
-  {{ setting_bottom(desc) }}
+      <div class="loading" id="modal_loading">
+        <img src="/static/img/loading.gif" />
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal end -->
 {% endmacro %}
+
+
+
+
+{% macro print_md(id, text) %}
+  <div id="{{id}}_div" data-text="{{text}}"></div>
+  <script type="text/javascript">
+    ret = converter.makeHtml($('#{{id}}_div').data('text'));
+    console.log(ret)
+    $('#{{id}}_div').html(ret);
+  </script>
+{% endmacro %}
+
+{% macro print_md1(id, text) %}
+
+  <script type="text/javascript">
+    ret = converter.makeHtml($('#{{id}}_div').data('text'));
+    console.log(ret)
+    
+  </script>
+{% endmacro %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- 일반적인 체크박스 -->
 {% macro setting_default_checkbox(id, left, label, value, desc='') %}
@@ -725,28 +814,6 @@ macros.setting_button_with_info([['toggle_btn', 'Toggle', [{'key':'category', 'v
 {% endmacro %}
 
 
-<!-- 스케쥴링 작동 버튼-->
-{% macro setting_scheduler_button(is_include, is_running, id='scheduler', left='스케쥴링 작동', desc=['On : 스케쥴링 시작','Off : 스케쥴링 중지']) %}
-{{ setting_top(left) }}
-<div class="input-group col-sm-3">
-  {% if is_include == 'True' %}
-  <input id="scheduler" name="scheduler" class="form-control form-control-sm" type="checkbox" data-toggle="toggle" checked>
-  {% else %}
-  <input id="scheduler" name="scheduler" class="form-control form-control-sm" type="checkbox" data-toggle="toggle">
-  {% endif %}
-  {% if is_running == 'True' %}
-    <span style="padding-left:10px; padding-top: 8px;">동작중</span>
-  {% else %}    
-    {% if is_include == 'True' %}
-      <span style="padding-left:10px; padding-top: 8px;">대기중</span>
-    {% endif %}  
-  {% endif %}    
-</div>
-{{ setting_bottom(desc) }}
-{% endmacro %}
-
-
-
 
 {% macro setting_global_scheduler_sub_button(is_include, is_running, id='scheduler', left='스케쥴링 작동', desc=['On : 스케쥴링 시작','Off : 스케쥴링 중지']) %}
 {{ setting_top(left) }}
@@ -803,14 +870,7 @@ macros.setting_button_with_info([['toggle_btn', 'Toggle', [{'key':'category', 'v
 {% endmacro %}
 
 
-{% macro m_hr_head_top() %}
-<div class="d-inline-block"></div>
-<hr style="width: 100%; margin:0px; background-color:#808080;">
-{% endmacro %}
 
-{% macro m_hr_head_bottom() %}
-  <hr style="width: 100%; margin:0px; margin-bottom:10px; margin-top:2px; background-color:#808080; height:2px" />
-{% endmacro %}
 
 {% macro m_button(id, text) %}
   <button id="{{id}}" name="{{id}}" class="btn btn-sm btn-outline-primary">{{text}}</button>
@@ -830,59 +890,6 @@ macros.setting_button_with_info([['toggle_btn', 'Toggle', [{'key':'category', 'v
 
 {% macro m_tab_content_end() %}
   </div>
-{% endmacro %}
-
-
-
-
-
-{% macro m_modal_start(id, title, size) %}
-<!-- Modal -->
-<div class="modal fade" id="{{id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog {{size}}">
-    <div class="modal-content">
-      
-      <div class="modal-header">
-        <h4 class="modal-title" id="{{id}}_title">{{title}}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body" id="modal_body" style="word-break:break-all;">
-{% endmacro %}
-
-{% macro m_modal_end() %}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-      </div>
-      <div class="loading" id="modal_loading">
-        <img src="/static/img/loading.gif" />
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Modal end -->
-{% endmacro %}
-
-
-{% macro m_modal_start2(id, title, size) %}
-<!-- Modal -->
-<div class="modal fade" id="{{id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog {{size}}">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="{{id}}_title">{{title}}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="loading" id="modal_loading">
-        <img src="/static/img/loading.gif" />
-      </div>
-{% endmacro %}      
-      
-{% macro m_modal_end2() %}      
-    </div>
-  </div>
-</div>
-<!-- Modal end -->
 {% endmacro %}
 
 
@@ -1002,16 +1009,3 @@ macros.setting_button_with_info([['toggle_btn', 'Toggle', [{'key':'category', 'v
 
 
 
-
-<!-- 다른이름으로 정의함. 나중에 삭제 -->
-{% macro buttons(buttons, left='', desc='') %}
-  {{ setting_top(left) }}
-    <div class="input-group col-sm-9">
-      <div class="btn-group btn-group-sm flex-wrap mr-2" role="group">
-      {% for b in buttons %}
-        <button id="{{b[0]}}" class="btn btn-sm btn-outline-primary">{{b[1]}}</button>
-      {% endfor %}
-      </div>
-    </div> 
-  {{ setting_bottom(desc) }}
-{% endmacro %}
