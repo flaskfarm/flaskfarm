@@ -15,7 +15,7 @@
 
 
 
-{% macro m_row_start(padding='5', align='center') %}
+{% macro m_row_start(padding='10', align='center') %}
   <div class="row" style="padding:{{ padding}}px; align-items:{{align}};">
 {% endmacro %}
 
@@ -60,7 +60,7 @@
 <!-- 설정 -->
 
 <!-- SETTING  기본 틀-->
-{% macro setting_top(left='', padding='5') %}
+{% macro setting_top(left='', padding='10') %}
   <div class='row' style="padding-top: {{padding}}px; padding-bottom:{{padding}}px; align-items: center;">
     <div class='col-sm-3 set-left'>
     {% if left != '' %}
@@ -149,7 +149,7 @@
   {{ setting_bottom(desc) }}
 {% endmacro %}
 
-{% macro setting_input_textarea_wide(id, left, value='', col='12', row='3', desc='', disabled=False, padding='5') %}
+{% macro setting_input_textarea_wide(id, left, value='', col='12', row='3', desc='', disabled=False, padding='10') %}
   <div class='row' style="padding-top: {{padding}}px; padding-bottom:{{padding}}px; align-items: center;">
     <div class='col-sm-12'>
       {% if left != '' %}
@@ -233,7 +233,7 @@
 
 
 <!-- 버튼 그룹. 그룹화 -->
-{% macro setting_buttons(buttons, left='', desc='', padding='5') %}
+{% macro setting_buttons(buttons, left='', desc='', padding='10') %}
   {{ setting_top(left, padding) }}
     <div class="input-group col-sm-9">
       <div class="btn-group btn-group-sm flex-wrap mr-2" role="group">
@@ -416,7 +416,7 @@ option을 script로 넣을 때 사용
   {{ setting_bottom(desc, padding_top='-5') }}
 {% endmacro %}
 
-{% macro info_text_go(id, left, value='', desc=None, padding=5) %}
+{% macro info_text_go(id, left, value='', desc=None, padding=10) %}
   {{ setting_top(left, padding) }}
     <div style="padding-left:20px; padding-top:-5px;">
       <span id={{id}}><a href="{{value}}" target="_blank">{{value}}</a></span>
@@ -897,7 +897,7 @@ macros.setting_button_with_info([['toggle_btn', 'Toggle', [{'key':'category', 'v
 
 
 
-{% macro row_start(padding='5') %}
+{% macro row_start(padding='10') %}
   <div class='row' style="padding-top: {{padding}}px; padding-bottom:{{padding}}px; align-items: center;">
 {% endmacro %}
 
