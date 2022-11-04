@@ -88,7 +88,7 @@ class Logic(object):
         try:
             job_id = '%s_%s' % (self.P.package_name, module_name)
             module = self.get_module(module_name)
-            job = Job(self.P.package_name, job_id, module.get_scheduler_interval(), self.scheduler_function, module.get_scheduler_desc(), args=module_name)
+            job = Job(self.P.package_name, job_id, module.get_scheduler_interval(), self.scheduler_function, module.get_scheduler_desc(), args=(module_name,))
             F.scheduler.add_job_instance(job)
         except Exception as e: 
             self.P.logger.error(f'Exception:{str(e)}')
