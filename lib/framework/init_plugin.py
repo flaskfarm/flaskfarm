@@ -187,11 +187,11 @@ class PluginManager:
                     mod_menu = getattr(entity['P'], 'menu')
                     if mod_menu and cls.all_package_list[key]['loading'] != False:
                         cls.plugin_menus[key]=  {'menu':mod_menu, 'match':False}
-                    if entity['version'] == '4':
-                        setting_menu = getattr(entity['P'], 'setting_menu')
-                        if setting_menu != None and cls.all_package_list[key]['loading'] != False:
-                            F.logger.info(f"메뉴 포함 : {key}")
-                            cls.setting_menus.append(setting_menu)
+
+                    setting_menu = getattr(entity['P'], 'setting_menu')
+                    if setting_menu != None and cls.all_package_list[key]['loading'] != False:
+                        F.logger.info(f"메뉴 포함 : {key}")
+                        cls.setting_menus.append(setting_menu)
                 except Exception as exception:
                     F.logger.debug('no menu')
             F.logger.debug('### plugin_load threading all start.. : %s ', len(cls.plugin_list))
