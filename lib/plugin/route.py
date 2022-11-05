@@ -57,6 +57,12 @@ def default_route(P):
             filepath = os.path.join(plugin_root,  *path.split('/'))
             from support import SupportFile
             data = SupportFile.read_file(filepath)
+            if filepath.endswith('.mdf'):
+                try:
+                    from support import SupportSC
+                    data = SupportSC.decode(data)
+                except:
+                    pass
             return render_template('manual.html', data=data)
         except Exception as exception:
             P.logger.error('Exception:%s', exception)
