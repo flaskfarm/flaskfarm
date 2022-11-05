@@ -144,11 +144,6 @@ false
 *.sh
 data/
 tmp/
-lib/support/site/tving.py
-lib/support/site/wavve.py
-lib/support/site/seezn.py
-lib/support/site/kakaotv.py
-lib/support/site/cppl.py
 *.bat
 output/
 *.mkv

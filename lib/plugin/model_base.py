@@ -100,7 +100,7 @@ class ModelBase(F.db.Model):
                     ago = now - timedelta(days=int(days))
                     #ago.hour = 0
                     #ago.minute = 0
-                    count = F.db.session.query(cls).filter(cls.created_time > ago).delete()
+                    count = F.db.session.query(cls).filter(cls.created_time < ago).delete()
                     cls.P.logger.info(f"delete_all {days=} {count=}")
                 return True
         except Exception as e:

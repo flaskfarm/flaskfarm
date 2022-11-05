@@ -54,6 +54,13 @@ class PluginModuleBase(object):
             page_ins = self.get_page(page)
             if page_ins != None:
                 return page_ins.process_menu(req)
+        try:
+            arg = self.P.ModelSetting.to_dict() if self.P.ModelSetting != None else {}
+            return render_template(f'{self.P.package_name}_{self.name}_{page}.html', arg=arg)
+
+        except Exception as e:
+            self.P.logger.error(f'Exception:{str(e)}')
+            self.P.logger.error(traceback.format_exc())
         return render_template('sample.html', title=f"PluginModuleBase-process_menu{self.P.package_name}/{self.name}/{page}")
 
     def process_ajax(self, sub, req):

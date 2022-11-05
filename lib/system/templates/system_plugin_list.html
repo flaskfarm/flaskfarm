@@ -74,7 +74,7 @@ function make_plugin_list(data) {
 $("body").on('click', '#json_btn', function(e){
   e.preventDefault();
   item_id = $(this).data('idx');
-  m_modal(current_data[item_id]);
+  showModal(current_data[item_id]);
 });
 
 
