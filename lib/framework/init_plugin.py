@@ -113,41 +113,23 @@ class PluginManager:
             for plugin_name in plugins:
                 F.logger.debug(f'[+] PLUGIN LOADING Start.. [{plugin_name}]') 
                 entity = cls.all_package_list[plugin_name]
-                entity['version'] = '3'
                 try:
-                    mod = __import__('%s' % (plugin_name), fromlist=[])
-                    mod_plugin_info = None
                     try:
-                        mod_plugin_info = getattr(mod, 'plugin_info')
-                        entity['module'] = mod 
-                    except Exception as exception:
-                        F.logger.info(f'[!] PLUGIN_INFO not exist : [{plugin_name}] - is FF')  
-
-                    if mod_plugin_info == None:
-                        try:
-                            mod = __import__(f'{plugin_name}.setup', fromlist=['setup'])
-                            entity['version'] = '4'
-                        except Exception as e:
-                            F.logger.error(f'Exception:{str(e)}')
-                            F.logger.error(traceback.format_exc())
-                            F.logger.warning(f'[!] NOT normal plugin : [{plugin_name}]')
+                        mod = __import__(f'{plugin_name}.setup', fromlist=['setup'])
+                    except Exception as e:
+                        F.logger.error(f'Exception:{str(e)}')
+                        F.logger.error(traceback.format_exc())
+                        F.logger.warning(f'[!] NOT normal plugin : [{plugin_name}]')
 
                     try:
-                        if entity['version'] != '4':
-                            mod_blue_print = getattr(mod, 'blueprint')
-                        else:
-                            entity['setup_mod'] = mod
-                            entity['P'] = getattr(mod, 'P')
-                            mod_blue_print = getattr(entity['P'], 'blueprint')
+                        entity['setup_mod'] = mod
+                        entity['P'] = getattr(mod, 'P')
+                        mod_blue_print = getattr(entity['P'], 'blueprint')
                         if mod_blue_print: 
                             F.app.register_blueprint(mod_blue_print)
                     except Exception as exception:
-                        #logger.error('Exception:%s', exception)
-                        #logger.error(traceback.format_exc())
                         F.logger.warning(f'[!] BLUEPRINT not exist : [{plugin_name}]') 
                     cls.plugin_list[plugin_name] = entity
-                    #system.LogicPlugin.current_loading_plugin_list[plugin_name]['status'] = 'success'
-                    #system.LogicPlugin.current_loading_plugin_list[plugin_name]['info'] = mod_plugin_info
                 except Exception as exception:
                     F.logger.error('Exception:%s', exception)
                     F.logger.error(traceback.format_exc())
@@ -155,7 +137,6 @@ class PluginManager:
                     cls.all_package_list[plugin_name]['loading'] = False
                     cls.all_package_list[plugin_name]['status'] = 'import fail'
                     cls.all_package_list[plugin_name]['log'] = traceback.format_exc()
-            
             
             
             if not F.config['run_celery']:
@@ -172,16 +153,11 @@ class PluginManager:
             
             for key, entity in cls.plugin_list.items():
                 try:
-                    mod_plugin_load = None
-                    if entity['version'] == '3':
-                        mod_plugin_load = getattr(entity['module'], 'plugin_load')
-                    elif entity['version'] == '4':
-                        mod_plugin_load = getattr(entity['P'], 'plugin_load')
+                    mod_plugin_load = getattr(entity['P'], 'plugin_load')
                     if mod_plugin_load:
                         def func(mod_plugin_load, key):
                             try:
                                 F.logger.debug(f'[!] plugin_load threading start : [{key}]') 
-                                #mod.plugin_load()
                                 mod_plugin_load()
                                 F.logger.debug(f'[!] plugin_load threading end : [{key}]') 
                             except Exception as exception:
@@ -199,26 +175,16 @@ class PluginManager:
                                     MenuManager.init_menu()
                                     F.logger.info(f"플러그인 로딩 실패로 메뉴 삭제2 : {key}")
 
-
-                        # mod는 위에서 로딩
                         if key != 'mod':
                             t = threading.Thread(target=func, args=(mod_plugin_load, key))
                             t.setDaemon(True)
                             t.start()
-                        #if key == 'mod':
-                        #    t.join()
+
                 except Exception as exception:
                     F.logger.debug(f'[!] PLUGIN_LOAD function not exist : [{key}]') 
-                    #logger.error('Exception:%s', exception)
-                    #logger.error(traceback.format_exc())
-                    #logger.debug('no init_scheduler') 
+
                 try:
-                    mod_menu = None
-                    if entity['version'] == '3':
-                        mod_menu = getattr(entity['module'], 'menu')
-                    elif entity['version'] == '4':
-                        mod_menu = getattr(entity['P'], 'menu')
-                    
+                    mod_menu = getattr(entity['P'], 'menu')
                     if mod_menu and cls.all_package_list[key]['loading'] != False:
                         cls.plugin_menus[key]=  {'menu':mod_menu, 'match':False}
                     if entity['version'] == '4':
@@ -226,8 +192,6 @@ class PluginManager:
                         if setting_menu != None and cls.all_package_list[key]['loading'] != False:
                             F.logger.info(f"메뉴 포함 : {key}")
                             cls.setting_menus.append(setting_menu)
-
-                            
                 except Exception as exception:
                     F.logger.debug('no menu')
             F.logger.debug('### plugin_load threading all start.. : %s ', len(cls.plugin_list))
@@ -243,17 +207,9 @@ class PluginManager:
     def plugin_unload(cls):
         for key, entity in cls.plugin_list.items():
             try:
-                if entity['version'] == '3':
-                    mod_plugin_unload = getattr(entity['module'], 'plugin_unload')
-                elif entity['version'] == '4':
-                    mod_plugin_unload = getattr(entity['P'], 'plugin_unload')
-                    
-                #if plugin_name == 'rss':
-                #    continue
-                #mod_plugin_unload = getattr(mod, 'plugin_unload')
+                mod_plugin_unload = getattr(entity['P'], 'plugin_unload')
                 if mod_plugin_unload:
                     mod_plugin_unload()
-                    #mod.plugin_unload()
             except Exception as e:
                 F.logger.error('module:%s', key)
                 F.logger.error(f'Exception:{str(e)}')
@@ -267,6 +223,7 @@ class PluginManager:
 
     @classmethod
     def plugin_install(cls, plugin_git, zip_url=None, zip_filename=None):
+        plugin_git = plugin_git.strip()
         is_git = True if plugin_git != None and plugin_git != '' else False
         ret = {}
         try:

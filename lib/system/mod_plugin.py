@@ -36,11 +36,13 @@ class ModulePlugin(PluginModuleBase):
             """
             for name, entity in F.PluginManager.all_package_list.items():
                 try:
-                    if entity.get('version') == '3':
-                        #data.append(entity)
-                        data.append({'package_name':name})
-                    else:
+                    if 'P' in entity:
                         data.append(entity['P'].plugin_info)
+                        data[-1]['loading'] = entity.get('loading')
+                        data[-1]['status'] = entity.get('status')
+                        data[-1]['log'] = entity.get('log')
+                    else:
+                        data.append({'package_name':name})
                         data[-1]['loading'] = entity.get('loading')
                         data[-1]['status'] = entity.get('status')
                         data[-1]['log'] = entity.get('log')

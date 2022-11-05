@@ -41,7 +41,7 @@ function make_plugin_list(data) {
     if (data[i].title == null) {
       str += j_col_wide(2, '');
       str += j_col_wide(2, data[i].package_name);
-      str += j_col_wide(5, '');
+      str += j_col_wide(5, data[i].status, 'center');
       tmp = j_button('uninstall_btn', '삭제', {'package_name':data[i].package_name}, 'danger', false, true);
     } else {
       str += j_col_wide(2, data[i].title);
