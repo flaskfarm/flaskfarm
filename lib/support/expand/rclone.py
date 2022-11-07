@@ -72,3 +72,18 @@ class SupportRclone(object):
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())   
+
+    @classmethod
+    def lsf(cls, remote_path, option=None):
+        try:
+            command = [cls.__rclone_path, '--config', cls.__rclone_config_path, 'lsf', remote_path, '--max-depth=1']
+            if option is not None:
+                command += option
+            result = SupportSubprocess.execute_command_return(command, format='json')
+            ret = None
+            if result != None and result['status'] == 'finish':
+                ret = result['log']
+            return ret
+        except Exception as e: 
+            logger.error(f'Exception:{str(e)}')
+            logger.error(traceback.format_exc())  

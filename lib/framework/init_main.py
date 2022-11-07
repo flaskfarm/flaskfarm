@@ -199,7 +199,8 @@ class Framework:
             self.logger.error(f'Exception:{str(e)}')
             self.logger.error(traceback.format_exc())
         self.SystemModelSetting = SystemInstance.ModelSetting 
-        SystemInstance.plugin_load()
+        if self.config['run_flask']:
+            SystemInstance.plugin_load()
         self.app.register_blueprint(SystemInstance.blueprint)
         self.config['flag_system_loading'] = True
         self.__config_initialize('member')

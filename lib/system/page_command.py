@@ -220,7 +220,7 @@ class PageCommand(PluginPageBase):
             job_id = f"command_{db_item.id}"
             if scheduler.is_include(job_id):
                 return
-            job = Job(self.P.package_name, job_id, db_item.schedule_interval, self.execute_thread_function_by_job_id, db_item.description,  args=db_item.id)
+            job = Job(self.P.package_name, job_id, db_item.schedule_interval, self.execute_thread_function_by_job_id, db_item.description,  args=(db_item.id,))
             scheduler.add_job_instance(job)
             return True
         except Exception as e: 

@@ -94,7 +94,24 @@ class SupportFile(object):
             zip_ref.extractall(extract_folderpath)
 
 
-
+    # 파일처리에서 사용. 중복이면 시간값
+    @classmethod
+    def file_move(cls, source_path, target_dir, target_filename):
+        try:
+            import shutil
+            import time
+            if os.path.exists(target_dir) == False:
+                os.makedirs(target_dir)
+            target_path = os.path.join(target_dir, target_filename)
+            if source_path != target_path:
+                if os.path.exists(target_path):
+                    tmp = os.path.splitext(target_filename)
+                    new_target_filename = f"{tmp[0]} {str(time.time()).split('.')[0]}{tmp[1]}"
+                    target_path = os.path.join(target_dir, new_target_filename)
+                shutil.move(source_path, target_path)
+        except Exception as exception:
+            logger.debug('Exception:%s', exception)
+            logger.debug(traceback.format_exc())
 
 
 

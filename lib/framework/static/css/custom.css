@@ -106,3 +106,5 @@ background-color: #ffff0080 !important;
 .dropdown-menu {
     margin:-2px;
 }
+
+.modal { overflow: scroll !important; }

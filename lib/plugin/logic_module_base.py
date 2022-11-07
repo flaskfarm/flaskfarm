@@ -50,14 +50,17 @@ class PluginModuleBase(object):
 
 
     def process_menu(self, page, req):
+        from framework import F
         if self.page_list is not None:
             page_ins = self.get_page(page)
             if page_ins != None:
                 return page_ins.process_menu(req)
         try:
             arg = self.P.ModelSetting.to_dict() if self.P.ModelSetting != None else {}
+            arg['path_data'] = F.config['path_data']
+            arg['is_include'] = str(F.scheduler.is_include(self.get_scheduler_name()))
+            arg['is_running'] = str(F.scheduler.is_running(self.get_scheduler_name()))
             return render_template(f'{self.P.package_name}_{self.name}_{page}.html', arg=arg)
-
         except Exception as e:
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
@@ -127,6 +130,8 @@ class PluginModuleBase(object):
     def arg_to_dict(self, arg):
         return self.P.logic.arg_to_dict(arg)
 
+    def get_scheduler_name(self):
+        return f'{self.P.package_name}_{self.name}'
 
 
 

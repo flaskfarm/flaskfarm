@@ -86,7 +86,9 @@ def open_file(path):
 @F.app.route("/file/<path:path>")
 @F.check_api
 def file2(path):
-    # 윈도우 drive 필요 없음
+    import platform
+    if platform.system() == 'Windows':
+        path = os.path.splitdrive(path)[1][1:]
     return send_from_directory('/', path, as_attachment=True)
 
 

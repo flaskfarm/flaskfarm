@@ -77,10 +77,12 @@ class PluginBase(object):
 
 
     def plugin_load(self):
-        self.logic.plugin_load()
+        if self.logic:
+            self.logic.plugin_load()
     
     def plugin_unload(self):
-        self.logic.plugin_unload()
+        if self.logic:
+            self.logic.plugin_unload()
 
     def get_first_manual_path(self):
         for __ in self.menu['list']:

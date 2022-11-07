@@ -1,16 +1,12 @@
-# -*- coding: utf-8 -*-
-#########################################################
-# python
-import os, re
-import traceback
+
+import re
 import time
-import threading
-import shutil
+import traceback
 from datetime import datetime
 
-from tool_base import d
-from . import logger
+from support import SupportFile, SupportString
 
+from . import logger
 
 EXTENSION = 'mp4|avi|mkv|ts|wmv|m2ts|smi|srt|ass|m4v|flv|asf|mpg|ogm'
 
@@ -21,13 +17,10 @@ REGEXS = [
     r'^(?P<name>.*?)([sS](?P<sno>\d+))?[eE](?P<no>\d+)', # 외국 릴
     r'^(?P<name>.*?)\.(Series\.(?P<sno>\d+)\.)?(?P<no>\d+)of', # 외국 릴
     r'^(?P<name>.*?)[\s\(](?P<no>\d+)[회화]',
-    
 ]
 
 #합본처리 제외
 #_REGEX_FILENAME_RENAME = r'(?P<title>.*?)[\s\.]E?(?P<no>\d{1,2})[\-\~\s\.]?E?\d{1,2}'
-
-
 
 class EntityKtv(object):
     meta_cache = {}
@@ -66,8 +59,8 @@ class EntityKtv(object):
         search_try = False
         if meta and self.data['filename']['is_matched']:
             if self.data['filename']['match_index'] in [3, 4]:
-                from tool_base import ToolHangul
-                info = ToolHangul.language_info(self.data['filename']['name'])
+                
+                info = SupportString.language_info(self.data['filename']['name'])
                 if info[0] == 0:
                     search_try = True
                     self.find_meta_tmdb()
@@ -282,7 +275,7 @@ class EntityKtv(object):
 
     
     def find_meta(self):
-        from lib_metadata import SiteDaumTv, SiteTvingTv, SiteWavveTv
+        from support_site import SiteDaumTv, SiteTvingTv, SiteWavveTv
         module_map = [('daum', SiteDaumTv), ('tving',SiteTvingTv), ('wavve',SiteWavveTv)]
         #if self.data['filename']['name'] in EntityKtv.meta_cache:
         #    self.data['meta'] = EntityKtv.meta_cache[self.data['filename']['name']]
@@ -361,8 +354,7 @@ class EntityKtv(object):
     
 
     def find_meta_tmdb(self):
-        from lib_metadata import SiteTmdbFtv
-        from tool_base import ToolBaseFile
+        from support_site import SiteTmdbFtv
         module_map = [('tmdb', SiteTmdbFtv)]
         
         for site, site_class in module_map:
@@ -380,7 +372,7 @@ class EntityKtv(object):
                         self.find_meta()
                         if self.data['meta']['find'] == False:
                             self.data['process_info']['status'] = 'ftv'
-                            self.data['process_info']['ftv_title'] = ToolBaseFile.text_for_filename(site_data['data'][0]['title'])
+                            self.data['process_info']['ftv_title'] = SupportFile.text_for_filename(site_data['data'][0]['title'])
                             self.data['process_info']['ftv_year'] = site_data['data'][0]['year']
                         return
             except Exception as exception:

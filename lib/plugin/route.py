@@ -104,7 +104,7 @@ def default_route(P):
     @P.blueprint.route('/ajax/<sub>', methods=['GET', 'POST'])
     @login_required
     def ajax(sub):
-        P.logger.debug('AJAX %s %s', P.package_name, sub)
+        #P.logger.debug('AJAX %s %s', P.package_name, sub)
         try:
             # global
             if sub == 'setting_save':
@@ -191,12 +191,11 @@ def default_route(P):
     # API - 외부
     #########################################################
     # 단일 모듈인 경우 모듈이름을 붙이기 불편하여 추가.
-    @P.blueprint.route('/api/<sub2>', methods=['GET', 'POST'])
+    @P.blueprint.route('/api/<sub>', methods=['GET', 'POST'])
     @F.check_api
-    def api_first(sub2):
+    def api_first(sub):
         try:
-            for module in P.module_list:
-                return module.process_api(sub2, request)
+            return P.module_list[0].process_api(sub, request)
         except Exception as exception: 
             P.logger.error('Exception:%s', exception)
             P.logger.error(traceback.format_exc())
@@ -208,6 +207,14 @@ def default_route(P):
             for module in P.module_list:
                 if sub == module.name:
                     return module.process_api(sub2, request)
+        except Exception as exception: 
+            P.logger.error('Exception:%s', exception)
+            P.logger.error(traceback.format_exc())
+
+    @P.blueprint.route('/normal/<sub>', methods=['GET', 'POST'])
+    def normal_first(sub):
+        try:
+            return P.module_list[0].process_normal(sub, request)
         except Exception as exception: 
             P.logger.error('Exception:%s', exception)
             P.logger.error(traceback.format_exc())
@@ -224,7 +231,7 @@ def default_route(P):
 
 
 
-
+    # default_route 끝
 
 
 
