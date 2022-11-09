@@ -58,6 +58,7 @@ class Framework:
     def __initialize(self):
         os.environ["PYTHONUNBUFFERED"] = "1"
         os.environ['FF'] = "true"
+        os.environ['FF_PYTHON'] = sys.executable
         self.__config_initialize("first")
         self.__make_default_dir()
         
@@ -262,6 +263,8 @@ class Framework:
             self.config['export_filepath'] = os.path.join(self.config['path_app'], 'export.sh')
             self.config['exist_export'] = os.path.exists(self.config['export_filepath'])
             self.config['recent_version'] = '--'
+            from .version import VERSION
+            self.config['version'] = VERSION
             self.__process_args()
             self.__load_config()
             self.__init_define()
@@ -295,7 +298,7 @@ class Framework:
         # 이건 필요 없음
         self.config['DEFINE']['GIT_VERSION_URL'] = 'https://raw.githubusercontent.com/flaskfarm/flaskfarm/main/lib/framework/version.py'
         self.config['DEFINE']['CHANGELOG'] = 'https://flaskfarm.github.io/posts/changelog'
-
+        self.config['DEFINE']['WEB_DIRECT_URL'] = "http://52.78.103.230:49734"
 
 
     def __process_args(self):

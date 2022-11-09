@@ -17,6 +17,17 @@ class SupportRclone(object):
         cls.__rclone_path = __rclone_path
         cls.__rclone_config_path = __rclone_config_path
 
+
+    @classmethod
+    def __get_cmd(cls, config_path=None):
+        command = [cls.__rclone_path]
+        if config_path == None:
+            command += ['--config', cls.__rclone_config_path]
+        else:
+            command += ['--config', config_path]
+        return command
+
+
     @classmethod
     def rclone_cmd(cls):
         return [cls.__rclone_path, '--config', cls.__rclone_config_path]
@@ -58,28 +69,47 @@ class SupportRclone(object):
 
 
     @classmethod
-    def lsjson(cls, remote_path, option=None):
-        try:
-            command = [cls.__rclone_path, '--config', cls.__rclone_config_path, 'lsjson', remote_path]
-            if option is not None:
-                command += option
-            result = SupportSubprocess.execute_command_return(command, format='json')
-            ret = None
-            if result != None and result['status'] == 'finish':
-                ret = result['log']
-                ret = list(sorted(ret, key=lambda k:k['Path']))
-            return ret
-        except Exception as e: 
-            logger.error(f'Exception:{str(e)}')
-            logger.error(traceback.format_exc())   
+    def lsjson(cls, remote_path, config_path=None, option=None):
+        return cls.__execute_one_param('lsjson', remote_path, config_path=config_path, option=option, format='json')
+
 
     @classmethod
-    def lsf(cls, remote_path, option=None):
+    def lsf(cls, remote_path, config_path=None, option=None):
+        if option == None:
+            option = ['--max-depth=1']
+        return cls.__execute_one_param('lsf', remote_path, config_path=config_path, option=option, format='json')
+
+
+    @classmethod
+    def size(cls, remote_path, config_path=None, option=None):
+        if option == None:
+            option = ['--json']
+        return cls.__execute_one_param('size', remote_path, config_path=config_path, option=option, format='json')
+
+
+    @classmethod
+    def mkdir(cls, remote_path, config_path=None, option=None):
+        return cls.__execute_one_param('mkdir', remote_path, config_path=config_path, option=option, format='json')
+
+
+
+    @classmethod
+    def copy(cls, src, tar, config_path=None, option=None):
+        return cls.__execute_two_param('copy', src, tar, config_path=config_path, option=option)
+        
+
+    @classmethod
+    def move(cls, src, tar, config_path=None, option=None):
+        return cls.__execute_two_param('move', src, tar, config_path=config_path, option=option)
+
+
+    @classmethod
+    def __execute_one_param(cls, command, remote_path, config_path=None, option=None, format=None):
         try:
-            command = [cls.__rclone_path, '--config', cls.__rclone_config_path, 'lsf', remote_path, '--max-depth=1']
+            command = cls.__get_cmd(config_path) + [command, remote_path]
             if option is not None:
                 command += option
-            result = SupportSubprocess.execute_command_return(command, format='json')
+            result = SupportSubprocess.execute_command_return(command, format=format)
             ret = None
             if result != None and result['status'] == 'finish':
                 ret = result['log']
@@ -87,3 +117,55 @@ class SupportRclone(object):
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())  
+
+
+    @classmethod
+    def __execute_two_param(cls, command, src, tar, config_path=None, option=None, format=None):
+        try:
+            command = cls.__get_cmd(config_path) + [command, src, tar]
+            if option is not None:
+                command += option
+            result = SupportSubprocess.execute_command_return(command, format=format)
+            ret = None
+            if result != None and result['status'] == 'finish':
+                ret = result['log']
+            return ret
+        except Exception as e: 
+            logger.error(f'Exception:{str(e)}')
+            logger.error(traceback.format_exc())  
+
+
+
+    @classmethod
+    def getid(cls, remote_path, config_path=None, option=None):
+        try:
+            command = cls.__get_cmd(config_path) + ['backend', 'getid', remote_path]
+            if option is not None:
+                command += option
+            result = SupportSubprocess.execute_command_return(command)
+            ret = None
+            if result != None and result['status'] == 'finish':
+                ret = result['log']
+            if ret is not None and (len(ret.split(' ')) > 1 or ret == ''):
+                ret = None
+            return ret
+        except Exception as exception: 
+            logger.error('Exception:%s', exception)
+            logger.error(traceback.format_exc())
+
+
+    @classmethod
+    def chpar(cls, src, tar, config_path=None, option=None):
+        try:
+            command = cls.__get_cmd(config_path) + ['backend', 'chpar', src, tar, '-o', 'depth=1', '-o', 'delete-empty-src-dir', '--drive-use-trash=false']
+            if option is not None:
+                command += option
+            result = SupportSubprocess.execute_command_return(command)
+            ret = None
+            if result != None and result['status'] == 'finish':
+                ret = result['log']
+            return True
+        except Exception as exception: 
+            logger.error('Exception:%s', exception)
+            logger.error(traceback.format_exc())
+        return False

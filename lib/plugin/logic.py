@@ -32,13 +32,30 @@ class Logic(object):
         if self.P.ModelSetting is not None:
             for module in self.P.module_list:
                 key = f'{module.name}_auto_start'
-                if self.P.ModelSetting.has_key(key) and self.P.ModelSetting.get_bool(key):
+                key2 = f'{module.name}_interval'
+                if self.P.ModelSetting.has_key(key) and self.P.ModelSetting.get_bool(key) and self.P.ModelSetting.has_key(key2):
                     self.scheduler_start(module.name)
+                
                 if module.page_list is not None:
                     for page_instance in module.page_list:
                         key = f'{module.name}_{page_instance.name}_auto_start'
                         if self.P.ModelSetting.has_key(key) and self.P.ModelSetting.get_bool(key):
                             self.scheduler_start_sub(module.name, page_instance.name)
+
+                key1 = f'{module.name}_db_auto_delete'
+                key2 = f'{module.name}_db_delete_day'
+                if self.P.ModelSetting.has_key(key1) and self.P.ModelSetting.has_key(key2) and self.P.ModelSetting.get_bool(key1):
+                    try: module.db_delete(self.P.ModelSetting.get_int(key2))
+                    except: pass
+                if module.page_list == None:
+                    continue
+                for page_instance in module.page_list:
+                    key1 = f'{module.name}_{page_instance.name}_db_auto_delete'
+                    key2 = f'{module.name}_{page_instance.name}_db_delete_day'
+                    if self.P.ModelSetting.has_key(key1) and self.P.ModelSetting.has_key(key2) and self.P.ModelSetting.get_bool(key1):
+                        try: page_instance.db_delete(self.P.ModelSetting.get_int(key2))
+                        except: pass
+
 
 
     def db_init(self):
@@ -112,14 +129,24 @@ class Logic(object):
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
-    def reset_db(self, module_name):
+   
+    def db_delete(self, module_name, page_name, day):
         try:
             module = self.get_module(module_name)
-            return module.reset_db()
+            if module == None:
+                return False
+            if page_name != None:
+                page = module.get_page(page_name)
+                if page != None:
+                    return page.db_delete(day)
+            else:
+                return module.db_delete(day)
         except Exception as e: 
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
+
+    
 
     def one_execute(self, module_name):
         self.P.logger.debug('one_execute :%s', module_name)
@@ -166,6 +193,7 @@ class Logic(object):
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
 
+    """
     def process_telegram_data(self, data, target=None):
         try:
             for module in self.P.module_list:
@@ -174,7 +202,7 @@ class Logic(object):
         except Exception as e:
             self.P.logger.error(f'Exception:{str(e)}')
             self.P.logger.error(traceback.format_exc())
-
+    """
 
 
 

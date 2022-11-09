@@ -357,6 +357,7 @@ class PluginManager:
     @classmethod
     def get_plugin_instance(cls, package_name):
         try:
-            return cls.all_package_list[package_name]['P']
+            if cls.all_package_list[package_name]['loading']:
+                return cls.all_package_list[package_name]['P']
         except:
             pass

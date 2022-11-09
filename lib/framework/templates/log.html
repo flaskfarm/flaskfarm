@@ -8,13 +8,13 @@
     {{ macros.m_tab_head_end() }}
   </nav>
   <div class="tab-content" id="nav-tabContent">
-    {{ macros.m_tab_content_start('이전', true) }}
+    {{ macros.m_tab_content_start('old', true) }}
       <div>
         <textarea id="log" class="col-md-12" rows="30" charswidth="23" disabled style="background-color:#ffffff;visibility:hidden"></textarea>
       </div>
     {{ macros.m_tab_content_end() }}
     
-    {{ macros.m_tab_content_start('실시간', false) }}
+    {{ macros.m_tab_content_start('new', false) }}
       <div>
         <textarea id="add" class="col-md-12" rows="30" charswidth="23" disabled style="background-color:#ffffff;visibility:visible"></textarea>
       </div>
@@ -52,6 +52,7 @@ $(window).resize(function() {
 
 var protocol = window.location.protocol;
 var socket = io.connect(protocol + "//" + document.domain + ":" + location.port + "/log");
+
 socket.emit("start", {'package':'{{package}}'} );
 socket.on('on_start', function(data){
   document.getElementById("log").innerHTML += data.data;

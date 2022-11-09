@@ -58,6 +58,19 @@ class SupportDiscord(object):
         return False
 
 
+    @classmethod
+    def send_discord_bot_message(cls, text, webhook_url, encryped=True):
+        try:
+            from support import SupportAES
+            if encryped:
+                text = '^' + SupportAES.encrypt(text)
+            return cls.send_discord_message(text, webhook_url=webhook_url)
+        except Exception as exception: 
+            logger.error('Exception:%s', exception)
+            logger.error(traceback.format_exc()) 
+            return False
+
+
     
     @classmethod
     def discord_proxy_image(cls, image_url, webhook_url=None, retry=True):

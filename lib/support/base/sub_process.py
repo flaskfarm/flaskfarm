@@ -43,14 +43,29 @@ class SupportSubprocess(object):
 
             iter_arg =  ''
             if platform.system() == 'Windows':
-                process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8')
+                process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8', bufsize=0)
             else:
                 if uid == None:
                     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8')
                 else:
                     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, preexec_fn=demote(uid, gid), encoding='utf8')
             new_ret = {'status':'finish', 'log':None}
+
+            def func(ret):
+                with process.stdout:
+                    for line in iter(process.stdout.readline, iter_arg):
+                        ret.append(line.strip())
+                        if log:
+                            logger.debug(ret[-1])
+            
+            result = []
+            thread = threading.Thread(target=func, args=(result,))
+            thread.setDaemon(True)
+            thread.start()
+            #thread.join()
+
             try:
+                #process.communicate()
                 process_ret = process.wait(timeout=timeout) # wait for the subprocess to exit
             except:
                 import psutil
@@ -59,14 +74,16 @@ class SupportSubprocess(object):
                     proc.kill()
                 process.kill()
                 new_ret['status'] = "timeout"
-
-            ret = []
-            with process.stdout:
-                for line in iter(process.stdout.readline, iter_arg):
-                    ret.append(line.strip())
-                    if log:
-                        logger.debug(ret[-1])
-
+            #logger.error(process_ret)
+            thread.join()
+            #ret = []
+            #with process.stdout:
+            #    for line in iter(process.stdout.readline, iter_arg):
+            #        ret.append(line.strip())
+            #        if log:
+            #            logger.debug(ret[-1])
+           
+            ret = result
             #logger.error(ret)
             if format is None:
                 ret2 = '\n'.join(ret)
@@ -220,15 +237,13 @@ class SupportSubprocess(object):
         def func_callback_line():
             previous = ''
             while self.stdout_queue:
-                #logger.info(previous)
                 receive = previous + self.stdout_queue.get()
-                #lines = receive.splitlines()
                 lines = receive.split('\n')
-                #logger.info((lines))
                 previous = lines[-1]
 
                 for line in lines[:-1]:
                     line = line.strip()
+                    # TODO
                     #logger.error(line)
                     if line == '<END>':
                         self.send_stdout_callback(self.call_id, 'END', None)

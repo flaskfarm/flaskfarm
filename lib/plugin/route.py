@@ -129,8 +129,9 @@ def default_route(P):
                     else:
                         P.logic.scheduler_stop(module_name)
                     return jsonify(go)
-                elif cmd == 'reset_db':
-                    ret = P.logic.reset_db(module_name)
+                elif cmd == 'db_delete':
+                    day = request.form['day']
+                    ret = P.logic.db_delete(module_name, None, day)
                     return jsonify(ret)
                 elif cmd == 'one_execute':
                     ret = P.logic.one_execute(module_name)
@@ -168,10 +169,10 @@ def default_route(P):
                     else:
                         P.logic.scheduler_stop_sub(module_name, page_name)
                     return jsonify(go)
-                #elif command == 'reset_db':
-                #    sub = request.form['sub']
-                #    ret = P.logic.reset_db(sub)
-                #    return jsonify(ret)
+                elif command == 'db_delete':
+                    day = request.form['day']
+                    ret = P.logic.db_delete(module_name, page_name, day)
+                    return jsonify(ret)
                 elif command == 'one_execute':
                     ret = P.logic.one_execute_sub(module_name, page_name)
                     return jsonify(ret)
@@ -293,10 +294,6 @@ def default_route_single_module(P):
                 else:
                     P.logic.scheduler_stop(sub)
                 return jsonify(go)
-            elif sub == 'reset_db':
-                sub = request.form['sub']
-                ret = P.logic.reset_db(sub)
-                return jsonify(ret)
             elif sub == 'one_execute':
                 sub = request.form['sub']
                 ret = P.logic.one_execute(sub)

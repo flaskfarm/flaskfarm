@@ -142,8 +142,8 @@ class EntityKtv(object):
             try:
                 name = re.sub(rule['source'], rule['target'], name, flags=re.I).strip()
             except Exception as e: 
-                P.logger.error(f"Exception:{e}")
-                P.logger.error(traceback.format_exc())
+                logger.error(f"Exception:{e}")
+                logger.error(traceback.format_exc())
         self.data['filename']['name'] = name
 
 
@@ -347,7 +347,7 @@ class EntityKtv(object):
             return self.data['filename']['original'].replace(f".{self.data['filename']['date']}.", f".E{str(self.data['process_info']['change_epi_number']).zfill(2)}.{self.data['filename']['date']}.")
         elif self.data['process_info']['rebuild'] == 'change_date':
             return self.data['filename']['original'].replace(f".{self.data['filename']['date']}.", f".{self.data['process_info']['change_date']}.")
-            time.sleep(100)
+            time.sleep(10)
         else:
             pass
 

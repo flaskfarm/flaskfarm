@@ -89,24 +89,25 @@ class ModelBase(F.db.Model):
         return False
 
     @classmethod
-    def delete_all(cls, days=None):
+    def delete_all(cls, day=None):
+        count = -1
         try:
             with F.app.app_context():
-                if days == None or days in [0, '0']:
-                    F.db.session.query(cls).delete()
-                    F.db.session.commit()
+                if day == None or day in [0, '0']:
+                    count = F.db.session.query(cls).delete()
                 else:
                     now = datetime.now()
-                    ago = now - timedelta(days=int(days))
+                    ago = now - timedelta(days=int(day))
                     #ago.hour = 0
                     #ago.minute = 0
                     count = F.db.session.query(cls).filter(cls.created_time < ago).delete()
-                    cls.P.logger.info(f"delete_all {days=} {count=}")
-                return True
+                    cls.P.logger.info(f"delete_all {day=} {count=}")
+                F.db.session.commit()
+                return count
         except Exception as e:
             cls.P.logger.error(f'Exception:{str(e)}')
             cls.P.logger.error(traceback.format_exc())
-        return False
+        return count
     
 
     @classmethod

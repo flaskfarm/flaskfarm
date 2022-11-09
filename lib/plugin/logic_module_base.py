@@ -58,8 +58,8 @@ class PluginModuleBase(object):
         try:
             arg = self.P.ModelSetting.to_dict() if self.P.ModelSetting != None else {}
             arg['path_data'] = F.config['path_data']
-            arg['is_include'] = str(F.scheduler.is_include(self.get_scheduler_name()))
-            arg['is_running'] = str(F.scheduler.is_running(self.get_scheduler_name()))
+            arg['is_include'] = F.scheduler.is_include(self.get_scheduler_name())
+            arg['is_running'] = F.scheduler.is_running(self.get_scheduler_name())
             return render_template(f'{self.P.package_name}_{self.name}_{page}.html', arg=arg)
         except Exception as e:
             self.P.logger.error(f'Exception:{str(e)}')
@@ -81,8 +81,10 @@ class PluginModuleBase(object):
     def scheduler_function(self):
         pass
 
-    def reset_db(self):
-        pass
+    def db_delete(self, day):
+        if self.web_list_model != None:
+            return self.web_list_model.delete_all(day)
+
 
     def plugin_load(self):
         pass
@@ -134,8 +136,24 @@ class PluginModuleBase(object):
         return f'{self.P.package_name}_{self.name}'
 
 
+    def process_discord_data(self, data):
+        pass
 
-
+    
+    def start_celery(self, func, on_message=None, *args, **kwargs):
+        from framework import F
+        if F.config['use_celery']:
+            result = func.apply_async(*args, **kwargs)
+            try:
+                if on_message != None:
+                    ret = result.get(on_message=on_message, propagate=True)
+                else:
+                    ret = result.get()
+            except:
+                ret = result.get()
+        else:
+            ret = func(*args, **kwargs)
+        return ret
 
 
 
@@ -233,3 +251,10 @@ class PluginPageBase(object):
 
     def get_module(self, module_name):
         return self.parent.get_module(module_name)
+
+    def process_discord_data(self, data):
+        pass
+    
+    def db_delete(self, day):
+        if self.web_list_model != None:
+            return self.web_list_model.delete_all(day)

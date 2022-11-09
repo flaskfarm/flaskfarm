@@ -62,7 +62,8 @@ class PluginBase(object):
             for mod in mod_list:
                 mod_ins = mod(self)
                 self.module_list.append(mod_ins)
-            
+            if self.home_module == None:
+                self.home_module = self.module_list[0].name
         except Exception as e:
             F.logger.error(f'[{self.package_name}] Exception:{str(e)}')
             F.logger.error(traceback.format_exc())

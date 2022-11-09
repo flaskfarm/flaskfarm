@@ -62,7 +62,7 @@ class WatchThread(threading.Thread):
             key = 'filename'
             value = self.filename
         if os.path.exists(logfile):
-            with open(logfile, 'r') as f:
+            with open(logfile, 'r', encoding='utf8') as f:
                 f.seek(0, os.SEEK_END)
                 while not self.stop_flag:
                     line = f.readline()
@@ -73,7 +73,6 @@ class WatchThread(threading.Thread):
             F.logger.debug('WatchThread.. End %s', value)
         else:
             F.socketio.emit("add", {key : value, 'data': 'not exist logfile'}, namespace='/log', broadcast=True)
-
 
 
 class LogViewer(SingletonClass):

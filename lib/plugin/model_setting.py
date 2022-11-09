@@ -117,7 +117,7 @@ def get_model_setting(package_name, logger, table_name=None):
                 return False, []
 
         @staticmethod
-        def get_list(key, delimeter='\n', comment=' #'):
+        def get_list(key, delimeter='\n', comment='#'):
             try:
                 value = ModelSetting.get(key).replace('\n', delimeter)
                 if comment is None:
