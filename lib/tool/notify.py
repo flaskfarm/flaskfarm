@@ -40,7 +40,7 @@ class ToolNotify(object):
                 elif item.get('type') == 'discord':
                     if item.get('webhook', '') == '':
                         continue
-                    SupportDiscord.send_discord_message(text, webhook_url=item.get('webhook'))
+                    SupportDiscord.send_discord_message(text, image_url=image_url, webhook_url=item.get('webhook'))
             return True
         except Exception as exception: 
             logger.error('Exception:%s', exception)

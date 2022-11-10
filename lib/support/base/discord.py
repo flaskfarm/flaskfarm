@@ -44,14 +44,38 @@ class SupportDiscord(object):
     @classmethod
     def send_discord_message(cls, text, image_url=None, webhook_url=None):
         try:
+            """
             webhook = DiscordWebhook(url=webhook_url, content=text)
             if image_url is not None:
                 embed = DiscordEmbed()
                 embed.set_timestamp()
                 embed.set_image(url=image_url)
                 webhook.add_embed(embed)
-            response = webhook.execute()
-            return True
+            """
+            try:
+                
+                if image_url is not None:
+                    webhook = DiscordWebhook(url=webhook_url)
+                    embed = DiscordEmbed()
+                    embed.set_timestamp()
+                    embed.set_image(url=image_url)
+                    tmp = text.split('\n', 1)
+                    embed.set_title(tmp[0])
+                    embed.set_description(tmp[1])
+                    webhook.add_embed(embed)
+                else:
+                    webhook = DiscordWebhook(url=webhook_url, content=text)
+                webhook.execute()
+                return True
+            except:
+                webhook = DiscordWebhook(url=webhook_url, content=text)
+                if image_url is not None:
+                    embed = DiscordEmbed()
+                    embed.set_timestamp()
+                    embed.set_image(url=image_url)
+                    webhook.add_embed(embed)
+                webhook.execute()
+                return True
         except Exception as exception: 
             logger.error('Exception:%s', exception)
             logger.error(traceback.format_exc()) 
