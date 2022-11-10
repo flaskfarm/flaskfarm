@@ -139,14 +139,21 @@ def default_route(P):
                 elif cmd == 'immediately_execute':
                     ret = P.logic.immediately_execute(module_name)
                     return jsonify(ret)
-                elif cmd == 'web_list':
-                    model = P.logic.get_module(module_name).web_list_model
-                    if model != None:
-                        return jsonify(model.web_list(request))
+                
                     
                 if module_name == module.name:
                     if cmd == 'command':
                         return module.process_command(request.form['command'], request.form.get('arg1'), request.form.get('arg2'), request.form.get('arg3'), request)
+                    elif cmd == 'web_list':
+                        model = P.logic.get_module(module_name).web_list_model
+                        if model != None:
+                            return jsonify(model.web_list(request))
+                    elif cmd == 'db_delete_item':
+                        db_id = request.form['db_id']
+                        ret = False
+                        if module.web_list_model != None:
+                            ret = module.web_list_model.delete_by_id(db_id)
+                        return jsonify(ret)
                     else:
                         return module.process_ajax(cmd, request)
         except Exception as exception: 
@@ -181,6 +188,12 @@ def default_route(P):
                     return jsonify(ret)
                 elif command == 'command':
                     return ins_page.process_command(request.form['command'], request.form.get('arg1'), request.form.get('arg2'), request.form.get('arg3'), request)
+                elif command == 'db_delete_item':
+                    db_id = request.form['db_id']
+                    ret = False
+                    if ins_page.web_list_model != None:
+                        ret = ins_page.web_list_model.delete_by_id(db_id)
+                    return jsonify(ret)
                 else:
                     return ins_page.process_ajax(command, request)
             P.logger.error(f"not process ajax : {P.package_name} {module_name} {page_name} {command}")
