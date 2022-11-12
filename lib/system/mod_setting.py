@@ -180,7 +180,12 @@ class ModuleSetting(PluginModuleBase):
         if 'theme' in change_list or 'web_title' in change_list:
             F.socketio.emit("refresh", {}, namespace='/framework', broadcast=True)
         elif 'notify.yaml' in change_list:
-            SupportFile.write_file(F.config['notify_yaml_filepath'], SystemModelSetting.get('notify.yaml'))
+            try:
+                SupportFile.write_file(F.config['notify_yaml_filepath'], SystemModelSetting.get('notify.yaml'))
+                SupportYaml.read_yaml(F.config['notify_yaml_filepath'])
+            except:
+                data = {'type':'danger', 'msg' : "알림 정책이 yaml 형식에 맞지 않습니다."}
+                F.socketio.emit("notify", data, namespace='/framework', broadcast=True)
         elif 'web_pw' in change_list:
             import hashlib
             enc = hashlib.md5()
