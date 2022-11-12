@@ -1,9 +1,9 @@
 import os
 import shutil
+import traceback
 
+from framework import F, logger
 from support import SupportYaml, d
-
-from framework import F
 
 
 class MenuManager:
@@ -11,13 +11,18 @@ class MenuManager:
 
     @classmethod
     def __load_menu_yaml(cls):
-        menu_yaml_filepath = os.path.join(F.config['path_data'], 'db', 'menu.yaml')
-        if os.path.exists(menu_yaml_filepath) == False:
-            shutil.copy(
-                os.path.join(F.config['path_app'], 'files', 'menu.yaml.template'),
-                menu_yaml_filepath
-            )
-        cls.menu_map = SupportYaml.read_yaml(menu_yaml_filepath)
+        try:
+            menu_yaml_filepath = os.path.join(F.config['path_data'], 'db', 'menu.yaml')
+            if os.path.exists(menu_yaml_filepath) == False:
+                shutil.copy(
+                    os.path.join(F.config['path_app'], 'files', 'menu.yaml.template'),
+                    menu_yaml_filepath
+                )
+            cls.menu_map = SupportYaml.read_yaml(menu_yaml_filepath)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
+            logger.error(traceback.format_exc())
+            cls.menu_map = SupportYaml.read_yaml(os.path.join(F.config['path_app'], 'files', 'menu.yaml.template'))
         
 
     @classmethod

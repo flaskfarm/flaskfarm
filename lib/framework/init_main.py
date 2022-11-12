@@ -519,8 +519,8 @@ class Framework:
             PluginManager.plugin_unload()
             with self.app.test_request_context():
                 self.socketio.stop()
-        except Exception as exception: 
-            self.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.logger.error(f"Exception:{str(e)}")
             self.logger.error(traceback.format_exc())
 
     def get_recent_version(self):

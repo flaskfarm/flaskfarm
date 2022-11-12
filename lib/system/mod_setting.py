@@ -3,7 +3,7 @@ import string
 import time
 
 from support import (SupportDiscord, SupportFile, SupportSubprocess,
-                     SupportTelegram)
+                     SupportTelegram, SupportYaml)
 from tool import ToolModalCommand
 
 from .setup import *
@@ -91,10 +91,15 @@ class ModuleSetting(PluginModuleBase):
                 ret['msg'] = 'export.sh 파일이 없습니다.'
         elif command == 'menu_save':
             SupportFile.write_file(F.config['menu_yaml_filepath'], arg1 )
-            ret['msg'] = '저장하였습니다.'
-            from framework.init_menu import MenuManager
-            MenuManager.init_menu()
-            F.socketio.emit("refresh", {}, namespace='/framework', broadcast=True)
+            try:
+                SupportYaml.read_yaml(F.config['menu_yaml_filepath'])
+                ret['msg'] = '저장하였습니다.'
+                from framework.init_menu import MenuManager
+                MenuManager.init_menu()
+                F.socketio.emit("refresh", {}, namespace='/framework', broadcast=True)
+            except:
+                ret['ret'] = "danger" 
+                ret['msg'] = "yaml 형식에 맞지 않습니다"
         elif command == 'notify_test':
             if arg1 == 'telegram':
                 token, chatid, sound, text = arg2.split('||')
