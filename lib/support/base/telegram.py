@@ -12,11 +12,16 @@ class SupportTelegram:
         try:
             bot = Bot(bot_token)
             if image_url is not None:
-                bot.sendPhoto(chat_id, image_url, disable_notification=disable_notification)
+                logger.debug(image_url)
+                try:
+                    bot.sendPhoto(chat_id, image_url, disable_notification=disable_notification)
+                except Exception as e: 
+                    logger.error(f"Exception:{str(e)}")
+                    logger.error(traceback.format_exc()) 
             bot.sendMessage(chat_id, text, disable_web_page_preview=True, disable_notification=disable_notification)
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
             logger.debug('Chatid:%s', chat_id)
         return False

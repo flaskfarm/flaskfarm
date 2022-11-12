@@ -1,20 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
 
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js?autorun=true&amp;lang=css&skin=sunburst"></script>
+
+
 <script src="{{ url_for('static', filename='js/showdown_2.1.0.js') }}"></script>
+<script src="{{ url_for('static', filename='js/showdown-prettify.js') }}"></script>
 <link href="{{ url_for('static', filename='css/showdown.css') }}" rel="stylesheet">
+
+
 
 <meta id="text" data-text="{{data}}">
 <div id="text_div"></div>
 
 <script type="text/javascript">
   $(document).ready(function(){
-    var converter = new showdown.Converter();
+    var converter = new showdown.Converter({extensions: ['prettify']});
     converter.setOption('tables', true);
     converter.setOption('strikethrough', true);
+    converter.setOption('ghCodeBlocks',true);
     
     text = $('#text').data('text');
     html      = converter.makeHtml(text);
+
+    input = "Here's a simple hello world in javascript:\n" +
+            "\n" +
+            "    alert('Hello World!');\n" +
+            "\n" +
+            "The `alert` function is a build-in global from `window`.";
+    //html = converter.makeHtml(input);
+
+    console.log(html);
+    
     $('#text_div').html(html);
   });
 </script>    
