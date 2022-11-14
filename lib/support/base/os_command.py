@@ -1,12 +1,14 @@
-import os, traceback, io, re, platform
-from . import logger
-from . import ToolSubprocess
-from . import ToolUtil, ToolBaseFile
+import os
+import platform
 
-class ToolOSCommand(object):
+from . import logger
+
+
+class SupportOSCommand(object):
 
     @classmethod
     def get_size(cls, path):
+        from support import SupportFile, SupportSubprocess, SupportUtil
         if platform.system() == 'Windows':
             #https://docs.microsoft.com/en-us/sysinternals/downloads/du
             """
@@ -24,19 +26,19 @@ class ToolOSCommand(object):
             ret['target'] = path
             if os.path.exists(path):
                 if os.path.isdir(path):
-                    ret['size'] = ToolBaseFile.size(start_path=path)
+                    ret['size'] = SupportFile.size(start_path=path)
                 else:
                     ret['size'] = os.stat(path).st_size
-            ret['sizeh'] = ToolUtil.sizeof_fmt(ret['size'])
+            ret['sizeh'] = SupportUtil.sizeof_fmt(ret['size'])
             return ret
 
         else:
             command = ['du', '-bs', path]
-            data = ToolSubprocess.execute_command_return(command)
+            data = SupportSubprocess.execute_command_return(command)
             ret = {}
-            tmp = data.split('\t')
+            tmp = data['log'].split('\t')
             ret['target'] = tmp[1].strip()
             ret['size'] = int(tmp[0].strip())
-            ret['sizeh'] = ToolUtil.sizeof_fmt(ret['size'])
+            ret['sizeh'] = SupportUtil.sizeof_fmt(ret['size'])
         return ret
             

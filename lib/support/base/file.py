@@ -113,94 +113,7 @@ class SupportFile(object):
             logger.debug('Exception:%s', exception)
             logger.debug(traceback.format_exc())
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
     @classmethod
     def size(cls, start_path = '.'):
         total_size = 0
@@ -210,6 +123,104 @@ class SupportFile(object):
                 if not os.path.islink(fp):
                     total_size += os.path.getsize(fp)
         return total_size
+
+
+    @classmethod
+    def rmtree(cls, folderpath):
+        import shutil
+        try:
+            for root, dirs, files in os.walk(folderpath):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    shutil.rmtree(os.path.join(root, name))
+        except:
+            return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @classmethod
     def file_move(cls, source_path, target_dir, target_filename):
@@ -257,7 +268,7 @@ class SupportFile(object):
         return
     """
 
-
+    """
     @classmethod
     def rmtree(cls, folderpath):
         import shutil
@@ -270,19 +281,9 @@ class SupportFile(object):
                 return True
             except:
                 return False
-            
+    """     
                 
-    @classmethod
-    def rmtree2(cls, folderpath):
-        import shutil
-        try:
-            for root, dirs, files in os.walk(folderpath):
-                for name in files:
-                    os.remove(os.path.join(root, name))
-                for name in dirs:
-                    shutil.rmtree(os.path.join(root, name))
-        except:
-            return False
+
           
     
 

@@ -70,6 +70,16 @@
     <div class='col-sm-9'>
 {% endmacro %}
 
+{% macro setting_top_big(left='', padding='10') %}
+  <div class='row' style="padding-top: {{padding}}px; padding-bottom:{{padding}}px; align-items: center;">
+    <div class='col-sm-3 set-left'>
+    {% if left != '' %}
+      <strong><h4>{{ left }}</h4></strong>
+    {% endif %}
+    </div>
+    <div class='col-sm-9'>
+{% endmacro %}
+
 {% macro setting_bottom(desc=None, padding_top='5') %}
   {% if desc is not none %}
     <div style="padding-left:20px; padding-top:{{padding_top}}px;">
@@ -412,6 +422,14 @@ option을 script로 넣을 때 사용
   {{ setting_top(left) }}
     <div style="padding-left:20px; padding-top:-5px;">
       <span id={{id}}>{{value}}</span>
+    </div>
+  {{ setting_bottom(desc, padding_top='-5') }}
+{% endmacro %}
+
+{% macro info_text_big(id, left, value='', desc=None) %}
+  {{ setting_top_big(left) }}
+    <div style="padding-left:20px; padding-top:-5px;">
+      <span id={{id}}><h4>{{value}}</h4></span>
     </div>
   {{ setting_bottom(desc, padding_top='-5') }}
 {% endmacro %}

@@ -15,6 +15,7 @@ logger = get_logger()
 from .base.aes import SupportAES
 from .base.discord import SupportDiscord
 from .base.file import SupportFile
+from .base.os_command import SupportOSCommand
 from .base.string import SupportString
 from .base.sub_process import SupportSubprocess
 from .base.support_sc import SupportSC

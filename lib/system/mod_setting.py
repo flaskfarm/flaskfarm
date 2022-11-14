@@ -143,8 +143,7 @@ class ModuleSetting(PluginModuleBase):
         try:
             if F.config['run_flask'] == False:
                 return
-            if SystemModelSetting.get_bool('celery_start_by_web'):
-                self.celery_execute()
+
             if F.config['arg_repeat'] == 0 or SystemModelSetting.get('system_start_time') == '':
                 SystemModelSetting.set('system_start_time', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             SystemModelSetting.set('repeat', str(F.config['arg_repeat']))
@@ -167,7 +166,11 @@ class ModuleSetting(PluginModuleBase):
                 from tool import ToolNotify
                 msg = f"시스템이 시작되었습니다.\n재시작: {F.config['arg_repeat']}"
                 ToolNotify.send_message(msg, message_id='system_start')
-            
+            if SystemModelSetting.get_bool('celery_start_by_web'):
+                # 2022-11-14 DB는 flask가 만드는데 만들기전 celery를 실행해버림
+                from threading import Timer
+                Timer(10, self.celery_execute).start()
+                #self.celery_execute()            
 
         except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
