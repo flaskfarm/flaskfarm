@@ -48,11 +48,9 @@ $("body").on('click', '#login_btn', function(e){
     function(data) {
       if (data == 'redirect') {
         next = document.getElementById("next").value;
-        console.log(next)
         if (next == '' || next == 'None' || next == '/system/restart' || '/system/shutdown') {
           next = '/'
         }
-        //console.log(next)
         window.location.href = next;
       } else if (data == 'no_id') {
         $.notify('<strong>ID가 없습니다.</strong>', {

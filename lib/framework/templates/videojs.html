@@ -30,10 +30,8 @@ let player = videojs('player', options);
 
 player.ready(function(){
   // set subtitle track
-  console.log(subtitle_src);
   if (subtitle_src != "") {
     var suburl = subtitle_src.replace(/&amp;/g, '&');
-    console.log(suburl);
     let captionOption = {
       kind: 'captions',
       srclang: 'ko',
@@ -53,10 +51,8 @@ player.ready(function(){
   }
   else {
     var tracks = player.textTracks();
-    console.log(tracks.length);
     for (var i = 0; i < tracks.length; i++) {
       var track = tracks[i];
-      console.log(track);
     }
   }
 });

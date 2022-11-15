@@ -1,3 +1,12 @@
+try:
+    import yaml
+except:
+    import os
+    try:
+        os.system("pip install pyyaml")
+    except:
+        pass
+    
 from .init_main import Framework
 from .version import VERSION
 

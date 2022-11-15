@@ -546,7 +546,6 @@ option을 script로 넣을 때 사용
   <div id="{{id}}_div" data-text="{{text}}"></div>
   <script type="text/javascript">
     ret = converter.makeHtml($('#{{id}}_div').data('text'));
-    console.log(ret)
     $('#{{id}}_div').html(ret);
   </script>
 {% endmacro %}
@@ -555,8 +554,6 @@ option을 script로 넣을 때 사용
 
   <script type="text/javascript">
     ret = converter.makeHtml($('#{{id}}_div').data('text'));
-    console.log(ret)
-    
   </script>
 {% endmacro %}
 

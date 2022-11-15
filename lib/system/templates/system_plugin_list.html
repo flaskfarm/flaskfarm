@@ -31,11 +31,9 @@ $("body").on('click', '#plugin_install_btn', function(e){
 
 function make_plugin_list(data) {
   current_data = data;
-  console.log(data);
   str = ''
-  console.log(data)
   for (i in data) {
-    console.log(data[i]);
+    //console.log(data[i]);
     str += j_row_start();
     str += j_col_wide(1, (parseInt(i)+1), 'center')
     if (data[i].title == null) {

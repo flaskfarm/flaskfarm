@@ -98,11 +98,9 @@ function make_list(data) {
   if (data.length == 0) str += '<tr><td colspan="6"><h4>작업이 없습니다.</h4></td></tr>';
 
   for(i in data) {
-    console.log(data[i]);
+    //console.log(data[i]);
     str += '<tr class="chover" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse_' + i + '" aria-expanded="true" >';
-
     str += '<td rowspan="2" scope="col" style="width:5%; text-align:center;">'+ (data[i].id) + '</td>';
-
 
     // command
     tmp = '';
@@ -187,8 +185,6 @@ $("body").on('click', '#job_save_btn', function(e){
   e.preventDefault();
   //tmp = document.getElementById("schedule_radio2").getAttribute("checked");
   schedule_mode = $('input[name=job_schedule_mode]:checked').val();
-  console.log(tmp);
-  
   schedule_interval = $("#job_schedule_interval").val();
   
   if (schedule_mode == 'scheduler' && schedule_interval == '') {

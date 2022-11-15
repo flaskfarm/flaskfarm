@@ -28,7 +28,6 @@ $(document).ready(function() {
       var restartSocket = io.connect(window.location.href);
       
       restartSocket.on('connect', function(data){
-        console.log('접속 받음')
         window.location.href = referer;
       });
     }, 3000);

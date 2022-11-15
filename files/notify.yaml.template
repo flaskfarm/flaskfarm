@@ -3,7 +3,7 @@
 # message id 가 없을 경우 DEFAULT 값 사용
 # 공통: type, enable_time (시작시간-종료시간. 항상 받을 경우 생략)
 
-- DEFAULT:
+DEFAULT:
   - type: 'telegram'
     token: ''
     chat_id: ''
@@ -14,7 +14,7 @@
     enable_time: '09-23'
 
 
-- system_start:
+system_start:
   - type: 'telegram'
     token: ''
     chat_id: ''
