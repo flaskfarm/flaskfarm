@@ -221,8 +221,7 @@ class Framework:
         PluginManager.plugin_menus['system'] = {'menu':SP.menu, 'match':False} 
 
         from .init_menu import MenuManager
-        if MenuManager.init_menu() == False:
-            MenuManager.init_menu(default=True)
+        MenuManager.init_menu()
         self.logger.info("메뉴 구성 완료")
 
         if self.config['run_flask']:

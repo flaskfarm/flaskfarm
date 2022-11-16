@@ -10,10 +10,7 @@ class MenuManager:
     menu_map = None
 
     @classmethod
-    def __load_menu_yaml(cls, default):
-        if default:
-            cls.menu_map = SupportYaml.read_yaml(os.path.join(F.config['path_app'], 'files', 'menu.yaml.template'))
-            return
+    def __load_menu_yaml(cls):
         try:
             menu_yaml_filepath = os.path.join(F.config['path_data'], 'db', 'menu.yaml')
             if os.path.exists(menu_yaml_filepath) == False:
@@ -26,15 +23,21 @@ class MenuManager:
             logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             cls.menu_map = SupportYaml.read_yaml(os.path.join(F.config['path_app'], 'files', 'menu.yaml.template'))
+        
 
     @classmethod
-    def init_menu(cls, default=False):
+    def init_menu(cls):
+        cls.__load_menu_yaml()
+        if cls.__init_menu() == False:
+            cls.menu_map = SupportYaml.read_yaml(os.path.join(F.config['path_app'], 'files', 'menu.yaml.template'))
+            cls.__init_menu()
+
+    @classmethod
+    def __init_menu(cls):
         try:
-            cls.__load_menu_yaml(default)
             from .init_plugin import PluginManager
             plugin_menus = PluginManager.plugin_menus
             copy_map = [] 
-
             for category in cls.menu_map:
                 if 'uri' in category:
                     copy_map.append(category)
@@ -91,13 +94,14 @@ class MenuManager:
                     c = cls.menu_map[-2]
                     c['count'] += 1
                     c['list'].append(plugin_menu['menu'])
-            #F.logger.warning(d(cls.menu_map))
             return True
         except Exception as e: 
             logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
-        return False
-      
+            return False
+        
+        #F.logger.warning(d(cls.menu_map))
+
 
     @classmethod
     def get_menu_map(cls):
