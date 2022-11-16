@@ -91,7 +91,6 @@ class MenuManager:
                     c = cls.menu_map[-2]
                     c['count'] += 1
                     c['list'].append(plugin_menu['menu'])
-            raise Exception()
             #F.logger.warning(d(cls.menu_map))
             return True
         except Exception as e: 
