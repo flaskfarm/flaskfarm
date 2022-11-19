@@ -1,6 +1,7 @@
 import base64
-from Crypto.Cipher import AES
+
 from Crypto import Random
+from Crypto.Cipher import AES
 from framework import app, logger
 
 BS = 16
@@ -13,8 +14,8 @@ class ToolAESCipher(object):
     def encrypt(raw, mykey=None):
         try:
             Random.atfork()
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
 
         raw = pad(raw)

@@ -4,9 +4,8 @@ import time
 import traceback
 
 from flask import request
-from support import SingletonClass
-
 from framework import F
+from support import SingletonClass
 
 namespace = 'log'
 
@@ -24,8 +23,8 @@ def socket_file(data):
             filename = data['filename']
         LogViewer.instance().start(package, filename, request.sid)
         F.logger.debug('start package:%s filename:%s sid:%s', package, filename, request.sid)
-    except Exception as exception: 
-        F.logger.error('Exception:%s', exception)
+    except Exception as e: 
+        F.logger.error(f"Exception:{str(e)}")
         F.logger.error(traceback.format_exc())
 
 @F.socketio.on('disconnect', namespace='/%s' % namespace)
@@ -33,8 +32,8 @@ def disconnect():
     try:
         LogViewer.instance().disconnect(request.sid)
         F.logger.debug('disconnect sid:%s', request.sid)
-    except Exception as exception: 
-        F.logger.error('Exception:%s', exception)
+    except Exception as e: 
+        F.logger.error(f"Exception:{str(e)}")
         F.logger.error(traceback.format_exc())
 
 

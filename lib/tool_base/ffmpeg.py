@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 #########################################################
-import os, sys, traceback, subprocess, json, platform
+import json
+import os
+import platform
+import subprocess
+import sys
+import traceback
+
 from framework import app, logger, path_data
+
 from ..support.base.subprocess import ToolSubprocess
+
 
 class ToolFfmpeg(object):
 
@@ -15,7 +23,7 @@ class ToolFfmpeg(object):
             logger.warning(' '.join(command))
             ret = ToolSubprocess.execute_command_return(command, format='json')
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 

@@ -201,8 +201,8 @@ class PageCommand(PluginPageBase):
                         self.execute_thread_start(db_item.id)
                     elif db_item.schedule_mode == 'scheduler' and db_item.schedule_auto_start:
                         self.__sched_add(db_item.id, db_item=db_item)
-            except Exception as exception: 
-                logger.error('Exception:%s', exception)
+            except Exception as e: 
+                logger.error(f"Exception:{str(e)}")
                 logger.error(traceback.format_exc())        
         try:
             th = threading.Thread(target=plugin_load_thread)
@@ -287,6 +287,6 @@ class ModelCommand(ModelBase):
                 item['process'] = (SupportSubprocess.get_instance_by_call_id(f"command_{item['id']}") != None)
 
             return data
-        except Exception as exception:
-            logger.error('Exception:%s', exception)
+        except Exception as e:
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())

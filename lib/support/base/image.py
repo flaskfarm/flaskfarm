@@ -1,6 +1,12 @@
-import os, sys, traceback, requests
+import os
+import sys
+import traceback
 from io import BytesIO
+
+import requests
+
 from . import logger
+
 
 class SupportImage(object):
 
@@ -20,6 +26,6 @@ class SupportImage(object):
             from . import SupportDiscord
             return SupportDiscord.discord_proxy_image_bytes(img_byte_arr)
         except Exception as e: 
-            logger.error('Exception:%s', e)
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 

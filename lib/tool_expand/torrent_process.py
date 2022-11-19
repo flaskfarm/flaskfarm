@@ -1,18 +1,18 @@
 
 # -*- coding: utf-8 -*-
-import requests, re, json, time
-import traceback, unicodedata
-from datetime import datetime
-import traceback
-import os
-import json
-import time
 import copy
+import json
+import os
+import re
+import time
+import traceback
+import unicodedata
+from datetime import datetime
 
-from framework import app, SystemModelSetting, py_urllib
+import requests
+from framework import SystemModelSetting, app, py_urllib
 from framework.util import Util
 from tool_expand import ToolExpandFileProcess
-
 
 logger = get_logger('torrent_process')
 
@@ -36,20 +36,21 @@ class TorrentProcess(object):
             elif package_name == 'bot_downloader_av':
                 cls.append('av', entity)
 
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
 
     @classmethod
     def append(cls, type, data):
         try:
-            import requests
             import json
+
+            import requests
             response = requests.post(f"{app.config['DEFINE']['WEB_DIRECT_URL']}/sjva/torrent_%s.php" % type, data={'data':json.dumps(data.as_dict())})
             #logger.debug(response.text)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
 
@@ -129,14 +130,15 @@ class TorrentProcess(object):
                             telegram['data'] = ret
                             
                             text = json.dumps(telegram, indent=2)
-                            from framework.common.telegram_bot import TelegramBot
+                            from framework.common.telegram_bot import \
+                                TelegramBot
                             TelegramBot.super_send_message(text)
                             time.sleep(0.5)
                             
                         
                         
-                except Exception as exception: 
-                    logger.error('Exception:%s', exception)
+                except Exception as e: 
+                    logger.error(f"Exception:{str(e)}")
                     logger.error(traceback.format_exc())        
 
 
@@ -213,8 +215,8 @@ class TorrentProcess(object):
                         TelegramBot.super_send_message(text)
                         time.sleep(0.5)
                         #return lists
-                except Exception as exception: 
-                    logger.error('Exception:%s', exception)
+                except Exception as e: 
+                    logger.error(f"Exception:{str(e)}")
                     logger.error(traceback.format_exc())     
 
         return lists
@@ -334,8 +336,8 @@ class TorrentProcess(object):
                         time.sleep(0.5)
                         #return lists
                         
-                except Exception as exception: 
-                    logger.error('Exception:%s', exception)
+                except Exception as e: 
+                    logger.error(f"Exception:{str(e)}")
                     logger.error(traceback.format_exc())     
 
 
@@ -360,8 +362,8 @@ class TorrentProcess(object):
             else:
                 file_info['type'] = None
             return file_info
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
         
 
@@ -385,8 +387,8 @@ class TorrentProcess(object):
                 ret['dirname'] = max_filename.replace('/%s' % ret['filename'], '')
             ret['max_size'] = max_size
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
     
@@ -420,8 +422,8 @@ class TorrentProcess(object):
             else:
                 ret = {'type':av_type}
             return ret
-        except Exception as exception: 
-            logger.error('Exxception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())            
 
 

@@ -4,7 +4,6 @@ import traceback
 from flask import (jsonify, redirect, render_template, request,
                    send_from_directory)
 from flask_login import login_required
-
 from framework import F
 
 
@@ -102,8 +101,8 @@ def upload():
             os.makedirs(upload_path, exist_ok=True)
             f.save(os.path.join(upload_path, secure_filename(f.filename)))
             return jsonify('success')
-    except Exception as exception:
-        F.logger.error('Exception:%s', exception)
+    except Exception as e:
+        F.logger.error(f"Exception:{str(e)}")
         F.logger.error(traceback.format_exc())
         return jsonify('fail')
 

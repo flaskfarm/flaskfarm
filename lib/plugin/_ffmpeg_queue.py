@@ -94,8 +94,8 @@ class FfmpegQueue(object):
                 self.download_thread = threading.Thread(target=self.download_thread_function, args=())
                 self.download_thread.daemon = True  
                 self.download_thread.start()
-        except Exception as exception: 
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.P.logger.error(f"Exception:{str(e)}")
             self.P.logger.error(traceback.format_exc())
 
 
@@ -107,8 +107,8 @@ class FfmpegQueue(object):
                         if self.current_ffmpeg_count < self.max_ffmpeg_count:
                             break
                         time.sleep(5)
-                    except Exception as exception: 
-                        self.P.logger.error('Exception:%s', exception)
+                    except Exception as e: 
+                        self.P.logger.error(f"Exception:{str(e)}")
                         self.P.logger.error(traceback.format_exc())
                         self.P.logger.error('current_ffmpeg_count : %s', self.current_ffmpeg_count)
                         self.P.logger.error('max_ffmpeg_count : %s', self.max_ffmpeg_count)
@@ -153,8 +153,8 @@ class FfmpegQueue(object):
                 f.start()
                 self.current_ffmpeg_count += 1
                 self.download_queue.task_done()    
-            except Exception as exception: 
-                self.P.logger.error('Exception:%s', exception)
+            except Exception as e: 
+                self.P.logger.error(f"Exception:{str(e)}")
                 self.P.logger.error(traceback.format_exc())
 
     def ffmpeg_listener(self, **arg):
@@ -203,8 +203,8 @@ class FfmpegQueue(object):
             self.entity_list.append(entity)
             self.download_queue.put(entity)
             return True
-        except Exception as exception:
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            self.P.logger.error(f"Exception:{str(e)}")
             self.P.logger.error(traceback.format_exc())
         return False
 
@@ -270,8 +270,8 @@ class FfmpegQueue(object):
                 self.entity_list = new_list
                 ret['ret'] = 'refresh'  
             return ret
-        except Exception as exception:
-            self.P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            self.P.logger.error(f"Exception:{str(e)}")
             self.P.logger.error(traceback.format_exc())
 
 

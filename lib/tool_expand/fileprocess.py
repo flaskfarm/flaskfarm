@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 #########################################################
 # python
-import os, re
-import traceback
-import time
-import threading
+import os
+import re
 import shutil
+import threading
+import time
+import traceback
 
 from framework import app
+
 from . import logger
 
 EXTENSION = 'mp4|avi|mkv|ts|wmv|m2ts|smi|srt|ass|m4v|flv|asf|mpg|ogm'
@@ -85,11 +87,11 @@ class ToolExpandFileProcess(object):
 
                 except UnicodeDecodeError:
                     pass
-                except Exception as exception:
-                    logger.error('Exception:%s', exception)
+                except Exception as e:
+                    logger.error(f"Exception:{str(e)}")
                     logger.error(traceback.format_exc())
-        except Exception as exception:
-            logger.error('Exception:%s', exception)
+        except Exception as e:
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
 
@@ -120,9 +122,9 @@ class ToolExpandFileProcess(object):
                 elif len(tmp2) == 2:
                     tmp = '%s-%scd%s%s' % (tmps[0], str(int(tmp2[0])).zfill(3), tmp2[1], ext)
                 return tmp
-        except Exception as exception:
+        except Exception as e:
             logger.debug('filename : %s', filename)
-            logger.error('Exception:%s', exception)
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return filename
 

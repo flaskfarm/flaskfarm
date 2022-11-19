@@ -51,7 +51,7 @@ class SupportYaml(object):
             source_data = source_data + f"\n{data}\n"
             SupportFile.write_file(source_data, target_file)
             return 'success'
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return 'exception'

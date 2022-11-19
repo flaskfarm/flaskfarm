@@ -4,11 +4,12 @@
 import os
 import traceback
 
-from discord_webhook import DiscordWebhook, DiscordEmbed
+from discord_webhook import DiscordEmbed, DiscordWebhook
 from telepot2 import Bot, glance
 from telepot2.loop import MessageLoop
 
 from . import logger
+
 
 class ToolBaseNotify(object):
 
@@ -46,8 +47,8 @@ class ToolBaseNotify(object):
                     tmp2 = tmp.split(',')
                     cls.send_telegram_message(text, image_url=image_url, bot_token=tmp2[0], chat_id=tmp2[1])
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
             #logger.debug('Chatid:%s', chat_id)
         return False
@@ -66,8 +67,8 @@ class ToolBaseNotify(object):
                         continue
                     ret[tmp2[0].strip()] = [x.strip() for x in tmp2[1].split('|')]
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
         return False
 
@@ -88,8 +89,8 @@ class ToolBaseNotify(object):
             #discord = response.json()
             #logger.debug(discord)
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
         return False
 
@@ -114,8 +115,8 @@ class ToolBaseNotify(object):
             #elif mime == 'video':
             #    bot.sendVideo(chat_id, text, disable_notification=disable_notification)
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
             logger.debug('Chatid:%s', chat_id)
         return False

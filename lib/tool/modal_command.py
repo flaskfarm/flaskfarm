@@ -48,8 +48,8 @@ class ToolModalCommand(object):
             if cls.__wait:
                 time.sleep(1)
                 cls.__thread.join()
-        except Exception as exception: 
-            F.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
 
     @classmethod

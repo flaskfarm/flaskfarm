@@ -76,8 +76,8 @@ class EntityKtv(object):
                         self.data['process_info']['status'] = 'no_date'
                     else:
                         self.check_episode_no()
-                except Exception as exception:
-                    logger.debug('Exception:%s', exception)
+                except Exception as e:
+                    logger.debug(f"Exception:{str(e)}")
                     logger.debug(traceback.format_exc())
 
 
@@ -323,8 +323,8 @@ class EntityKtv(object):
                     if self.data['filename']['name'] not in EntityKtv.meta_cache:
                         EntityKtv.meta_cache[self.data['filename']['name']] = {}
                     EntityKtv.meta_cache[self.data['filename']['name']][site] = self.data['meta']
-            except Exception as exception:
-                logger.error('Exception:%s', exception)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)}")
                 logger.error(traceback.format_exc())
 
 
@@ -375,8 +375,8 @@ class EntityKtv(object):
                             self.data['process_info']['ftv_title'] = SupportFile.text_for_filename(site_data['data'][0]['title'])
                             self.data['process_info']['ftv_year'] = site_data['data'][0]['year']
                         return
-            except Exception as exception:
-                logger.error('Exception:%s', exception)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)}")
                 logger.error(traceback.format_exc())
 
 

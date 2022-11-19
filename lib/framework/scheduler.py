@@ -49,8 +49,8 @@ class Scheduler(object):
             if flag_exit:
                 self.remove_job("scheduler_check")
             #time.sleep(30)
-        except Exception as exception: 
-            self.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            self.logger.error(f"Exception:{str(e)}")
             self.logger.error(traceback.format_exc())
     
     def shutdown(self):
@@ -245,9 +245,9 @@ class Job(object):
             if not F.scheduler.is_include(self.job_id):
                 F.scheduler.remove_job_instance(self.job_id)
             self.count += 1
-        except Exception as exception: 
+        except Exception as e: 
             self.status = 'exception'
-            F.logger.error('Exception:%s', exception)
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
         finally:
             self.is_running = False

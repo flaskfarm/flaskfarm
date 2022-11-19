@@ -24,8 +24,8 @@ class ToolBaseFile(object):
             ofp.write(data)
             ofp.close()
             return True
-        except Exception as exception:
-            logger.debug('Exception:%s', exception)
+        except Exception as e:
+            logger.debug(f"Exception:{str(e)}")
             logger.debug(traceback.format_exc())
         return False
 
@@ -65,8 +65,8 @@ class ToolBaseFile(object):
                 import shutil
                 shutil.rmtree(zip_path)
             return zipfilepath
-        except Exception as exception:
-            logger.error('Exception:%s', exception)
+        except Exception as e:
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
         return
 
@@ -104,8 +104,8 @@ class ToolBaseFile(object):
                 os.makedirs(os.path.dirname(filepath))
             with open(filepath, "w", encoding='utf8') as json_file:
                 json.dump(data, json_file, indent=4, ensure_ascii=False)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
 
     @classmethod
@@ -114,8 +114,8 @@ class ToolBaseFile(object):
             with open(filepath, "r", encoding='utf8') as json_file:
                 data = json.load(json_file)
                 return data
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
     
 
@@ -126,8 +126,8 @@ class ToolBaseFile(object):
             ofp = codecs.open(filename, 'w', encoding='utf8')
             ofp.write(data)
             ofp.close()
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
 
     @classmethod
@@ -137,8 +137,8 @@ class ToolBaseFile(object):
             data = ifp.read()
             ifp.close()
             return data
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
     

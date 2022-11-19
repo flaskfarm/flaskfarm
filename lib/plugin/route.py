@@ -45,8 +45,8 @@ def default_route(P):
                     return redirect(f"/{P.package_name}/manual/{P.get_first_manual_path()}")
                     
             return render_template('sample.html', title='%s - %s' % (P.package_name, sub))
-        except Exception as exception:
-            P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
     
     @P.blueprint.route('/manual/<path:path>', methods=['GET', 'POST'])
@@ -64,8 +64,8 @@ def default_route(P):
                 except:
                     pass
             return render_template('manual.html', data=data)
-        except Exception as exception:
-            P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
     
     @P.blueprint.route('/<module_name>/manual/<path:path>', methods=['GET', 'POST'])
@@ -77,8 +77,8 @@ def default_route(P):
             from support import SupportFile
             data = SupportFile.read_file(filepath)
             return render_template('manual.html', data=data)
-        except Exception as exception:
-            P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
 
@@ -94,8 +94,8 @@ def default_route(P):
             if sub == 'log':
                 return render_template('log.html', package=P.package_name)
             return render_template('sample.html', title='%s - %s' % (P.package_name, sub))
-        except Exception as exception:
-            P.logger.error('Exception:%s', exception)
+        except Exception as e:
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
     #########################################################
@@ -113,8 +113,8 @@ def default_route(P):
                     module.setting_save_after(change_list)
                 return jsonify(ret)
             
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())  
 
     @P.blueprint.route('/ajax/<module_name>/<cmd>', methods=['GET', 'POST'])
@@ -156,8 +156,8 @@ def default_route(P):
                         return jsonify(ret)
                     else:
                         return module.process_ajax(cmd, request)
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
     @P.blueprint.route('/ajax/<module_name>/<page_name>/<command>', methods=['GET', 'POST'])
@@ -197,8 +197,8 @@ def default_route(P):
                 else:
                     return ins_page.process_ajax(command, request)
             P.logger.error(f"not process ajax : {P.package_name} {module_name} {page_name} {command}")
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
     #########################################################
@@ -210,8 +210,8 @@ def default_route(P):
     def api_first(sub):
         try:
             return P.module_list[0].process_api(sub, request)
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
     @P.blueprint.route('/api/<sub>/<sub2>', methods=['GET', 'POST'])
@@ -221,16 +221,16 @@ def default_route(P):
             for module in P.module_list:
                 if sub == module.name:
                     return module.process_api(sub2, request)
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
     @P.blueprint.route('/normal/<sub>', methods=['GET', 'POST'])
     def normal_first(sub):
         try:
             return P.module_list[0].process_normal(sub, request)
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
     @P.blueprint.route('/normal/<sub>/<sub2>', methods=['GET', 'POST'])
@@ -239,8 +239,8 @@ def default_route(P):
             for module in P.module_list:
                 if sub == module.name:
                     return module.process_normal(sub2, request)
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
 
@@ -313,8 +313,8 @@ def default_route_single_module(P):
                 return jsonify(ret)
             else:
                 return P.module_list[0].process_ajax(sub, request)
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())  
 
     @P.blueprint.route('/api/<sub>', methods=['GET', 'POST'])
@@ -322,16 +322,16 @@ def default_route_single_module(P):
     def api(sub):
         try:
             return P.module_list[0].process_api(sub, request)
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
     @P.blueprint.route('/normal/<sub>', methods=['GET', 'POST'])
     def normal(sub):
         try:
             return P.module_list[0].process_normal(sub, request)
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())    
 
 
@@ -373,8 +373,8 @@ def default_route_socketio_module(module, attach=''):
             module.socketio_list.append(request.sid)
             socketio_callback('start', '')
             module.socketio_connect()
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
 
@@ -384,8 +384,8 @@ def default_route_socketio_module(module, attach=''):
             P.logger.debug(f'socket_disconnect : {P.package_name} - {module.name}{attach}')
             module.socketio_list.remove(request.sid)
             module.socketio_disconnect()
-        except Exception as exception: 
-            P.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            P.logger.error(f"Exception:{str(e)}")
             P.logger.error(traceback.format_exc())
 
 

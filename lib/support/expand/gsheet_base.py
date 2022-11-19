@@ -204,9 +204,9 @@ class GoogleSheetBase:
                     break
                 except gspread.exceptions.APIError:
                     self.sleep_exception()
-                except Exception as exception: 
+                except Exception as e: 
                     logger.error(f"{key} - {value}")
-                    logger.error('Exception:%s', exception)
+                    logger.error(f"Exception:{str(e)}")
                     logger.error(traceback.format_exc())
                     logger.error(self.header_info)
                     self.sleep_exception()

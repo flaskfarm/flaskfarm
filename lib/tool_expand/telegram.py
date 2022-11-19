@@ -1,16 +1,16 @@
-import os
-import traceback
-import json
 import datetime
+import json
+import os
 import time
-
-from telepot2 import Bot, glance
-from telepot2.loop import MessageLoop
+import traceback
 
 from framework import app
+from telepot2 import Bot, glance
+from telepot2.loop import MessageLoop
+from tool_base import ToolAESCipher
+
 from . import logger
 
-from tool_base import ToolAESCipher
 
 class ToolTelegram(object):
     SUPER_BOT = None
@@ -30,13 +30,13 @@ class ToolTelegram(object):
                 for c_id in cls.SJVA_BOT_CHANNEL_CHAT_ID:
                     try:
                         cls.SUPER_BOT.sendMessage(c_id, text)
-                    except Exception as exception: 
-                        logger.error('Exception:%s', exception)
+                    except Exception as e: 
+                        logger.error(f"Exception:{str(e)}")
                         logger.error('Chat ID : %s', c_id)
                         logger.error(traceback.format_exc())   
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
             return False
 

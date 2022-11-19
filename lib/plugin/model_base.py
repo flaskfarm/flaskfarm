@@ -136,12 +136,12 @@ class ModelBase(F.db.Model):
                 if cls.P.ModelSetting is not None and cls.__tablename__ is not None:
                     cls.P.ModelSetting.set(f'{cls.__tablename__}_last_list_option', f'{order}|{page}|{search}|{option1}|{option2}')
             except Exception as e:
-                F.logger.error('Exception:%s', e)
+                F.logger.error(f"Exception:{str(e)}")
                 F.logger.error(traceback.format_exc())
                 F.logger.error(f'{cls.__tablename__}_last_list_option ERROR!' )
             return ret
         except Exception as e:
-            cls.P.logger.error('Exception:%s', e)
+            cls.P.logger.error(f"Exception:{str(e)}")
             cls.P.logger.error(traceback.format_exc())
 
 

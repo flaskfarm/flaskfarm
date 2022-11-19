@@ -19,8 +19,8 @@ class ToolUtil(object):
             ofp = codecs.open(filepath, 'w', encoding='utf8')
             ofp.write(data)
             ofp.close()
-        except Exception as exception:
-            logger.debug('Exception:%s', exception)
+        except Exception as e:
+            logger.debug(f"Exception:{str(e)}")
             logger.debug(traceback.format_exc())
 
 

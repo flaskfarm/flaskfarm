@@ -25,8 +25,8 @@ class ToolRclone(object):
             if ret is not None:
                 ret = list(sorted(ret, key=lambda k:k['Path']))
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
 
@@ -38,8 +38,8 @@ class ToolRclone(object):
                 command += option
             ret = ToolSubprocess.execute_command_return(command, format='json')
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
     
 
@@ -53,8 +53,8 @@ class ToolRclone(object):
             if ret is not None and (len(ret.split(' ')) > 1 or ret == ''):
                 ret = None
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
     
 
@@ -66,8 +66,8 @@ class ToolRclone(object):
                 command += option
             ret = ToolSubprocess.execute_command_return(command)
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
     @classmethod
@@ -78,8 +78,8 @@ class ToolRclone(object):
                 command += option
             ret = ToolSubprocess.execute_command_return(command)
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
 
@@ -94,8 +94,8 @@ class ToolRclone(object):
                 if 'token' in value and value['token'].startswith('{'):
                     value['token'] = json.loads(value['token'])
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
 
@@ -112,8 +112,8 @@ class ToolRclone(object):
             logger.debug(' '.join(command))
             ret = ToolSubprocess.execute_command_return(command)
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
     
 
@@ -124,8 +124,8 @@ class ToolRclone(object):
             data = cls.config_list(rclone_path=rclone_path, config_path=config_path, option=option)
             return data.get(remote_name, None)
             
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
 
@@ -138,6 +138,6 @@ class ToolRclone(object):
             logger.debug(' '.join(command))
             ret = ToolSubprocess.execute_command_return(command)
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())

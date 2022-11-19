@@ -7,9 +7,8 @@ import traceback
 import zipfile
 
 import requests
-from support import SupportFile, SupportSubprocess, SupportYaml
-
 from framework import F
+from support import SupportFile, SupportSubprocess, SupportYaml
 
 
 class PluginManager:
@@ -35,8 +34,8 @@ class PluginManager:
                         cls.all_package_list[t] = {'pos':'normal', 'path':os.path.join(plugin_path, t), 'loading':(F.config.get('plugin_loading_only_devpath', None) != True)}
 
                 plugins = plugins + add_plugin_list
-        except Exception as exception:
-            F.logger.error('Exception:%s', exception)
+        except Exception as e:
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
         
         if F.config.get('plugin_loading_only_devpath', None) == True:
@@ -63,8 +62,8 @@ class PluginManager:
                                 add_plugin_list.append(t)
                                 cls.all_package_list[t] = {'pos':'dev', 'path':os.path.join(__, t), 'loading':True}
                         plugins = plugins + add_plugin_list
-        except Exception as exception:
-            F.logger.error('Exception:%s', exception)
+        except Exception as e:
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
 
         # plugin_loading_list
@@ -79,8 +78,8 @@ class PluginManager:
                         cls.all_package_list[_]['loading'] = False
                         cls.all_package_list[_]['status'] = 'not_include_loading_list'
                 plugins = new_plugins
-        except Exception as exception:
-            F.logger.error('Exception:%s', exception)
+        except Exception as e:
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
 
         # plugin_except_list
@@ -95,8 +94,8 @@ class PluginManager:
                         cls.all_package_list[_]['loading'] = False
                         cls.all_package_list[_]['status'] = 'include_except_list'
                 plugins = new_plugins
-        except Exception as exception:
-            F.logger.error('Exception:%s', exception)
+        except Exception as e:
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
         return plugins
 
@@ -130,8 +129,8 @@ class PluginManager:
                     except Exception as exception:
                         F.logger.warning(f'[!] BLUEPRINT not exist : [{plugin_name}]') 
                     cls.plugin_list[plugin_name] = entity
-                except Exception as exception:
-                    F.logger.error('Exception:%s', exception)
+                except Exception as e:
+                    F.logger.error(f"Exception:{str(e)}")
                     F.logger.error(traceback.format_exc())
                     F.logger.debug('no blueprint')
                     cls.all_package_list[plugin_name]['loading'] = False
@@ -143,8 +142,8 @@ class PluginManager:
                 try:
                     with F.app.app_context(): 
                         F.db.create_all()
-                except Exception as exception:
-                    F.logger.error('Exception:%s', exception)
+                except Exception as e:
+                    F.logger.error(f"Exception:{str(e)}")
                     F.logger.error(traceback.format_exc())
                     F.logger.debug('db.create_all error')
 
@@ -160,9 +159,9 @@ class PluginManager:
                                 F.logger.debug(f'[!] plugin_load threading start : [{key}]') 
                                 mod_plugin_load()
                                 F.logger.debug(f'[!] plugin_load threading end : [{key}]') 
-                            except Exception as exception:
+                            except Exception as e:
                                 F.logger.error('### plugin_load exception : %s', key)
-                                F.logger.error('Exception:%s', exception)
+                                F.logger.error(f"Exception:{str(e)}")
                                 F.logger.error(traceback.format_exc())
                                 cls.all_package_list[key]['loading'] = False
                                 cls.all_package_list[key]['status'] = 'plugin_load error'
@@ -180,7 +179,7 @@ class PluginManager:
                             t.setDaemon(True)
                             t.start()
 
-                except Exception as exception:
+                except Exception as e:
                     F.logger.debug(f'[!] PLUGIN_LOAD function not exist : [{key}]') 
 
                 try:
@@ -197,8 +196,8 @@ class PluginManager:
             F.logger.debug('### plugin_load threading all start.. : %s ', len(cls.plugin_list))
             # 모든 모듈을 로드한 이후에 app 등록, table 생성, start
 
-        except Exception as exception:
-            F.logger.error('Exception:%s', exception)
+        except Exception as e:
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
 
 
@@ -349,8 +348,8 @@ class PluginManager:
                     F.logger.debug(ret)
                 else:
                     F.logger.debug(f"{plugin_path} not git repo")
-        except Exception as exception: 
-            F.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
 
 

@@ -34,8 +34,8 @@ class Util(object):
             paging['count'] = count
             F.logger.debug('paging : c:%s %s %s %s %s %s', count, paging['total_page'], paging['prev_page'], paging['next_page'] , paging['start_page'], paging['last_page'])
             return paging
-        except Exception as exception:
-            F.logger.debug('Exception:%s', exception)
+        except Exception as e:
+            F.logger.debug(f"Exception:{str(e)}")
             F.logger.debug(traceback.format_exc())
     
 
@@ -60,8 +60,8 @@ class Util(object):
                 ret['dirname'] = max_filename.replace('/%s' % ret['filename'], '')
             ret['max_size'] = max_size
             return ret
-        except Exception as exception: 
-            F.logger.error('Exception:%s', exception)
+        except Exception as e: 
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
 
 
@@ -81,8 +81,8 @@ class Util(object):
             import shutil
             shutil.rmtree(zip_path)
             return True
-        except Exception as exception:
-            F.logger.error('Exception:%s', exception)
+        except Exception as e:
+            F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
         return False
 

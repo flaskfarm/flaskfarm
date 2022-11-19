@@ -2,15 +2,15 @@
 #########################################################
 
 import os
-import traceback, time
 import random
+import time
+import traceback
 
 import requests
-from discord_webhook import DiscordWebhook, DiscordEmbed
-
+from discord_webhook import DiscordEmbed, DiscordWebhook
 from framework import app
-from . import logger
 
+from . import logger
 
 webhook_list = app.config['DEFINE']['WEBHOOK_LIST_FOR_IMAGE_PROXY']
 
@@ -31,8 +31,8 @@ class ToolExpandDiscord(object):
                 webhook.add_embed(embed)
             response = webhook.execute()
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
         return False
 
@@ -52,7 +52,7 @@ class ToolExpandDiscord(object):
                 url = '{server_plugin_ddns}/server/normal/discord_proxy/set_target?source={source}&target={target}&user={user}'.format(server_plugin_ddns=server_plugin_ddns, source=py_urllib.quote_plus(source), target=py_urllib.quote_plus(target), user=SystemModelSetting.get('sjva_me_user_id'))
                 data = requests.get(url).json()
             """
-        except Exception as exception: 
+        except Exception as e: 
             logger.error('server disconnect..')
         return True
 
@@ -96,8 +96,8 @@ class ToolExpandDiscord(object):
                     return image_url
             else:
                 raise Exception(str(data))
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             if retry:
                 time.sleep(1)
@@ -112,7 +112,7 @@ class ToolExpandDiscord(object):
         webhook_url =  webhook_list[random.randint(0,9)]  # sjva 채널
 
         try:
-            from discord_webhook import DiscordWebhook, DiscordEmbed
+            from discord_webhook import DiscordEmbed, DiscordWebhook
             webhook = DiscordWebhook(url=webhook_url, content='')
             import io
             with open(filepath, 'rb') as fh:
@@ -132,8 +132,8 @@ class ToolExpandDiscord(object):
                 target = data['attachments'][0]['url']
                 if requests.get(target).status_code == 200:
                     return target
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
             if retry:
@@ -149,7 +149,7 @@ class ToolExpandDiscord(object):
             webhook_url =  webhook_list[random.randint(0,9)]  # sjva 채널
 
         try:
-            from discord_webhook import DiscordWebhook, DiscordEmbed
+            from discord_webhook import DiscordEmbed, DiscordWebhook
             webhook = DiscordWebhook(url=webhook_url, content=content)
             if byteio is None and filepath is not None:
                 import io
@@ -170,8 +170,8 @@ class ToolExpandDiscord(object):
                 target = data['attachments'][0]['url']
                 if requests.get(target).status_code == 200:
                     return target
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             if retry:
                 time.sleep(1)

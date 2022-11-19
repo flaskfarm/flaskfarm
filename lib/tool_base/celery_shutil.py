@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
-import traceback
 import shutil
+import traceback
 
 from framework import app, celery, logger
+
 
 class ToolShutil(object):
     # run_in_celery=True 이미 celery안에서 실행된다. 바로 콜한다.
@@ -15,8 +16,8 @@ class ToolShutil(object):
                 return result.get()
             else:
                 return ToolShutil._move_task(source_path, target_path)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return ToolShutil._move_task(source_path, target_path)
 
@@ -28,8 +29,8 @@ class ToolShutil(object):
             shutil.move(source_path, target_path)
             logger.debug('_move_task end')
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return False
 
@@ -41,8 +42,8 @@ class ToolShutil(object):
                 return result.get()
             else:
                 return ToolShutil._move_exist_remove_task(source_path, target_path)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return ToolShutil._move_exist_remove_task(source_path, target_path)
 
@@ -58,8 +59,8 @@ class ToolShutil(object):
             shutil.move(source_path, target_path)
             logger.debug('_move_exist_remove end')
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return False
 
@@ -71,8 +72,8 @@ class ToolShutil(object):
                 return result.get()
             else:
                 return ToolShutil._copytree_task(source_path, target_path)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return ToolShutil._copytree_task(source_path, target_path)
 
@@ -82,8 +83,8 @@ class ToolShutil(object):
         try:
             shutil.copytree(source_path, target_path)
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return False
 
@@ -96,8 +97,8 @@ class ToolShutil(object):
                 return result.get()
             else:
                 return ToolShutil._copy_task(source_path, target_path)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return ToolShutil._copy_task(source_path, target_path)
 
@@ -107,8 +108,8 @@ class ToolShutil(object):
         try:
             shutil.copy(source_path, target_path)
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return False
 
@@ -121,8 +122,8 @@ class ToolShutil(object):
                 return result.get()
             else:
                 return ToolShutil._rmtree_task(source_path)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return ToolShutil._rmtree_task(source_path)
 
@@ -132,8 +133,8 @@ class ToolShutil(object):
         try:
             shutil.rmtree(source_path)
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return False   
 
@@ -146,8 +147,8 @@ class ToolShutil(object):
                 return result.get()
             else:
                 return ToolShutil._remove_task(remove_path)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return ToolShutil._remove_task(remove_path)
         finally:
@@ -159,7 +160,7 @@ class ToolShutil(object):
         try:
             os.remove(remove_path)
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return False   

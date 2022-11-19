@@ -149,8 +149,8 @@ class SupportRclone(object):
             if ret is not None and (len(ret.split(' ')) > 1 or ret == ''):
                 ret = None
             return ret
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
 
@@ -165,7 +165,7 @@ class SupportRclone(object):
             if result != None and result['status'] == 'finish':
                 ret = result['log']
             return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
         return False

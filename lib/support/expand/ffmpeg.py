@@ -216,8 +216,8 @@ SET CRLF=^
                 else:
                     if os.path.exists(self.temp_fullpath):
                         os.remove(self.temp_fullpath)
-            except Exception as exception:
-                logger.error('Exception:%s', exception)
+            except Exception as e:
+                logger.error(f"Exception:{str(e)}")
                 logger.error(traceback.format_exc())
 
             arg = {'type':'last', 'status':self.status, 'data' : self.get_data()}

@@ -17,8 +17,8 @@ class SupportFile(object):
             data = ifp.read()
             ifp.close()
             return data
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
     @classmethod
@@ -28,8 +28,8 @@ class SupportFile(object):
             ofp = codecs.open(filename, mode, encoding='utf8')
             ofp.write(data)
             ofp.close()
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
 
     @classmethod
@@ -38,8 +38,8 @@ class SupportFile(object):
             with open(filepath, "r", encoding='utf8') as json_file:
                 data = json.load(json_file)
                 return data
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
 
     @classmethod
@@ -49,8 +49,8 @@ class SupportFile(object):
                 os.makedirs(os.path.dirname(filepath), exist_ok=True)
             with open(filepath, "w", encoding='utf8') as json_file:
                 json.dump(data, json_file, indent=4, ensure_ascii=False)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
 
     
@@ -72,8 +72,8 @@ class SupportFile(object):
                 response = requests.get(url, headers=headers)               # get request
                 file_is.write(response.content)      # write to file
                 return True
-        except Exception as exception:
-            logger.debug('Exception:%s', exception)
+        except Exception as e:
+            logger.debug(f"Exception:{str(e)}")
             logger.debug(traceback.format_exc())   
         return False
 
@@ -109,8 +109,8 @@ class SupportFile(object):
                     new_target_filename = f"{tmp[0]} {str(time.time()).split('.')[0]}{tmp[1]}"
                     target_path = os.path.join(target_dir, new_target_filename)
                 shutil.move(source_path, target_path)
-        except Exception as exception:
-            logger.debug('Exception:%s', exception)
+        except Exception as e:
+            logger.debug(f"Exception:{str(e)}")
             logger.debug(traceback.format_exc())
 
     
@@ -236,8 +236,8 @@ class SupportFile(object):
                     new_target_filename = f"{tmp[0]} {str(time.time()).split('.')[0]}{tmp[1]}"
                     target_path = os.path.join(target_dir, new_target_filename)
                 shutil.move(source_path, target_path)
-        except Exception as exception:
-            logger.debug('Exception:%s', exception)
+        except Exception as e:
+            logger.debug(f"Exception:{str(e)}")
             logger.debug(traceback.format_exc())
 
     """
@@ -262,8 +262,8 @@ class SupportFile(object):
                 import shutil
                 shutil.rmtree(zip_path)
             return zipfilepath
-        except Exception as exception:
-            logger.error('Exception:%s', exception)
+        except Exception as e:
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
         return
     """
@@ -297,8 +297,8 @@ class SupportFile(object):
         try:
             with open(filename, 'wb') as f:
                 f.write(data)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
 
 
@@ -379,8 +379,8 @@ class SupportFile(object):
             if isinstance(data, bytes):
                 data = data.decode('utf-8') 
             return data
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
     
     """

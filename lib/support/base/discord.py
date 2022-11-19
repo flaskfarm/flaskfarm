@@ -76,8 +76,8 @@ class SupportDiscord(object):
                     webhook.add_embed(embed)
                 webhook.execute()
                 return True
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
         return False
 
@@ -89,8 +89,8 @@ class SupportDiscord(object):
             if encryped:
                 text = '^' + SupportAES.encrypt(text)
             return cls.send_discord_message(text, webhook_url=webhook_url)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
             return False
 
@@ -132,8 +132,8 @@ class SupportDiscord(object):
                     return image_url
             else:
                 raise Exception(str(data))
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             if retry:
                 time.sleep(1)
@@ -170,8 +170,8 @@ class SupportDiscord(object):
             if retry:
                 time.sleep(1)
                 return cls.discord_proxy_image_localfile(filepath, retry=False)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
     
             if retry:
@@ -205,8 +205,8 @@ class SupportDiscord(object):
             if retry:
                 time.sleep(1)
                 return cls.discord_proxy_image_bytes(bytes, retry=False)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
 
             if retry:
@@ -247,8 +247,8 @@ class SupportDiscord(object):
             if retry:
                 time.sleep(1)
                 return cls.discord_proxy_image_localfile(filepath, retry=False)
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             if retry:
                 time.sleep(1)

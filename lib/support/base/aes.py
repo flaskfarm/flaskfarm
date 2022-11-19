@@ -18,8 +18,8 @@ class SupportAES(object):
     def encrypt(cls, raw, mykey=None):
         try:
             Random.atfork()
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
 
         raw = pad(raw)
@@ -31,8 +31,8 @@ class SupportAES(object):
         cipher = AES.new(key if mykey is None else mykey, AES.MODE_CBC, iv )
         try:
             tmp = cipher.encrypt( raw )
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
             tmp = cipher.encrypt( raw.encode() )
         ret = base64.b64encode( iv + tmp ) 
@@ -64,8 +64,8 @@ class SupportAES(object):
     def encrypt_(cls, raw, mykey=None, iv=None):
         try:
             Random.atfork()
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
         raw = pad(raw)
         if type(raw) == type(''):
@@ -79,8 +79,8 @@ class SupportAES(object):
         cipher = AES.new(key if mykey is None else mykey, AES.MODE_CBC, iv )
         try:
             tmp = cipher.encrypt( raw )
-        except Exception as exception: 
-            logger.error('Exception:%s', exception)
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc()) 
             tmp = cipher.encrypt( raw.encode() )
         ret = base64.b64encode( tmp ) 
