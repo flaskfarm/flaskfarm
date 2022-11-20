@@ -365,6 +365,9 @@ class Framework:
             self.config['debug'] = False
         if self.config.get('plugin_update') == None:
             self.config['plugin_update'] = True
+        # 2022-11-20
+        if self.config['debug']:
+            self.config['plugin_update'] = False
         if self.config.get('plugin_loading_only_devpath') == None:
             self.config['plugin_loading_only_devpath'] = False
         if self.config.get('plugin_loading_list') == None:
