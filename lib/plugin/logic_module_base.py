@@ -51,11 +51,13 @@ class PluginModuleBase(object):
 
     def process_menu(self, page, req):
         from framework import F
-        if self.page_list is not None:
-            page_ins = self.get_page(page)
-            if page_ins != None:
-                return page_ins.process_menu(req)
+        
         try:
+            if self.page_list is not None:
+                page_ins = self.get_page(page)
+                if page_ins != None:
+                    return page_ins.process_menu(req)
+
             arg = self.P.ModelSetting.to_dict() if self.P.ModelSetting != None else {}
             arg['path_data'] = F.config['path_data']
             arg['is_include'] = F.scheduler.is_include(self.get_scheduler_name())
