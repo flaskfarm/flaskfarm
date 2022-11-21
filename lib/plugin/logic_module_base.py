@@ -142,10 +142,10 @@ class PluginModuleBase(object):
         pass
 
     
-    def start_celery(self, func, on_message=None, *args, **kwargs):
+    def start_celery(self, func, on_message=None, *args, page=None):
         from framework import F
         if F.config['use_celery']:
-            result = func.apply_async(*args, **kwargs)
+            result = func.apply_async(args)
             try:
                 if on_message != None:
                     ret = result.get(on_message=on_message, propagate=True)
@@ -154,7 +154,13 @@ class PluginModuleBase(object):
             except:
                 ret = result.get()
         else:
-            ret = func(*args, **kwargs)
+            if on_message == None:
+                ret = func(*args)
+            else:
+                if page == None:
+                    ret = func(self, *args)
+                else:
+                    ret = func(page, *args)
         return ret
 
 
@@ -260,3 +266,24 @@ class PluginPageBase(object):
     def db_delete(self, day):
         if self.web_list_model != None:
             return self.web_list_model.delete_all(day)
+    
+
+    def start_celery(self, func, on_message, *args):
+        return self.parent.start_celery(func, on_message, *args, page=self)
+    
+    """
+    def start_celery(self, func, on_message=None, *args):
+        from framework import F
+        if F.config['use_celery']:
+            result = func.apply_async(args)
+            try:
+                if on_message != None:
+                    ret = result.get(on_message=on_message, propagate=True)
+                else:
+                    ret = result.get()
+            except:
+                ret = result.get()
+        else:
+            ret = func(*args)
+        return ret
+    """
