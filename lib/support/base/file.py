@@ -134,92 +134,9 @@ class SupportFile(object):
                     os.remove(os.path.join(root, name))
                 for name in dirs:
                     shutil.rmtree(os.path.join(root, name))
+            shutil.rmtree(folderpath)
         except:
             return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     @classmethod
@@ -227,8 +144,7 @@ class SupportFile(object):
         try:
             import shutil
             import time
-            if os.path.exists(target_dir) == False:
-                os.makedirs(target_dir)
+            os.makedirs(target_dir, exist_ok=True)
             target_path = os.path.join(target_dir, target_filename)
             if source_path != target_path:
                 if os.path.exists(target_path):
@@ -239,6 +155,90 @@ class SupportFile(object):
         except Exception as e:
             logger.debug(f"Exception:{str(e)}")
             logger.debug(traceback.format_exc())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     """
     @classmethod

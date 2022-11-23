@@ -159,7 +159,7 @@ class SupportFfmpeg(object):
                             return
             except:
                 pass
-            #logger.error(' '.join(command))
+            logger.error(' '.join(command))
             command = SupportSubprocess.command_for_windows(command)
 
             if platform.system() == 'Windows' and header_count > 1:
@@ -347,6 +347,7 @@ SET CRLF=^
         return data
 
     def send_to_listener(self, **arg):
+        print(arg)
         if self.total_callback_function != None:
             self.total_callback_function(**arg)
         if self.callback_function is not None and self.callback_function != self.total_callback_function:
