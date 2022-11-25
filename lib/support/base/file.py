@@ -135,7 +135,9 @@ class SupportFile(object):
                 for name in dirs:
                     shutil.rmtree(os.path.join(root, name))
             shutil.rmtree(folderpath)
-        except:
+        except Exception as e:
+            logger.debug(f"Exception:{str(e)}")
+            logger.debug(traceback.format_exc())
             return False
 
 
