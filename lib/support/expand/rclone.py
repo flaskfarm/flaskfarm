@@ -67,6 +67,16 @@ class SupportRclone(object):
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())   
 
+    @classmethod
+    def get_config(cls, remote_name, rclone_path=None, rclone_config_path=None, option=None):
+        try:
+            data = cls.config_list(rclone_path=rclone_path, rclone_config_path=rclone_config_path, option=option)
+            return data.get(remote_name, None)
+            
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
+            logger.error(traceback.format_exc())
+
 
     @classmethod
     def lsjson(cls, remote_path, config_path=None, option=None):
@@ -91,16 +101,9 @@ class SupportRclone(object):
     def mkdir(cls, remote_path, config_path=None, option=None):
         return cls.__execute_one_param('mkdir', remote_path, config_path=config_path, option=option, format='json')
 
-
-
     @classmethod
-    def copy(cls, src, tar, config_path=None, option=None):
-        return cls.__execute_two_param('copy', src, tar, config_path=config_path, option=option)
-        
-
-    @classmethod
-    def move(cls, src, tar, config_path=None, option=None):
-        return cls.__execute_two_param('move', src, tar, config_path=config_path, option=option)
+    def purge(cls, remote_path, config_path=None, option=None):
+        return cls.__execute_one_param('purge', remote_path, config_path=config_path, option=option, format='json')
 
 
     @classmethod
@@ -118,6 +121,21 @@ class SupportRclone(object):
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())  
 
+
+    @classmethod
+    def copy(cls, src, tar, config_path=None, option=None):
+        return cls.__execute_two_param('copy', src, tar, config_path=config_path, option=option)
+        
+
+    @classmethod
+    def move(cls, src, tar, config_path=None, option=None):
+        return cls.__execute_two_param('move', src, tar, config_path=config_path, option=option)
+
+    @classmethod
+    def move_server_side(cls, src, tar, config_path=None, option=None):
+        if option == None:
+            option = ['--drive-server-side-across-configs=true', '--delete-empty-src-dirs']
+        return cls.__execute_two_param('move', src, tar, config_path=config_path, option=option)
 
     @classmethod
     def __execute_two_param(cls, command, src, tar, config_path=None, option=None, format=None):
