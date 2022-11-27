@@ -83,7 +83,7 @@ class SupportFile(object):
         #text = text.replace('/', '')
         # 2021-07-31 X:X
         #text = text.replace(':', ' ')
-        text = re.sub('[\\/:*?\"<>|]', ' ', text).strip()
+        text = re.sub('[\\/:*?\"<>|：]', ' ', text).strip()
         text = re.sub("\s{2,}", ' ', text)
         return text
 
