@@ -14,11 +14,11 @@ def check_api(original_function):
         #logger.warning(request.form)
         try:
             if F.SystemModelSetting.get_bool('use_apikey'):
-                if request.method == 'POST':
-                    apikey = request.form['apikey']
-                else:
-                    apikey = request.args.get('apikey')
-                #apikey = request.args.get('apikey')
+                try:
+                    d = request.get_json()
+                except Exception:
+                    d = request.form.to_dict() if request.method == 'POST' else request.args.to_dict()
+                apikey = d.get('apikey')
                 if apikey is None or apikey != F.SystemModelSetting.get('apikey'):
                     F.logger.warning('CHECK API : ABORT no match ({})'.format(apikey))
                     F.logger.warning(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
@@ -31,7 +31,7 @@ def check_api(original_function):
         return original_function(*args, **kwargs)  #2
     return wrapper_function
 
-# Suuport를 logger 생성전에 쓰지 않기 위해 중복 선언 
+# Support를 logger 생성전에 쓰지 않기 위해 중복 선언 
 import logging
 
 
