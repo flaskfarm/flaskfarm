@@ -13,13 +13,13 @@ def check_api(original_function):
         #logger.warning(request.url)
         #logger.warning(request.form)
         try:
-            if F.SystemModelSetting.get_bool('auth_use_apikey'):
+            if F.SystemModelSetting.get_bool('use_apikey'):
                 if request.method == 'POST':
                     apikey = request.form['apikey']
                 else:
                     apikey = request.args.get('apikey')
                 #apikey = request.args.get('apikey')
-                if apikey is None or apikey != F.SystemModelSetting.get('auth_apikey'):
+                if apikey is None or apikey != F.SystemModelSetting.get('apikey'):
                     F.logger.warning('CHECK API : ABORT no match ({})'.format(apikey))
                     F.logger.warning(request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
                     abort(403)

@@ -206,6 +206,7 @@ class Framework:
         self.config['flag_system_loading'] = True
         self.__config_initialize('member')
         self.__config_initialize('system_loading_after')
+        self.set_level(self.SystemModelSetting.get_int('log_level'))
        
 
     def initialize_plugin(self): 
@@ -464,7 +465,7 @@ class Framework:
     def set_level(self, level):
         try:
             for l in self.__logger_list:
-                l.setLevel(level)
+                l.setLevel(int(level))
             self.__make_default_logger()
         except:
             pass    

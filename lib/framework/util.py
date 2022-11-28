@@ -92,12 +92,12 @@ class Util(object):
     def make_apikey(url):
         from framework import SystemModelSetting
         url = url.format(ddns=SystemModelSetting.get('ddns'))
-        if SystemModelSetting.get_bool('auth_use_apikey'):
+        if SystemModelSetting.get_bool('use_apikey'):
             if url.find('?') == -1:
                 url += '?'
             else:
                 url += '&'
-            url += 'apikey=%s' % SystemModelSetting.get('auth_apikey')
+            url += 'apikey=%s' % SystemModelSetting.get('apikey')
         return url
 
 
