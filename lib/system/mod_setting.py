@@ -198,6 +198,9 @@ class ModuleSetting(PluginModuleBase):
             if SystemModelSetting.get('restart_interval') == '':
                 SystemModelSetting.set('restart_interval', '0')
             self.__set_restart_scheduler()
+        elif 'log_level' in change_list:
+            F.set_level(SystemModelSetting.get_int('log_level'))
+
 
 
     def __set_restart_scheduler(self):
