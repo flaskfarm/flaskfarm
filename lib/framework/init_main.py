@@ -408,8 +408,8 @@ class Framework:
             try:
                 if self.config['flag_system_loading']:
                     try:
-                        from system import SystemModelSetting
-                        level = SystemModelSetting.get_int('log_level')
+                        #from system import SystemModelSetting
+                        level = self.SystemModelSetting.get_int('log_level')
                     except:
                         level = logging.DEBUG
                     if self.__level_unset_logger_list is not None:
