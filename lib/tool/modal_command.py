@@ -16,7 +16,7 @@ class ToolModalCommand(object):
     __wait = None
     __ss_process = None
     __abort = None
-
+    __return_log = None
 
     @classmethod
     def start(cls, title, commands, clear=True, wait=False, show_modal=True):
@@ -33,7 +33,9 @@ class ToolModalCommand(object):
         cls.__show_modal = show_modal
         cls.__thread = None
         cls.__abort = False
-        cls.__start()
+        cls.__return_log = ''
+        return cls.__start()
+
 
 
     @classmethod
@@ -48,6 +50,7 @@ class ToolModalCommand(object):
             if cls.__wait:
                 time.sleep(1)
                 cls.__thread.join()
+                return cls.__return_log
         except Exception as e: 
             F.logger.error(f"Exception:{str(e)}")
             F.logger.error(traceback.format_exc())
@@ -97,7 +100,9 @@ class ToolModalCommand(object):
             #F.socketio.emit("command_modal_add_text", "\n\n<<프로세스 종료>>", namespace='/framework', broadcast=True)
             F.socketio.emit("command_modal_input_disable", "", namespace='/framework', broadcast=True)
         else:
-            F.socketio.emit("command_modal_add_text", text, namespace='/framework', broadcast=True)
+            if text != None:
+                cls.__return_log += text
+                F.socketio.emit("command_modal_add_text", text, namespace='/framework', broadcast=True)
 
     
     @classmethod

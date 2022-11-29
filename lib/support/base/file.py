@@ -124,6 +124,22 @@ class SupportFile(object):
                     total_size += os.path.getsize(fp)
         return total_size
 
+    @classmethod
+    def size_info(cls, start_path = '.'):
+        ret = {
+            'size':0,
+            'file_count':0,
+            'folder_count':0.
+        }
+        for dirpath, dirnames, filenames in os.walk(start_path):
+            for f in filenames:
+                fp = os.path.join(dirpath, f)
+                if not os.path.islink(fp):
+                    ret['size'] += os.path.getsize(fp)
+            ret['folder_count'] += len(dirnames)
+            ret['file_count'] += len(filenames)
+        return ret
+
 
     @classmethod
     def rmtree(cls, folderpath):

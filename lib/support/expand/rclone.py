@@ -125,7 +125,12 @@ class SupportRclone(object):
     @classmethod
     def copy(cls, src, tar, config_path=None, option=None):
         return cls.__execute_two_param('copy', src, tar, config_path=config_path, option=option)
-        
+    
+    @classmethod
+    def copy_server_side(cls, src, tar, config_path=None, option=None):
+        if option == None:
+            option = ['--drive-server-side-across-configs=true', '--delete-empty-src-dirs']
+        return cls.__execute_two_param('copy', src, tar, config_path=config_path, option=option)
 
     @classmethod
     def move(cls, src, tar, config_path=None, option=None):
