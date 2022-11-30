@@ -17,6 +17,9 @@ class SupportRclone(object):
         cls.__rclone_path = __rclone_path
         cls.__rclone_config_path = __rclone_config_path
 
+    @classmethod
+    def get_rclone_path(cls):
+        return cls.__rclone_path
 
     @classmethod
     def __get_cmd(cls, config_path=None):
