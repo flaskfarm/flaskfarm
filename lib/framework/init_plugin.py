@@ -29,7 +29,7 @@ class PluginManager:
                 tmps = os.listdir(plugin_path)
                 add_plugin_list = []
                 for t in tmps:
-                    if not t.startswith('_') and os.path.isdir(os.path.join(plugin_path, t)):
+                    if not t.startswith('_') and os.path.isdir(os.path.join(plugin_path, t)) and t != 'false':
                         add_plugin_list.append(t)
                         cls.all_package_list[t] = {'pos':'normal', 'path':os.path.join(plugin_path, t), 'loading':(F.config.get('plugin_loading_only_devpath', None) != True)}
 
@@ -58,7 +58,7 @@ class PluginManager:
                         tmps = os.listdir(__)
                         add_plugin_list = []
                         for t in tmps:
-                            if not t.startswith('_')  and os.path.isdir(os.path.join(__, t)):
+                            if not t.startswith('_')  and os.path.isdir(os.path.join(__, t)) and t != 'false':
                                 add_plugin_list.append(t)
                                 cls.all_package_list[t] = {'pos':'dev', 'path':os.path.join(__, t), 'loading':True}
                         plugins = plugins + add_plugin_list
@@ -119,6 +119,7 @@ class PluginManager:
                         F.logger.error(f'Exception:{str(e)}')
                         F.logger.error(traceback.format_exc())
                         F.logger.warning(f'[!] NOT normal plugin : [{plugin_name}]')
+                        continue
 
                     try:
                         entity['setup_mod'] = mod
@@ -156,7 +157,7 @@ class PluginManager:
                     if mod_plugin_load:
                         def func(mod_plugin_load, key):
                             try:
-                                F.logger.debug(f'[!] plugin_load threading start : [{key}]') 
+                                F.logger.info(f'[!] plugin_load threading start : [{key}]') 
                                 mod_plugin_load()
                                 F.logger.debug(f'[!] plugin_load threading end : [{key}]') 
                             except Exception as e:
