@@ -4,9 +4,18 @@ from support import SupportSubprocess, logger
 
 
 class SupportFfprobe:
+    __ffprobe_path = 'ffprobe'
+
     @classmethod
-    def ffprobe(cls, filepath, ffprobe_path='ffprobe', option=None):
+    def initialize(cls, __ffprobe_path):
+        cls.__ffprobe_path = __ffprobe_path
+        
+    @classmethod
+    def ffprobe(cls, filepath, ffprobe_path=None, option=None):
         try:
+            if ffprobe_path == None:
+                ffprobe_path = cls.__ffprobe_path
+
             command = [ffprobe_path, '-v', 'quiet', '-print_format', 'json', '-show_format', '-show_streams', filepath]
             if option is not None:
                 command += option

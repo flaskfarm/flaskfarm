@@ -91,6 +91,10 @@ class PluginModuleBase(object):
     def plugin_load(self):
         pass
     
+    def plugin_load_celery(self):
+        pass
+
+
     def plugin_unload(self):
         pass
     
@@ -216,6 +220,9 @@ class PluginPageBase(object):
     
     # logic
     def plugin_load(self):
+        pass
+    
+    def plugin_load_celery(self):
         pass
     
     # logic

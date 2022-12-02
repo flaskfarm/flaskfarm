@@ -81,6 +81,11 @@ class PluginBase(object):
         if self.logic:
             self.logic.plugin_load()
     
+    def plugin_load_celery(self):
+        if self.logic:
+            self.logic.plugin_load_celery()
+
+    
     def plugin_unload(self):
         if self.logic:
             self.logic.plugin_unload()

@@ -116,13 +116,19 @@ class SupportFile(object):
     
     @classmethod
     def size(cls, start_path = '.'):
-        total_size = 0
-        for dirpath, dirnames, filenames in os.walk(start_path):
-            for f in filenames:
-                fp = os.path.join(dirpath, f)
-                if not os.path.islink(fp):
-                    total_size += os.path.getsize(fp)
-        return total_size
+        if os.path.exists(start_path):
+            if os.path.isdir(start_path):
+                total_size = 0
+                for dirpath, dirnames, filenames in os.walk(start_path):
+                    for f in filenames:
+                        fp = os.path.join(dirpath, f)
+                        if not os.path.islink(fp):
+                            total_size += os.path.getsize(fp)
+                return total_size
+            else:
+                return os.path.getsize(start_path)
+        return 0
+
 
     @classmethod
     def size_info(cls, start_path = '.'):

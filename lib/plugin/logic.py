@@ -56,6 +56,14 @@ class Logic(object):
                         try: page_instance.db_delete(self.P.ModelSetting.get_int(key2))
                         except: pass
 
+    def plugin_load_celery(self):
+        self.P.logger.debug('%s plugin_load_celery', self.P.package_name)
+        for module in self.P.module_list:
+            module.plugin_load_celery()
+            if module.page_list is not None:
+                for page_instance in module.page_list:
+                    page_instance.plugin_load_celery()
+
 
 
     def db_init(self):

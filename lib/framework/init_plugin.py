@@ -148,6 +148,25 @@ class PluginManager:
                     F.logger.error(traceback.format_exc())
                     F.logger.debug('db.create_all error')
 
+            for key, entity in cls.plugin_list.items():
+                try:
+                    mod_plugin_load = getattr(entity['P'], 'plugin_load_celery')
+                    if mod_plugin_load:
+                        def func(mod_plugin_load, key):
+                            try:
+                                F.logger.debug(f'[!] plugin_load_celery threading start : [{key}]') 
+                                mod_plugin_load()
+                                F.logger.debug(f'[!] plugin_load_celery threading end : [{key}]') 
+                            except Exception as e:
+                                F.logger.error(f"Exception:{str(e)}")
+                                F.logger.error(traceback.format_exc())
+                        t = threading.Thread(target=func, args=(mod_plugin_load, key))
+                        t.setDaemon(True)
+                        t.start()
+                except Exception as e:
+                    F.logger.error(f"Exception:{str(e)}")
+                    F.logger.error(traceback.format_exc())
+
             if not F.config['run_flask']:
                 return
             
@@ -175,10 +194,9 @@ class PluginManager:
                                     MenuManager.init_menu()
                                     F.logger.info(f"플러그인 로딩 실패로 메뉴 삭제2 : {key}")
 
-                        if key != 'mod':
-                            t = threading.Thread(target=func, args=(mod_plugin_load, key))
-                            t.setDaemon(True)
-                            t.start()
+                        t = threading.Thread(target=func, args=(mod_plugin_load, key))
+                        t.setDaemon(True)
+                        t.start()
 
                 except Exception as e:
                     F.logger.debug(f'[!] PLUGIN_LOAD function not exist : [{key}]') 
