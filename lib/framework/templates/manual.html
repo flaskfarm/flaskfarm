@@ -21,14 +21,10 @@
     converter.setOption('ghCodeBlocks',true);
     
     text = $('#text').data('text');
+    if (window.location.href.endsWith('.yaml')) {
+      text = "```" + text + "```";
+    }
     html      = converter.makeHtml(text);
-
-    input = "Here's a simple hello world in javascript:\n" +
-            "\n" +
-            "    alert('Hello World!');\n" +
-            "\n" +
-            "The `alert` function is a build-in global from `window`.";
-    //html = converter.makeHtml(input);
     $('#text_div').html(html);
   });
 </script>    
