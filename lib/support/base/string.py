@@ -1,4 +1,5 @@
 import re
+import traceback
 
 from . import logger
 
@@ -41,8 +42,18 @@ class SupportString(object):
             all_count = len(text)
             han_count = len(re.findall('[\u3130-\u318F\uAC00-\uD7A3]', text))
             eng_count = len(re.findall('[a-zA-Z]', text))
-            han_percent = int(han_count * 100 / all_count)
-            eng_percent = int(eng_count * 100 / all_count)
+            etc_count = len(re.findall('[0-9]', text))
+            etc_count += len(re.findall('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\\‘|\(\)\[\]\<\>`\'…》：]', text))
+            
+            han_percent = int(han_count * 100 / (all_count-etc_count))
+            eng_percent = int(eng_count * 100 / (all_count-etc_count))
             return (han_percent, eng_percent)
-        except:
+        except Exception as e: 
+            logger.error(f"Exception:{str(e)}")
+            logger.error(traceback.format_exc())
             return False
+
+    @classmethod
+    def remove_special_char(cls, text):
+        return re.sub('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\\‘|\(\)\[\]\<\>`\'…》：]', '', text)
+
