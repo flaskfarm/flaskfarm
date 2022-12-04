@@ -96,7 +96,7 @@ def upload():
     try:
         if request.method == 'POST':
             f = request.files['file']
-            from werkzeug import secure_filename
+            from werkzeug.utils import secure_filename
             upload_path = F.SystemModelSetting.get('path_upload')
             os.makedirs(upload_path, exist_ok=True)
             f.save(os.path.join(upload_path, secure_filename(f.filename)))
