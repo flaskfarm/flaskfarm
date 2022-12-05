@@ -150,6 +150,10 @@ class ModelBase(F.db.Model):
     def make_query(cls, req, order='desc', search='', option1='all', option2='all'):
         with F.app.app_context():
             query = F.db.session.query(cls)
+            if order == 'desc':
+                query = query.order_by(desc(cls.id))
+            else:
+                query = query.order_by(cls.id)
             return query 
         
     

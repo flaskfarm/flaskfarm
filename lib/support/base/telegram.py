@@ -1,5 +1,7 @@
+import time
 import traceback
 
+import requests
 from telepot_mod import Bot
 
 from . import logger
@@ -13,6 +15,11 @@ class SupportTelegram:
             bot = Bot(bot_token)
             if image_url is not None:
                 logger.debug(image_url)
+                for i in range(5):
+                    if requests.get(image_url).status_code == 200:
+                        break
+                    else:
+                        time.sleep(3)
                 try:
                     bot.sendPhoto(chat_id, image_url, disable_notification=disable_notification)
                 except Exception as e: 

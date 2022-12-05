@@ -63,7 +63,7 @@ class SupportDiscord(object):
                     embed.set_description(tmp[1])
                     webhook.add_embed(embed)
                 else:
-                    webhook = DiscordWebhook(url=webhook_url, content=text)
+                    webhook = DiscordWebhook(url=webhook_url, content='```' + text + '```')
                 webhook.execute()
                 return True
             except:
@@ -179,15 +179,15 @@ class SupportDiscord(object):
 
 
     @classmethod
-    def discord_proxy_image_bytes(cls, bytes, retry=True):
+    def discord_proxy_image_bytes(cls, bytes, retry=True, format='jpg'):
         data = None
         idx = random.randint(0,len(webhook_list)-1)
         webhook_url =  webhook_list[idx]
         try:
             webhook = DiscordWebhook(url=webhook_url, content='')
-            webhook.add_file(file=bytes, filename='image.jpg')
+            webhook.add_file(file=bytes, filename=f'image.{format}')
             embed = DiscordEmbed()
-            embed.set_image(url="attachment://image.jpg")
+            embed.set_image(url=f"attachment://image.{format}")
             response = webhook.execute()
             data = None
             if type(response) == type([]):
