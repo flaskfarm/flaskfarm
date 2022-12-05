@@ -154,9 +154,9 @@ class PluginManager:
                     if mod_plugin_load:
                         def func(mod_plugin_load, key):
                             try:
-                                F.logger.debug(f'[!] plugin_load_celery threading start : [{key}]') 
+                                #F.logger.debug(f'[!] plugin_load_celery threading start : [{key}]') 
                                 mod_plugin_load()
-                                F.logger.debug(f'[!] plugin_load_celery threading end : [{key}]') 
+                                #F.logger.debug(f'[!] plugin_load_celery threading end : [{key}]') 
                             except Exception as e:
                                 F.logger.error(f"Exception:{str(e)}")
                                 F.logger.error(traceback.format_exc())
