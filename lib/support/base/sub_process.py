@@ -1,5 +1,6 @@
 import io
 import json
+import locale
 import os
 import platform
 import queue
@@ -43,7 +44,7 @@ class SupportSubprocess(object):
 
             iter_arg =  ''
             if platform.system() == 'Windows':
-                process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8', bufsize=0)
+                process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding=locale.getpreferredencoding(), bufsize=0)
             else:
                 if uid == None:
                     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=shell, env=env, encoding='utf8')
@@ -143,7 +144,7 @@ class SupportSubprocess(object):
             self.command = self.command_for_windows(self.command)
             logger.debug(f"{self.command=}")
             if platform.system() == 'Windows':
-                self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
+                self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding=locale.getpreferredencoding(), bufsize=0)
 
             else:
                 if self.uid == None:
