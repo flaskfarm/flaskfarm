@@ -40,7 +40,11 @@ class MenuManager:
             copy_map = [] 
             for category in cls.menu_map:
                 if 'uri' in category:
-                    copy_map.append(category)
+                    if category['uri'] in plugin_menus:
+                        plugin_menus[category['uri']]['match'] = True
+                        copy_map.append(plugin_menus[category['uri']]['menu'])
+                    else:
+                        copy_map.append(category)
                     continue
                 cate_count = 0  
 

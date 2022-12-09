@@ -63,7 +63,10 @@ class SupportDiscord(object):
                     embed.set_description(tmp[1])
                     webhook.add_embed(embed)
                 else:
-                    webhook = DiscordWebhook(url=webhook_url, content='```' + text + '```')
+                    if 'http://' in text or 'https://' in text:
+                        webhook = DiscordWebhook(url=webhook_url, content= text)
+                    else:
+                        webhook = DiscordWebhook(url=webhook_url, content='```' + text + '```')
                 webhook.execute()
                 return True
             except:
