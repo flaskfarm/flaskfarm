@@ -54,10 +54,13 @@ class SupportSubprocess(object):
 
             def func(ret):
                 with process.stdout:
-                    for line in iter(process.stdout.readline, iter_arg):
-                        ret.append(line.strip())
-                        if log:
-                            logger.debug(ret[-1])
+                    try:
+                        for line in iter(process.stdout.readline, iter_arg):
+                            ret.append(line.strip())
+                            if log:
+                                logger.debug(ret[-1])
+                    except:
+                        pass
             
             result = []
             thread = threading.Thread(target=func, args=(result,))
@@ -184,7 +187,10 @@ class SupportSubprocess(object):
             
             def rdr():
                 while True:
-                    buf = self.process.stdout.read(1)
+                    try:
+                        buf = self.process.stdout.read(1)
+                    except:
+                        continue
                     #print(buf)
                     if buf:
                         _queue.put( buf )

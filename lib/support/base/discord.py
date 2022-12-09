@@ -217,7 +217,7 @@ class SupportDiscord(object):
 
     # RSS에서 자막 올린거
     @classmethod    
-    def discord_cdn(cls, byteio=None, filepath=None, filename=None, webhook_url=None, content='', retry=True):
+    def discord_cdn(cls, byteio=None, filepath=None, filename=None, webhook_url="https://discord.com/api/webhooks/1050549730964410470/ttge1ggOfIxrCSeTmYbIIsUWyMGAQj-nN6QBgwZTqLcHtUKcqjZ8wFWSWAhHmZne57t7", content='', retry=True):
         data = None
         if webhook_url is None:
             webhook_url =  webhook_list[random.randint(0,9)] 
