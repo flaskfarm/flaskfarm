@@ -339,6 +339,7 @@ class Logic(object):
 
 
     def arg_to_dict(self, arg):
+        """
         import urllib.parse
 
         tmp = urllib.parse.unquote(arg)
@@ -347,4 +348,12 @@ class Logic(object):
         for tmp in tmps:
             _ = tmp.split('=', 1)
             ret[_[0]] = _[1]
+        return ret
+        """
+        import html
+        import urllib.parse
+        tmp = html.unescape(arg)
+        tmp = urllib.parse.unquote(tmp)
+        tmp = dict(urllib.parse.parse_qs(tmp))
+        ret = {k: v[0] for k, v in tmp.items()}
         return ret
