@@ -354,6 +354,6 @@ class Logic(object):
         import urllib.parse
         tmp = html.unescape(arg)
         tmp = urllib.parse.unquote(tmp)
-        tmp = dict(urllib.parse.parse_qs(tmp))
+        tmp = dict(urllib.parse.parse_qs(tmp, keep_blank_values=True))
         ret = {k: v[0] for k, v in tmp.items()}
         return ret
