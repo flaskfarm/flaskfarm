@@ -1,0 +1,90 @@
+<title>aaaa</title>
+
+
+<meta charset="UTF-8">
+<meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" name="viewport">
+<meta content="ie=edge" http-equiv="X-UA-Compatible">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<link href="/media/avatar.png" rel="icon" type="image/jpeg">
+<link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" rel="stylesheet" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+<link href="https://unpkg.com/swiper@7/swiper-bundle.min.css" rel="stylesheet" />
+<link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+<link href="/css/style.css" rel="stylesheet" />
+<link href="/css/style_dark.css" rel="stylesheet" />
+<link href="/media/favicon.png" rel="icon" type="image/jpeg">
+<meta property="og:site_name" content="aaaaaaaaaaaaaaaaa" />
+<meta property="og:url" content="https://ff.soju6jan.synology.me/gds_tool/api/route/streaming.mp4?apikey=ooo5298ooo&type=file&id=1gtpG7CAUKTWu6wxWtCKx-XN01PMz70v8" />
+<meta property="og:type" content="video.other" />
+<meta property="og:title" content="Mini rengar xD" />
+<meta property="og:image" content="https://outplays.eu/Q5THkfY3/thumbnail.png" />
+<meta property="og:video" content="https://ff.soju6jan.synology.me/gds_tool/api/route/streaming.mp4?apikey=ooo5298ooo&type=file&id=1gtpG7CAUKTWu6wxWtCKx-XN01PMz70v8" />
+<meta property="og:video:type" content="video/mp4" />
+<meta property="og:video:secure_url" content="https://ff.soju6jan.synology.me/gds_tool/api/route/streaming.mp4?apikey=ooo5298ooo&type=file&id=1gtpG7CAUKTWu6wxWtCKx-XN01PMz70v8" />
+<meta property="og:video:height" content="1080" />
+<meta property="og:video:width" content="1920" />
+<meta property="og:image:height" content="1080" />
+<meta property="og:image:width" content="1920" />
+
+
+
+<script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+<link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+
+<body bgcolor='black'>
+<video id=player width=960 height=540 class="video-js vjs-default-skin vjs-16-9" autoplay controls>
+  <source
+     src="https://ff.soju6jan.synology.me/gds_tool/api/route/streaming.mp4?apikey=ooo5298ooo&type=file&id=1gtpG7CAUKTWu6wxWtCKx-XN01PMz70v8"
+     type="application/x-mpegURL" />
+</video>
+</body>
+
+<script>
+var subtitle_src = "aaaa";
+let options = {
+    html5: {
+      nativeTextTracks: false
+    },
+    playbackRates: [.5, .75, 1, 1.5, 2],
+    controls: true,
+    preload: "auto",
+    controlBar: {
+        playToggle: false,
+        pictureInPictureToggle: false,
+        remainingTimeDisplay: true,
+        qualitySelector: true,
+    }
+};
+let player = videojs('player', options);
+
+player.ready(function(){
+  // set subtitle track
+  if (subtitle_src != "") {
+    var suburl = subtitle_src.replace(/&amp;/g, '&');
+    let captionOption = {
+      kind: 'captions',
+      srclang: 'ko',
+      label: 'Korean',
+      src: suburl,
+      mode: 'showing'
+    };
+    player.addRemoteTextTrack(captionOption);
+
+    var settings = this.textTrackSettings;
+    settings.setValues({
+        "backgroundColor": "#000",
+        "backgroundOpacity": "0",
+        "edgeStyle": "uniform",
+    });
+    settings.updateDisplay();
+  }
+  else {
+    var tracks = player.textTracks();
+    for (var i = 0; i < tracks.length; i++) {
+      var track = tracks[i];
+    }
+  }
+});
+
+player.play();
+</script>

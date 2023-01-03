@@ -118,6 +118,18 @@ def videojs():
     return render_template('videojs.html', data=data)
 
 
+@F.app.route("/videojs_discord", methods=['GET', 'POST'])
+def videojs_og():
+    data = {}
+    """
+    data['play_title'] = request.form['play_title']
+    data['play_source_src'] = request.form['play_source_src']
+    data['play_source_type'] = request.form['play_source_type']
+    if 'play_subtitle_src' in request.form:
+        data['play_subtitle_src'] = request.form['play_subtitle_src']
+    """
+    return render_template('videojs_og.html', data=data)
+
 
 @F.app.route("/headers", methods=['GET', 'POST'])
 def headers():

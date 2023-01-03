@@ -42,7 +42,8 @@ class SupportString(object):
             eng_count = len(re.findall('[a-zA-Z]', text))
             etc_count = len(re.findall('[0-9]', text))
             etc_count += len(re.findall('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\\‘|\(\)\[\]\<\>`\'…》：]', text))
-            
+            if all_count == etc_count:
+                return (0,0)
             han_percent = int(han_count * 100 / (all_count-etc_count))
             eng_percent = int(eng_count * 100 / (all_count-etc_count))
             return (han_percent, eng_percent)
