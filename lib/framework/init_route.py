@@ -128,7 +128,7 @@ def videojs_og():
     if 'play_subtitle_src' in request.form:
         data['play_subtitle_src'] = request.form['play_subtitle_src']
     """
-    return render_template('videojs_og.html', data=data)
+    return render_template('videojs_discord.html', data=data)
 
 
 @F.app.route("/headers", methods=['GET', 'POST'])
