@@ -352,8 +352,10 @@ class Logic(object):
         """
         import html
         import urllib.parse
+        char = '||!||'
+        arg = arg.replace('&amp;', char)
         tmp = html.unescape(arg)
         tmp = urllib.parse.unquote(tmp)
         tmp = dict(urllib.parse.parse_qs(tmp, keep_blank_values=True))
-        ret = {k: v[0] for k, v in tmp.items()}
+        ret = {k: v[0].replace(char, '&') for k, v in tmp.items()}
         return ret
