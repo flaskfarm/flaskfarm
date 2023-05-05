@@ -43,7 +43,7 @@ class ToolModalCommand(object):
         try:
             if cls.__show_modal:
                 if cls.__clear:
-                    F.socketio.emit("command_modal_clear", None, namespace='/framework', broadcast=True)
+                    F.socketio.emit("command_modal_clear", None, namespace='/framework')
             cls.__thread = threading.Thread(target=cls.__execute_thread_function, args=())
             cls.__thread.setDaemon(True)
             cls.__thread.start()
@@ -59,18 +59,18 @@ class ToolModalCommand(object):
     def __execute_thread_function(cls):
         try:
             if cls.__show_modal:
-                F.socketio.emit("command_modal_show", cls.__title, namespace='/framework', broadcast=True)
-                F.socketio.emit("loading_hide", None, namespace='/framework', broadcast=True)
+                F.socketio.emit("command_modal_show", cls.__title, namespace='/framework')
+                F.socketio.emit("loading_hide", None, namespace='/framework')
                 
             for command in cls.__commands:
                 if cls.__abort:
                     return
                 if command[0] == 'msg':
                     if cls.__show_modal:
-                        F.socketio.emit("command_modal_add_text", '%s\n\n' % command[1], namespace='/framework', broadcast=True)
+                        F.socketio.emit("command_modal_add_text", '%s\n\n' % command[1], namespace='/framework')
                 elif command[0] == 'system':
                     if cls.__show_modal:
-                        F.socketio.emit("command_modal_add_text", '$ %s\n\n' % command[1], namespace='/framework', broadcast=True)
+                        F.socketio.emit("command_modal_add_text", '$ %s\n\n' % command[1], namespace='/framework')
                     os.system(command[1])
                 else:
                     #show_command = True
@@ -84,9 +84,9 @@ class ToolModalCommand(object):
                 time.sleep(1)
         except Exception as exception: 
             if cls.__show_modal:
-                F.socketio.emit("command_modal_show", cls.__title, namespace='/framework', broadcast=True)
-                F.socketio.emit("command_modal_add_text", str(exception), namespace='/framework', broadcast=True)
-                F.socketio.emit("command_modal_add_text", str(traceback.format_exc()), namespace='/framework', broadcast=True)
+                F.socketio.emit("command_modal_show", cls.__title, namespace='/framework')
+                F.socketio.emit("command_modal_add_text", str(exception), namespace='/framework')
+                F.socketio.emit("command_modal_add_text", str(traceback.format_exc()), namespace='/framework')
 
     @classmethod
     def process_callback(cls, call_id, mode, text):
@@ -94,15 +94,15 @@ class ToolModalCommand(object):
         if cls.__show_modal == False:
             return
         if mode == 'end':
-            F.socketio.emit("command_modal_add_text", "\n\n<<프로세스 종료>>", namespace='/framework', broadcast=True)
-            F.socketio.emit("command_modal_input_disable", "", namespace='/framework', broadcast=True)
+            F.socketio.emit("command_modal_add_text", "\n\n<<프로세스 종료>>", namespace='/framework')
+            F.socketio.emit("command_modal_input_disable", "", namespace='/framework')
         elif mode == 'thread_end':
-            #F.socketio.emit("command_modal_add_text", "\n\n<<프로세스 종료>>", namespace='/framework', broadcast=True)
-            F.socketio.emit("command_modal_input_disable", "", namespace='/framework', broadcast=True)
+            #F.socketio.emit("command_modal_add_text", "\n\n<<프로세스 종료>>", namespace='/framework')
+            F.socketio.emit("command_modal_input_disable", "", namespace='/framework')
         else:
             if text != None:
                 cls.__return_log += text
-                F.socketio.emit("command_modal_add_text", text, namespace='/framework', broadcast=True)
+                F.socketio.emit("command_modal_add_text", text, namespace='/framework')
 
     
     @classmethod
@@ -122,4 +122,4 @@ class ToolModalCommand(object):
 
     @classmethod
     def send_message(cls, text):
-        F.socketio.emit("command_modal_add_text", '%s\n\n' % text, namespace='/framework', broadcast=True)
+        F.socketio.emit("command_modal_add_text", '%s\n\n' % text, namespace='/framework')

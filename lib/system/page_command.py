@@ -92,7 +92,7 @@ class PageCommand(PluginPageBase):
         if command[0] != 'LOAD':
             ToolModalCommand.start(title, [command])
         else:
-            F.socketio.emit("command_modal_show", title, namespace='/framework', broadcast=True)
+            F.socketio.emit("command_modal_show", title, namespace='/framework')
             def start_communicate_load(load_log_list):
                 def func():
                     while True:
@@ -100,7 +100,7 @@ class PageCommand(PluginPageBase):
                         load_log_list.truncate(0)
                         if logs:
                             P.logger.error(logs)
-                            F.socketio.emit("command_modal_add_text", logs.strip() + '\n', namespace='/framework', broadcast=True)
+                            F.socketio.emit("command_modal_add_text", logs.strip() + '\n', namespace='/framework')
                             if logs == '<<END>>':
                                 break
                         time.sleep(0.3)

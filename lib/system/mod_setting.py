@@ -96,7 +96,7 @@ class ModuleSetting(PluginModuleBase):
                 ret['msg'] = '저장하였습니다.'
                 from framework.init_menu import MenuManager
                 MenuManager.init_menu()
-                F.socketio.emit("refresh", {}, namespace='/framework', broadcast=True)
+                F.socketio.emit("refresh", {}, namespace='/framework')
             except:
                 ret['ret'] = "danger" 
                 ret['msg'] = "yaml 형식에 맞지 않습니다"
@@ -181,14 +181,14 @@ class ModuleSetting(PluginModuleBase):
 
     def setting_save_after(self, change_list):
         if 'theme' in change_list or 'web_title' in change_list:
-            F.socketio.emit("refresh", {}, namespace='/framework', broadcast=True)
+            F.socketio.emit("refresh", {}, namespace='/framework')
         elif 'notify.yaml' in change_list:
             try:
                 SupportFile.write_file(F.config['notify_yaml_filepath'], SystemModelSetting.get('notify.yaml'))
                 SupportYaml.read_yaml(F.config['notify_yaml_filepath'])
             except:
                 data = {'type':'danger', 'msg' : "알림 정책이 yaml 형식에 맞지 않습니다."}
-                F.socketio.emit("notify", data, namespace='/framework', broadcast=True)
+                F.socketio.emit("notify", data, namespace='/framework')
         elif 'web_pw' in change_list:
             import hashlib
             enc = hashlib.md5()

@@ -68,10 +68,10 @@ class WatchThread(threading.Thread):
                     if not line:
                         time.sleep(0.1) # Sleep briefly
                         continue
-                    F.socketio.emit("add", {key : value, 'data': line}, namespace='/log', broadcast=True)
+                    F.socketio.emit("add", {key : value, 'data': line}, namespace='/log')
             F.logger.debug('WatchThread.. End %s', value)
         else:
-            F.socketio.emit("add", {key : value, 'data': 'not exist logfile'}, namespace='/log', broadcast=True)
+            F.socketio.emit("add", {key : value, 'data': 'not exist logfile'}, namespace='/log')
 
 
 class LogViewer(SingletonClass):

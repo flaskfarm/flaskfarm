@@ -53,7 +53,7 @@ class ModuleRoute(PluginModuleBase):
 
         @F.socketio.on('connect', namespace=f'/{P.package_name}/restart')
         def restart_socket_connect():
-            F.socketio.emit('connect', {}, namespace='/{P.package_name}/restart', broadcast=True)
+            F.socketio.emit('connect', {}, namespace='/{P.package_name}/restart')
 
 
     def process_menu(self, page, req):

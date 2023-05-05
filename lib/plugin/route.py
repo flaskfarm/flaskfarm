@@ -394,7 +394,7 @@ def default_route_socketio_module(module, attach=''):
             if encoding:
                 data = json.dumps(data, cls=AlchemyEncoder)
                 data = json.loads(data)
-            F.socketio.emit(cmd, data, namespace=f'/{P.package_name}/{module.name}{attach}', broadcast=True)
+            F.socketio.emit(cmd, data, namespace=f'/{P.package_name}/{module.name}{attach}')
 
     module.socketio_callback = socketio_callback
 
@@ -454,6 +454,6 @@ def default_route_socketio_page(page):
             if encoding:
                 data = json.dumps(data, cls=AlchemyEncoder)
                 data = json.loads(data)
-            F.socketio.emit(cmd, data, namespace=f'/{P.package_name}/{module.name}/{page.name}', broadcast=True)
+            F.socketio.emit(cmd, data, namespace=f'/{P.package_name}/{module.name}/{page.name}')
 
     page.socketio_callback = page_socketio_socketio_callback

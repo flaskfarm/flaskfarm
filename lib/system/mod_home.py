@@ -56,7 +56,7 @@ class ModuleHome(PluginModuleBase):
         ret = {}
         ret['system'] = self.get_info()
         ret['scheduler'] = scheduler.get_job_list_info()
-        F.socketio.emit("status", ret, namespace=f'/{P.package_name}/{name}', broadcast=True)
+        F.socketio.emit("status", ret, namespace=f'/{P.package_name}/{name}')
     
     
     def get_info(self, mode=''):
