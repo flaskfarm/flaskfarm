@@ -1,4 +1,5 @@
 import queue
+import shlex
 
 from support import SupportSubprocess
 from tool import ToolModalCommand
@@ -7,18 +8,18 @@ from .setup import *
 
 
 class PageCommand(PluginPageBase):
-    
+
     def __init__(self, P, parent):
         super(PageCommand, self).__init__(P, parent, name='command')
         self.db_default = {
             f'{self.parent.name}_{self.name}_recent': '',
-        } 
+        }
 
     def process_menu(self, req):
         arg = self.P.ModelSetting.to_dict()
         arg['path_data'] = F.config['path_data']
         return render_template(f'{self.P.package_name}_{self.parent.name}_{self.name}.html', arg=arg)
-        
+
 
 
     def process_command(self, command, arg1, arg2, arg3, req):
@@ -26,14 +27,14 @@ class PageCommand(PluginPageBase):
         if command == 'foreground_command':
             P.ModelSetting.set(f'{self.parent.name}_{self.name}_recent', arg1)
             self.__foreground_execute(arg1, arg1.split(' '))
-            
+
             return jsonify('')
         elif command == 'job_new':
             db_item = ModelCommand.job_new(arg1)
-            ret['msg'] = f"ID:{db_item.id} 작업을 생성하였습니다." 
+            ret['msg'] = f"ID:{db_item.id} 작업을 생성하였습니다."
         elif command == 'job_list':
             ret['data'] = ModelCommand.job_list()
-            
+
         elif command == 'job_save':
             data = P.logic.arg_to_dict(arg1)
             db_item = ModelCommand.get_by_id(data['job_id'])
@@ -54,7 +55,7 @@ class PageCommand(PluginPageBase):
         elif command == 'job_fore_execute':
             db_item = ModelCommand.get_by_id(arg1)
             cmd = (db_item.command + ' ' + db_item.args).strip()
-            self.__foreground_execute(f"Command ID: {db_item.id}", cmd.split(' '), db_item.id)
+            self.__foreground_execute(f"Command ID: {db_item.id}", shlex.split(cmd), db_item.id)
         elif command == 'job_back_execute':
             self.execute_thread_start(arg1)
             ret['msg'] = "실행 요청을 하였습니다.<br>로그를 확인하세요."
@@ -86,9 +87,9 @@ class PageCommand(PluginPageBase):
                 ret['msg'] = "Process를 중지하였습니다."
         return jsonify(ret)
 
-    
+
     def __foreground_execute(self, title, command, job_id=None):
-        
+
         if command[0] != 'LOAD':
             ToolModalCommand.start(title, [command])
         else:
@@ -144,9 +145,9 @@ class PageCommand(PluginPageBase):
             if mod_command_load:
                 ret = mod_command_load(*args, **kwargs)
             return ret
-        except Exception as e: 
+        except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
-            P.logger.error(traceback.format_exc())   
+            P.logger.error(traceback.format_exc())
 
 
 
@@ -164,11 +165,11 @@ class PageCommand(PluginPageBase):
         kwargs['id'] = args[0]
         self.execute_thread_function((db_item.command + ' ' + db_item.args).strip(), **kwargs)
 
-    
+
     def execute_thread_function(self, command, **kwargs):
         try:
-            cmd = command.split(' ')
-            
+            cmd = shlex.split(command)
+
             if cmd[0] == 'LOAD':
                 command_logger = F.get_logger(f"command_{kwargs['id']}")
                 kwargs['logger'] = command_logger
@@ -187,9 +188,9 @@ class PageCommand(PluginPageBase):
                 receiver = LogReceiver(command_logger)
                 process = SupportSubprocess(cmd, stdout_callback=receiver.stdout_callback, call_id=f"command_{kwargs['id']}")
                 process.start()
-        except Exception as e: 
+        except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
-            P.logger.error(traceback.format_exc())        
+            P.logger.error(traceback.format_exc())
 
 
     def plugin_load(self):
@@ -201,18 +202,18 @@ class PageCommand(PluginPageBase):
                         self.execute_thread_start(db_item.id)
                     elif db_item.schedule_mode == 'scheduler' and db_item.schedule_auto_start:
                         self.__sched_add(db_item.id, db_item=db_item)
-            except Exception as e: 
+            except Exception as e:
                 logger.error(f"Exception:{str(e)}")
-                logger.error(traceback.format_exc())        
+                logger.error(traceback.format_exc())
         try:
             th = threading.Thread(target=plugin_load_thread)
             th.setDaemon(True)
             th.start()
-        except Exception as e: 
+        except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
-            P.logger.error(traceback.format_exc())   
-    
-    
+            P.logger.error(traceback.format_exc())
+
+
     def __sched_add(self, id, db_item=None):
         try:
             if db_item is None:
@@ -223,9 +224,9 @@ class PageCommand(PluginPageBase):
             job = Job(self.P.package_name, job_id, db_item.schedule_interval, self.execute_thread_function_by_job_id, db_item.description,  args=(db_item.id,))
             scheduler.add_job_instance(job)
             return True
-        except Exception as e: 
+        except Exception as e:
             P.logger.error(f'Exception:{str(e)}')
-            P.logger.error(traceback.format_exc())   
+            P.logger.error(traceback.format_exc())
         return False
 
 
@@ -250,7 +251,7 @@ class ModelCommand(ModelBase):
     schedule_mode = db.Column(db.String) # none, startup, scheduler
     schedule_auto_start = db.Column(db.Boolean)  # 시작시 스케쥴링 등록
     schedule_interval = db.Column(db.String)  # 주기
-    
+
 
     def __init__(self, command):
         self.args = ''
