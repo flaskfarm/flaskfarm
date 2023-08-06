@@ -1,4 +1,5 @@
 import queue
+import shlex
 
 from support import SupportSubprocess
 from tool import ToolModalCommand
@@ -25,7 +26,7 @@ class PageCommand(PluginPageBase):
         ret = {'ret':'success'}
         if command == 'foreground_command':
             P.ModelSetting.set(f'{self.parent.name}_{self.name}_recent', arg1)
-            self.__foreground_execute(arg1, arg1.split(' '))
+            self.__foreground_execute(arg1, shlex.split(arg1))
             
             return jsonify('')
         elif command == 'job_new':
@@ -54,7 +55,7 @@ class PageCommand(PluginPageBase):
         elif command == 'job_fore_execute':
             db_item = ModelCommand.get_by_id(arg1)
             cmd = (db_item.command + ' ' + db_item.args).strip()
-            self.__foreground_execute(f"Command ID: {db_item.id}", cmd.split(' '), db_item.id)
+            self.__foreground_execute(f"Command ID: {db_item.id}", shlex.split(cmd), db_item.id)
         elif command == 'job_back_execute':
             self.execute_thread_start(arg1)
             ret['msg'] = "실행 요청을 하였습니다.<br>로그를 확인하세요."
@@ -167,7 +168,7 @@ class PageCommand(PluginPageBase):
     
     def execute_thread_function(self, command, **kwargs):
         try:
-            cmd = command.split(' ')
+            cmd = shlex.split(command)
             
             if cmd[0] == 'LOAD':
                 command_logger = F.get_logger(f"command_{kwargs['id']}")
