@@ -12,7 +12,7 @@ name = 'setting'
 
 class ModuleSetting(PluginModuleBase):
     db_default = {
-        'db_version' : '1',
+        'db_version' : '1.1',
         'port' : '9999',
         'ddns' : 'http://localhost:9999',
         'use_login' : 'False',
