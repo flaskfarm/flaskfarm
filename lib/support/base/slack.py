@@ -4,7 +4,7 @@ import traceback
 try:
     from slack_sdk.webhook import WebhookClient
 except:
-    os.system('pip3 install discord-webhook')
+    os.system('pip3 install slack-sdk')
     from slack_sdk.webhook import WebhookClient
 from . import logger
 
