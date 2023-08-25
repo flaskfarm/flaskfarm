@@ -2,7 +2,7 @@ import traceback
 from datetime import datetime
 
 from framework import F
-from support import SupportDiscord, SupportTelegram, SupportYaml
+from support import SupportDiscord, SupportTelegram, SupportYaml, SupportSlack
 
 from . import logger
 
@@ -18,6 +18,8 @@ class ToolNotify(object):
                 SupportTelegram.send_telegram_message(text, image_url=image_url, bot_token=F.SystemModelSetting.get('notify_telegram_token'), chat_id=F.SystemModelSetting.get('notify_telegram_chat_id'))
             if F.SystemModelSetting.get_bool('notify_discord_use'):
                 SupportDiscord.send_discord_message(text, image_url=image_url, webhook_url=F.SystemModelSetting.get('notify_discord_webhook')) 
+            if F.SystemModelSetting.get_bool('notify_slack_use'):
+                SupportSlack.send_slack_message(text, image_url=image_url, webhook_url=F.SystemModelSetting.get('notify_slack_webhook'))
 
 
     @classmethod
@@ -41,6 +43,10 @@ class ToolNotify(object):
                     if item.get('webhook', '') == '':
                         continue
                     SupportDiscord.send_discord_message(text, image_url=image_url, webhook_url=item.get('webhook'))
+                elif item.get('type') == 'slack':
+                    if item.get('webhook', '') == '':
+                        continue
+                    SupportSlack.send_slack_message(text, image_url=image_url, webhook_url=item.get('webhook'))
             return True
         except Exception as e: 
             logger.error(f"Exception:{str(e)}")

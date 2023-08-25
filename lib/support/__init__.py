@@ -20,6 +20,7 @@ from .base.string import SupportString
 from .base.sub_process import SupportSubprocess
 from .base.support_sc import SupportSC
 from .base.telegram import SupportTelegram
+from .base.slack import SupportSlack
 from .base.util import (AlchemyEncoder, SingletonClass, SupportUtil,
                         default_headers, pt)
 from .base.yaml import SupportYaml
