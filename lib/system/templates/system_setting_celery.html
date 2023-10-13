@@ -9,7 +9,7 @@
   <div class="tab-content" id="nav-tabContent">
     {{ macros.info_text('use_celery', 'use_celery 값', arg['use_celery']) }}
     {{ macros.info_text('running_type', 'running_type 값', arg['running_type']) }}
-    {{ macros.info_text('_tmp', '설명', "Docker는 celery가 서비스로 동작하기 때문에 설정이 불필요하며 '테스트' 버튼으로 작동 여부 확인만 가능합니다.", desc=['','native로 동작하는 경우 celery 실행을 따로 하지 않고 한번에 실행하기 위한 설정', 'Redis는 설정된 Port로 동작중인 상태여야 함.']) }}
+    {{ macros.info_text('_tmp', '설명', "보통 시작시 celery 실행 On 상태로 동작하며 개발시에만 Off로 설정.", desc=None) }}
     {{ macros.m_hr() }}
     <form id='setting' name='setting'>
     {{ macros.setting_checkbox('celery_start_by_web', '시작시 celery 실행', value=arg['celery_start_by_web']) }}
