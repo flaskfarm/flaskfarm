@@ -29,6 +29,14 @@
       {{ macros.setting_input_text('notify_discord_webhook', '웹훅', value=arg['notify_discord_webhook']) }}
       {{ macros.setting_input_text_and_buttons('tmp_text_discord', 'Test', [['tmp_discord_test_btn', '전송']], value='테스트 메시지입니다.', col='9') }}
       </div>
+      
+      {{ macros.m_hr() }}
+
+      {{ macros.setting_checkbox('notify_slack_use', '슬랙 사용', value=arg['notify_slack_use']) }}
+      <div id="notify_slack_use_div" class="collapse">
+      {{ macros.setting_input_text('notify_slack_webhook', '웹훅', value=arg['notify_slack_webhook']) }}
+      {{ macros.setting_input_text_and_buttons('tmp_text_slack', 'Test', [['tmp_slack_test_btn', '전송']], value='테스트 메시지입니다.', col='9') }}
+      </div>
     {{ macros.m_tab_content_end() }} 
 
     {{ macros.m_tab_content_start('advanced', false) }}
@@ -53,6 +61,7 @@
 $(document).ready(function(){
   use_collapse("notify_telegram_use");
   use_collapse("notify_discord_use");
+  use_collapse("notify_slack_use");
   use_collapse("notify_advaned_use");
 });
 
@@ -62,6 +71,10 @@ $('#notify_telegram_use').change(function() {
 
 $('#notify_discord_use').change(function() {
   use_collapse('notify_discord_use');
+});
+
+$('#notify_slack_use').change(function() {
+  use_collapse('notify_slack_use');
 });
 
 $('#notify_advaned_use').change(function() {
@@ -78,6 +91,11 @@ $("body").on('click', '#tmp_telegram_test_btn', function(e){
 $("body").on('click', '#tmp_discord_test_btn', function(e){
   e.preventDefault();
   globalSendCommand('notify_test', 'discord', $('#notify_discord_webhook').val(), $('#tmp_text_discord').val());
+});
+
+$("body").on('click', '#tmp_slack_test_btn', function(e){
+  e.preventDefault();
+  globalSendCommand('notify_test', 'slack', $('#notify_slack_webhook').val(), $('#tmp_text_slack').val());
 });
 
 $("body").on('click', '#tmp_advanced_test_btn', function(e){

@@ -19,6 +19,7 @@ pyyaml
 telepot-mod
 Flask-Dropzone
 psutil
+slack-sdk
 
 # filemanager
 pillow
