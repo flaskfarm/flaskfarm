@@ -21,7 +21,7 @@ def demote(user_uid, user_gid):
 class SupportSubprocess(object):
 
     @classmethod 
-    def command_for_windows(cls, command: list) -> str or list: 
+    def command_for_windows(cls, command: list): 
         if platform.system() == 'Windows':
             tmp = []
             if type(command) == type([]):
