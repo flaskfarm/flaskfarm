@@ -3,7 +3,7 @@ import string
 import time
 
 from support import (SupportDiscord, SupportFile, SupportSubprocess,
-                     SupportTelegram, SupportYaml)
+                     SupportTelegram, SupportYaml, SupportSlack)
 from tool import ToolModalCommand
 
 from .setup import *
@@ -12,7 +12,7 @@ name = 'setting'
 
 class ModuleSetting(PluginModuleBase):
     db_default = {
-        'db_version' : '1',
+        'db_version' : '1.1',
         'port' : '9999',
         'ddns' : 'http://localhost:9999',
         'use_login' : 'False',
@@ -34,6 +34,8 @@ class ModuleSetting(PluginModuleBase):
         'notify_telegram_disable_notification' : 'False',
         'notify_discord_use' : 'False',
         'notify_discord_webhook' : '',
+        'notify_slack_use' : 'False',
+        'notify_slack_webhook' : '',
         'notify_advaned_use' : 'False',
         'notify.yaml': '', #직접 사용하지 않으나 저장 편의상.
         'command_text': '',
@@ -108,6 +110,9 @@ class ModuleSetting(PluginModuleBase):
                 ret['msg'] = '메시지를 전송했습니다.'
             elif arg1 == 'discord':
                 SupportDiscord.send_discord_message(arg3, webhook_url=arg2)
+                ret['msg'] = '메시지를 전송했습니다.'
+            elif arg1 == 'slack':
+                SupportSlack.send_slack_message(arg3, webhook_url=arg2)
                 ret['msg'] = '메시지를 전송했습니다.'
             elif arg1 == 'advanced':
                 from tool import ToolNotify
