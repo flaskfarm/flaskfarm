@@ -202,14 +202,19 @@ class PluginManager:
                     F.logger.debug(f'[!] PLUGIN_LOAD function not exist : [{key}]') 
 
                 try:
-                    mod_menu = getattr(entity['P'], 'menu')
-                    if mod_menu and cls.all_package_list[key]['loading'] != False:
-                        cls.plugin_menus[key]=  {'menu':mod_menu, 'match':False}
-
+                    # 2024-05-27
+                    # 확장설정에 대한 여러 페이지 제공을 위해 menu를 사용할 수 있도록 하나 확장설정을 통해서만 진입할 수 있도록 수정
+                    is_setting_menu = False
                     setting_menu = getattr(entity['P'], 'setting_menu')
                     if setting_menu != None and cls.all_package_list[key]['loading'] != False:
                         F.logger.info(f"메뉴 포함 : {key}")
                         cls.setting_menus.append(setting_menu)
+                        is_setting_menu = True
+                    if is_setting_menu:
+                        mod_menu = getattr(entity['P'], 'menu')
+                        if mod_menu and cls.all_package_list[key]['loading'] != False:
+                            cls.plugin_menus[key]=  {'menu':mod_menu, 'match':False}
+
                 except Exception as exception:
                     F.logger.debug('no menu')
             F.logger.debug('### plugin_load threading all start.. : %s ', len(cls.plugin_list))
