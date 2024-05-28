@@ -111,3 +111,11 @@ class MenuManager:
     def get_menu_map(cls):
         #F.logger.warning(d(cls.menu_map))
         return cls.menu_map
+
+    @classmethod
+    def is_expand_setting(cls, uri):
+        from .init_plugin import PluginManager
+        for tmp in PluginManager.setting_menus:
+            if tmp['uri'].split('/',1)[0] == uri:
+                return True
+        return False

@@ -208,7 +208,7 @@ class PluginManager:
 
                     setting_menu = getattr(entity['P'], 'setting_menu')
                     if setting_menu != None and cls.all_package_list[key]['loading'] != False:
-                        F.logger.info(f"메뉴 포함 : {key}")
+                        F.logger.info(f"확장 설정 : {key}")
                         cls.setting_menus.append(setting_menu)
                 except Exception as exception:
                     F.logger.debug('no menu')

@@ -26,32 +26,34 @@
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{category['name']}}</a>
           <ul class="dropdown-menu">
           {% for category_child in category['list'] %}
-            {% if category_child['uri'] == 'setting' %}
-              <li><a class="dropdown-item" href="#" style="font-size: .850rem; font-weight:bold">{{category_child['name']}}</a>
-                <ul class="submenu dropdown-menu">
-                {% for item in category_child['list'] %}
-                  <li><a class="dropdown-item" href="/{{item['uri']}}" style="font-size: .850rem; font-weight:bold">{{item['name']}}</a></li>
-                {% endfor %}
-                </ul>
-              </li>
-            {% elif category_child['uri'] == '-' %}
-              <div class="dropdown-divider"></div>
-            {% elif 'uri' in category_child and category_child['uri'].startswith('http') %}
-              {% if 'target' not in category_child or  category_child['target'] == '_blank' %}
-                <a class="dropdown-item" href="{{ category_child['uri'] }}" target="_blank" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
-              {% else %}
-              <a class="dropdown-item" href="{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
-              {% endif %}
-            {% elif 'uri' in category_child and category_child['uri'].startswith('javascript') %}
-              <a class="dropdown-item" href="{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
-            {% else %}
-              {% if category_child['uri'] == menu[0] %}
-                <a class="dropdown-item active" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
-              {% else %}
-                {% if 'target' in category_child %}
-                  <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold" target="{{category_child['target']}}">{{ category_child['name'] }}</a>
+            {% if is_expand_setting(category_child['uri']) == False %}
+              {% if category_child['uri'] == 'setting' %}
+                <li><a class="dropdown-item" href="#" style="font-size: .850rem; font-weight:bold">{{category_child['name']}}</a>
+                  <ul class="submenu dropdown-menu">
+                  {% for item in category_child['list'] %}
+                    <li><a class="dropdown-item" href="/{{item['uri']}}" style="font-size: .850rem; font-weight:bold">{{item['name']}}</a></li>
+                  {% endfor %}
+                  </ul>
+                </li>
+              {% elif category_child['uri'] == '-' %}
+                <div class="dropdown-divider"></div>
+              {% elif 'uri' in category_child and category_child['uri'].startswith('http') %}
+                {% if 'target' not in category_child or  category_child['target'] == '_blank' %}
+                  <a class="dropdown-item" href="{{ category_child['uri'] }}" target="_blank" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
                 {% else %}
-                  <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+                <a class="dropdown-item" href="{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+                {% endif %}
+              {% elif 'uri' in category_child and category_child['uri'].startswith('javascript') %}
+                <a class="dropdown-item" href="{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+              {% else %}
+                {% if category_child['uri'] == menu[0] %}
+                  <a class="dropdown-item active" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+                {% else %}
+                  {% if 'target' in category_child %}
+                    <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold" target="{{category_child['target']}}">{{ category_child['name'] }}</a>
+                  {% else %}
+                    <a class="dropdown-item" href="/{{ category_child['uri'] }}" style="font-size: .850rem; font-weight:bold">{{ category_child['name'] }}</a>
+                  {% endif %}
                 {% endif %}
               {% endif %}
             {% endif %}
