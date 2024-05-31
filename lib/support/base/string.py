@@ -58,7 +58,7 @@ class SupportString(object):
 
 
     @classmethod
-    def remove_emoji(text, char=''):
+    def remove_emoji(cls, text, char=''):
         import re
         emoji_pattern = re.compile("["
                 u"\U0001F600-\U0001F64F"  # emoticons
