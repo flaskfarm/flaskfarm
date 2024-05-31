@@ -298,7 +298,7 @@ class Framework:
         self.config['DEFINE'] = {}
         # 이건 필요 없음
         self.config['DEFINE']['GIT_VERSION_URL'] = 'https://raw.githubusercontent.com/flaskfarm/flaskfarm/main/lib/framework/version.py'
-        self.config['DEFINE']['CHANGELOG'] = 'https://flaskfarm.github.io/posts/changelog'
+        self.config['DEFINE']['CHANGELOG'] = 'https://github.com/flaskfarm/flaskfarm'
         self.config['DEFINE']['WEB_DIRECT_URL'] = "http://52.78.103.230:49734"
 
 
