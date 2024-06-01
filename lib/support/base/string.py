@@ -68,7 +68,7 @@ class SupportString(object):
                                 u"\U00002500-\U00002BEF"  # chinese char
                                 u"\U00002702-\U000027B0"
                                 u"\U00002702-\U000027B0"
-                                u"\U000024C2-\U0001F251"
+                                #u"\U000024C2-\U0001F251"
                                 u"\U0001f926-\U0001f937"
                                 u"\U00010000-\U0010ffff"
                                 u"\u2640-\u2642"
