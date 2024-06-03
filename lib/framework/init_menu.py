@@ -68,12 +68,35 @@ class MenuManager:
                         })
                         cate_count += 1
                     elif item['uri'] == 'setting':
+                        # 2024.06.04
+                        # 확장설정도 메뉴 구성
                         if len(PluginManager.setting_menus) > 0:
-                            tmp_cate_list.append({
-                                'uri': item['uri'],
-                                'name': item.get('name', ''),
-                                'list': PluginManager.setting_menus
-                            })
+                            set_tmp = item.get('list')
+                            if set_tmp:
+                                cp = PluginManager.setting_menus.copy()
+                                include = [] 
+                                for set_ch in set_tmp:
+                                    if set_ch.get('uri') and (set_ch.get('uri') == '-' or set_ch.get('uri').startswith('http')):
+                                        include.append(set_ch)
+                                        continue
+
+                                    for i, ps in enumerate(cp):
+                                        if set_ch.get('plugin') != None and set_ch.get('plugin') == ps.get('plugin'):
+                                            include.append(ps)
+                                            del cp[i]
+                                            break
+                                tmp_cate_list.append({
+                                    'uri': item['uri'],
+                                    'name': item.get('name', ''),
+                                    'list': include + cp
+                                })
+                           
+                            else:
+                                tmp_cate_list.append({
+                                    'uri': item['uri'],
+                                    'name': item.get('name', ''),
+                                    'list': PluginManager.setting_menus
+                                })
                     
                 if cate_count > 0:
                     copy_map.append({
@@ -112,6 +135,7 @@ class MenuManager:
         #F.logger.warning(d(cls.menu_map))
         return cls.menu_map
 
+    """
     @classmethod
     def is_expand_setting(cls, uri):
         from .init_plugin import PluginManager
@@ -119,3 +143,4 @@ class MenuManager:
             if tmp['uri'].split('/',1)[0] == uri:
                 return True
         return False
+    """

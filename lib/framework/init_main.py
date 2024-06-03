@@ -93,8 +93,8 @@ class Framework:
         self.app.config.update(
             DROPZONE_MAX_FILE_SIZE = 102400,
             DROPZONE_TIMEOUT = 5*60*1000,
-            #DROPZONE_ALLOWED_FILE_CUSTOM = True,
-            #DROPZONE_ALLOWED_FILE_TYPE = 'default, image, audio, video, text, app, *.*',
+            DROPZONE_ALLOWED_FILE_CUSTOM = True,
+            DROPZONE_ALLOWED_FILE_TYPE = "image/*, audio/*, video/*, text/*, application/*, *.*",
         )
         self.dropzone = Dropzone(self.app)
 
