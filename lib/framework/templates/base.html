@@ -1,4 +1,4 @@
-{% from "macro_menu.html" import menu, menu_module, menu_page with context %}
+{% from "macro_menu.html" import menu, menu_module, menu_page, make_setting_menu_page with context %}
 {% from "macro_include.html" import apply_theme, modals with context %}
 {% import "macro.html" as macros %}
 <!DOCTYPE html>
@@ -51,6 +51,7 @@
     <main id="main_container" role="main" class="container">
       <div class="d-inline-block"></div>
         {{ menu_page() }}
+        {{ make_setting_menu_page() }}
       <div>
         {% block content %}{% endblock %}
       </div>

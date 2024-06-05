@@ -108,16 +108,12 @@ class MenuManager:
                 
             make_dummy_cate = False
             for name, plugin_menu in plugin_menus.items():
-                #F.logger.info(d(plugin_menu))
-                #if 'uri' not in plugin_menu['menu']:
-                #    continue
                 if plugin_menu['match'] == False:
                     if make_dummy_cate == False:
                         make_dummy_cate = True
                         cls.menu_map.insert(len(cls.menu_map)-1, {
                             'name':'미분류', 'count':0, 'list':[]
                         })
-
                     c = cls.menu_map[-2]
                     c['count'] += 1
                     c['list'].append(plugin_menu['menu'])
@@ -126,21 +122,17 @@ class MenuManager:
             logger.error(f"Exception:{str(e)}")
             logger.error(traceback.format_exc())
             return False
-        
-        #F.logger.warning(d(cls.menu_map))
 
 
     @classmethod
     def get_menu_map(cls):
-        #F.logger.warning(d(cls.menu_map))
         return cls.menu_map
 
-    """
+
     @classmethod
-    def is_expand_setting(cls, uri):
+    def get_setting_menu(cls, plugin):
         from .init_plugin import PluginManager
         for tmp in PluginManager.setting_menus:
-            if tmp['uri'].split('/',1)[0] == uri:
-                return True
-        return False
-    """
+            if tmp['plugin'] == plugin:
+                return tmp
+    

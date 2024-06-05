@@ -6,7 +6,7 @@ from framework import F
 def get_menu(full_query):
     match = re.compile(r'\/(?P<package_name>.*?)\/(?P<module_name>.*?)\/manual\/(?P<sub2>.*?)($|\?)').match(full_query)
     if match:
-        return match.group('package_name'), match.group('module_name'), 'manual'
+        return match.group('package_name'), match.group('module_name'), f"manual/{match.group('sub2')}"
 
     match = re.compile(r'\/(?P<menu>.*?)\/manual\/(?P<sub2>.*?)($|\?)').match(full_query)
     if match:
@@ -52,14 +52,14 @@ def jinja_initialize(app):
     app.jinja_env.globals.update(get_menu=get_menu)
     app.jinja_env.globals.update(get_theme=get_theme)
     app.jinja_env.globals.update(get_menu_map=MenuManager.get_menu_map)
-    #app.jinja_env.globals.update(is_expand_setting=MenuManager.is_expand_setting)
+    app.jinja_env.globals.update(get_setting_menu=MenuManager.get_setting_menu)
     app.jinja_env.globals.update(get_web_title=get_web_title)
     app.jinja_env.globals.update(dropzone=F.dropzone)
 
     app.jinja_env.filters['get_menu'] = get_menu
     app.jinja_env.filters['get_theme'] = get_theme
     app.jinja_env.filters['get_menu_map'] = MenuManager.get_menu_map
-    #app.jinja_env.filters['is_expand_setting'] = MenuManager.is_expand_setting
+    app.jinja_env.filters['get_setting_menu'] = MenuManager.get_setting_menu
     app.jinja_env.filters['get_web_title'] = get_web_title
 
     app.jinja_env.auto_reload = True

@@ -122,17 +122,6 @@
 {% endmacro %}
 
 
-
-
-
-
-
-
-
-
-
-
-
 {% macro menu_page() %}
   <div id='menu_page_div'>
   {% set current_menu = request.full_path | get_menu %}
@@ -162,3 +151,25 @@
   </div>
 {% endmacro %}
             
+
+
+{% macro make_setting_menu_page() %}
+  <div id='setting_menu_page_div'>
+  {% set current_menu = request.full_path | get_menu %}
+  {% set menu_map = current_menu[0] | get_setting_menu() %}
+<!-- {{ module }} -->
+  {% if menu_map != None and 'list' in menu_map and menu_map['list']|length > 1 %}
+    <ul class="nav nav-pills bg-light shadow text-dark">
+    {% for page in menu_map['list'] %}
+  <!--{{ current_menu }}-->
+      {% if current_menu[2]!= None and page['uri'].startswith(current_menu[2]) %}
+        <li class="nav-item"><a class="nav-link active" href="/{{ current_menu[0] }}/{{ current_menu[1] }}/{{ page['uri'] }}">{{page['name']}}</a></li>
+      {% else %}
+        <li class="nav-item"><a class="nav-link" href="/{{ current_menu[0] }}/{{ current_menu[1] }}/{{ page['uri'] }}">{{page['name']}}</a></li>
+      {% endif %}          
+    {% endfor %}
+    </ul>
+    <div class="d-inline-block"></div>
+  {% endif %}  
+  </div>
+{% endmacro %}
