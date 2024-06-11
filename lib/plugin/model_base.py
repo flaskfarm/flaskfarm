@@ -102,7 +102,9 @@ class ModelBase(F.db.Model):
                     #ago.minute = 0
                     count = F.db.session.query(cls).filter(cls.created_time < ago).delete()
                     cls.P.logger.info(f"delete_all {day=} {count=}")
-                F.db.session.commit()
+                #F.db.session.commit()
+                F.db.session.execute("COMMIT")
+                F.db.session.execute("VACUUM;")
                 return count
         except Exception as e:
             cls.P.logger.error(f'Exception:{str(e)}')
