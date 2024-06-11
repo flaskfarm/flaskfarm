@@ -105,7 +105,7 @@ class ModelBase(F.db.Model):
                 F.db.session.commit()
             
             with F.app.app_context():
-                F.db.session.execute('VACCUM;')
+                F.db.session.execute('VACUUM;')
         except Exception as e:
             cls.P.logger.error(f'Exception:{str(e)}')
             cls.P.logger.error(traceback.format_exc())
