@@ -1,3 +1,4 @@
+import sqlite3
 import traceback
 from datetime import datetime, timedelta
 
@@ -103,9 +104,12 @@ class ModelBase(F.db.Model):
                     count = F.db.session.query(cls).filter(cls.created_time < ago).delete()
                     cls.P.logger.info(f"delete_all {day=} {count=}")
                 F.db.session.commit()
-            
-            with F.app.app_context():
-                F.db.session.execute('VACUUM;')
+               
+                db_file = F.app.config['SQLALCHEMY_BINDS'][cls.P.package_name].replace('sqlite:///', '').split('?')[0]
+                connection = sqlite3.connect(db_file)
+                cursor = connection.cursor()
+                cursor.execute('VACUUM;')
+                connection.close()
         except Exception as e:
             cls.P.logger.error(f'Exception:{str(e)}')
             cls.P.logger.error(traceback.format_exc())
