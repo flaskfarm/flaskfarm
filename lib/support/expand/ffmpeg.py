@@ -116,7 +116,11 @@ class SupportFfmpeg(object):
             header_count = 0
             if self.proxy is None:
                 if self.headers is None:
-                    command = [self.__ffmpeg_path, '-y', '-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
+                    if platform.system() == 'Windows':
+                        command = [self.__ffmpeg_path, '-y', '-i', f'"{self.url}"', '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
+                    else:
+                        command = [self.__ffmpeg_path, '-y', '-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
+
                 else:
                     headers_command = []
                     tmp = ""
@@ -136,9 +140,15 @@ class SupportFfmpeg(object):
                     if len(tmp) > 0:
                         headers_command.append('-headers')
                         headers_command.append(f'{tmp}')
-                    command = [self.__ffmpeg_path, '-y'] + headers_command + ['-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
+                    if platform.system() == 'Windows':
+                        command = [self.__ffmpeg_path, '-y'] + headers_command + ['-i', f'"{self.url}"', '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
+                    else:
+                        command = [self.__ffmpeg_path, '-y'] + headers_command + ['-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
             else:
-                command = [self.__ffmpeg_path, '-y', '-http_proxy', self.proxy, '-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
+                if platform.system() == 'Windows':
+                    command = [self.__ffmpeg_path, '-y', '-http_proxy', self.proxy, '-i', f'"{self.url}"', '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
+                else:
+                    command = [self.__ffmpeg_path, '-y', '-http_proxy', self.proxy, '-i', self.url, '-c', 'copy', '-bsf:a', 'aac_adtstoasc']
 
             
             if platform.system() == 'Windows':
