@@ -1,36 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<div>
-  <nav>
-    {{ macros.m_tab_head_start() }}
-      {{ macros.m_tab_head('old', '이전', true) }}
-      {{ macros.m_tab_head('new', '실시간', false) }}
-    {{ macros.m_tab_head_end() }}
-  </nav>
-  <div class="tab-content" id="nav-tabContent">
-    {{ macros.m_tab_content_start('old', true) }}
-      <div>
-        <textarea id="log" class="col-md-12" rows="30" charswidth="23" disabled style="background-color:#ffffff;visibility:hidden"></textarea>
-      </div>
-    {{ macros.m_tab_content_end() }}
-    
-    {{ macros.m_tab_content_start('new', false) }}
-      <div>
-        <textarea id="add" class="col-md-12" rows="30" charswidth="23" disabled style="background-color:#ffffff;visibility:visible"></textarea>
-      </div>
-      
-      <div class="form-inline">
-        <label class="form-check-label" for="auto_scroll">자동 스크롤</label>
-        <input id="auto_scroll" name="auto_scroll" class="form-control form-control-sm" type="checkbox" data-toggle="toggle" checked>
-        <span class='text-left' style="padding-left:25px; padding-top:0px">
-          <button id="clear" class="btn btn-sm btn-outline-success">리셋</button>
-        </span>
-      </div>
-    {{ macros.m_tab_content_end() }}
 
+<div>
+  <div id="log_div" class="bg-dark" style="overflow:auto; border-color: blue; border: solid 1px;">
   </div>
 </div>
-
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -41,8 +15,7 @@ $(document).ready(function() {
 
 function ResizeTextAreaLog() {
   ClientHeight = window.innerHeight
-  $("#log").height(ClientHeight-240);
-  $("#add").height(ClientHeight-260);
+  $("#log_div").height(ClientHeight-130);
 }
 
 $(window).resize(function() {
@@ -55,23 +28,26 @@ var socket = io.connect(protocol + "//" + document.domain + ":" + location.port 
 
 socket.emit("start", {'package':'{{package}}'} );
 socket.on('on_start', function(data){
-  document.getElementById("log").innerHTML += data.data;
-  document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
-  document.getElementById("log").style.visibility = 'visible';
+  lines = splitLines(data.data);
+  var html = '';
+  for (i in lines) {
+    html += logline(lines[i]);
+  }
+  $('#log_div').html(html)
+  $('#log_div').scrollTop = $('#log_div').scrollHeight;
   $('#loading').hide();
 });
 
 socket.on('add', function(data){
   if (data.package == "{{package}}") {
-    var chk = $('#auto_scroll').is(":checked");
-    document.getElementById("add").innerHTML += data.data;
-    if (chk) document.getElementById("add").scrollTop = document.getElementById("add").scrollHeight;
+    $('#log_div').append(logline(data.data));
+    $('#log_div').scrollTop = $('#log_div').scrollHeight;
   }
 });
 
 $("#clear").click(function(e) {
   e.preventDefault(); 
-  document.getElementById("add").innerHTML = '';
+  document.getElementById("log").innerHTML = '';
 });
 
 $("#auto_scroll").click(function(){
@@ -79,4 +55,7 @@ $("#auto_scroll").click(function(){
 });
   
 </script>    
+
+
+
 {% endblock %}

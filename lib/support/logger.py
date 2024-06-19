@@ -36,7 +36,7 @@ class CustomFormatter(logging.Formatter):
     # pathname filename
     #format = "[%(asctime)s|%(name)s|%(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
     
-    __format = '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset} %(pathname)s:%(lineno)s] {color}%(message)s{reset}' if os.environ.get('LOGGER_PATHNAME', "False") == "True" else '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset} %(filename)s:%(lineno)s] {color}%(message)s{reset}'
+    __format = '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset}|%(pathname)s:%(lineno)s] {color}%(message)s{reset}' if os.environ.get('LOGGER_PATHNAME', "False") == "True" else '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset}|%(filename)s:%(lineno)s] {color}%(message)s{reset}'
 
     FORMATS = {
         logging.DEBUG: __format.format(color=grey, reset=reset, yellow=yellow, green=green),
@@ -53,15 +53,13 @@ class CustomFormatter(logging.Formatter):
 
 
 def get_logger(name=None, log_path=None):
-    if os.environ.get('FF') == 'true':
-        name = 'framework'
     if name == None:
         name = sys.argv[0].rsplit('.', 1)[0]
     logger = logging.getLogger(name)
     if not logger.handlers:
         level = logging.DEBUG
         logger.setLevel(level)
-        formatter = logging.Formatter(u'[%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s] %(message)s')
+        formatter = logging.Formatter(u'[%(asctime)s|%(levelname)s|%(name)s|%(filename)s:%(lineno)s] %(message)s')
         def customTime(*args):
             utc_dt = utc.localize(datetime.utcnow())
             my_tz = timezone("Asia/Seoul")

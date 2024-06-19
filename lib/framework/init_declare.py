@@ -47,7 +47,7 @@ class CustomFormatter(logging.Formatter):
     # pathname filename
     #format = "[%(asctime)s|%(name)s|%(levelname)s - %(message)s (%(filename)s:%(lineno)d)"
     
-    __format = '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset} %(pathname)s:%(lineno)s] {color}%(message)s{reset}' if os.environ.get('LOGGER_PATHNAME', "False") == "True" else '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset} %(filename)s:%(lineno)s] {color}%(message)s{reset}'
+    __format = '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset}|%(pathname)s:%(lineno)s] {color}%(message)s{reset}' if os.environ.get('LOGGER_PATHNAME', "False") == "True" else '[{yellow}%(asctime)s{reset}|{color}%(levelname)s{reset}|{green}%(name)s{reset}|%(filename)s:%(lineno)s] {color}%(message)s{reset}'
 
     FORMATS = {
         logging.DEBUG: __format.format(color=grey, reset=reset, yellow=yellow, green=green),

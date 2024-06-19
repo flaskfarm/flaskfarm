@@ -1,33 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-
+</style>
 <div>
   {{ macros.setting_select_empty('log_select1', '로그 파일 선택 (.log)') }}
-  <!--{{ macros.setting_select_empty('log_select2', '로그 파일 선택 (.logX)') }}-->
-  <nav>
-    {{ macros.m_tab_head_start() }}
-      {{ macros.m_tab_head('old', '이전', true) }}
-      {{ macros.m_tab_head('new', '실시간', false) }}
-    {{ macros.m_tab_head_end() }}
-  </nav>
-  <div class="tab-content" id="nav-tabContent">
-    {{ macros.m_tab_content_start('old', true) }}
-      <div>
-        <textarea id="log" class="col-md-12" rows="30" charswidth="23" disabled style="background-color:#ffffff;visibility:hidden"></textarea>
-      </div>
-    {{ macros.m_tab_content_end() }}
-    {{ macros.m_tab_content_start('new', false) }}
-      <div>
-        <textarea id="add" class="col-md-12" rows="30" charswidth="23" disabled style="background-color:#ffffff;visibility:visible"></textarea>
-      </div>
-      <div class="form-inline">
-        <label class="form-check-label" for="auto_scroll">자동 스크롤</label>
-        <input id="auto_scroll" name="auto_scroll" class="form-control form-control-sm" type="checkbox" data-toggle="toggle" checked>
-        <span class='text-left' style="padding-left:25px; padding-top:0px">
-          <button id="clear" class="btn btn-sm btn-outline-success">리셋</button>
-        </span>
-      </div>
-    {{ macros.m_tab_content_end() }}
+  <div id="log_div" class="bg-dark" style="overflow:auto; border-color: blue; border: solid 1px;">
   </div>
 </div>
 
@@ -56,14 +32,6 @@ function make_form() {
     str += '<option value="' + data[i] + '">' + data[i] + '</option>';
   }
   $("#log_select1_div").html(str);
-  /*
-  str = '<select id="log_select" name="log_select" class="form-control form-control-sm">';
-  data = all_list.split('|')
-  for(var i in data) {
-    str += '<option value="' + data[i] + '">' + data[i] + '</option>';
-  }
-  $("#log_select2_div").html(str);
-  */
 }
 
 $("body").on('change', '#log_select', function(e){
@@ -75,11 +43,9 @@ $("body").on('change', '#log_select', function(e){
   socket.emit("start", {'filename':filename} );
 });
 
-
 function ResizeTextAreaAllLog() {
   ClientHeight = window.innerHeight
-  $("#log").height(ClientHeight-300);
-  $("#add").height(ClientHeight-320);
+  $("#log_div").height(ClientHeight-180);
 }
 
 $(window).resize(function() {
@@ -88,17 +54,20 @@ $(window).resize(function() {
 
 
 socket.on('on_start', function(data){
-  document.getElementById("log").innerHTML += data.data;
-  document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
-  document.getElementById("log").style.visibility = 'visible';
+  lines = splitLines(data.data);
+  var html = '';
+  for (i in lines) {
+    html += logline(lines[i]);
+  }
+  $('#log_div').html(html)
+  $('#log_div').scrollTop = $('#log_div').scrollHeight;
   $('#loading').hide();
 });
 
 socket.on('add', function(data){
   if (data.filename == current_filename) {
-    var chk = $('#auto_scroll').is(":checked");
-    document.getElementById("add").innerHTML += data.data;
-    if (chk) document.getElementById("add").scrollTop = document.getElementById("add").scrollHeight;
+    $('#log_div').append(logline(data.data));
+    $('#log_div').scrollTop = $('#log_div').scrollHeight;
   }
 });
 

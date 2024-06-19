@@ -2,8 +2,8 @@ import random
 import string
 import time
 
-from support import (SupportDiscord, SupportFile, SupportSubprocess,
-                     SupportTelegram, SupportYaml, SupportSlack)
+from support import (SupportDiscord, SupportFile, SupportSlack,
+                     SupportSubprocess, SupportTelegram, SupportYaml)
 from tool import ToolModalCommand
 
 from .setup import *
@@ -279,6 +279,7 @@ class ModuleSetting(PluginModuleBase):
         try:
             time.sleep(1)
             data = '정상입니다. 이 메시지는 celery 에서 반환됩니다. '
+            P.logger.info(data)
             return data
         except Exception as e:
             P.logger.error(f'Exception:{str(e)}')

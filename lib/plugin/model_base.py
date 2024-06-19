@@ -182,3 +182,16 @@ class ModelBase(F.db.Model):
                 query = query.filter(field.like('%'+search+'%'))
             #query = query1.union(query2)
         return query
+
+
+    @classmethod
+    def get_list_by_status(cls, status):
+        try:
+            with F.app.app_context():
+                query = F.db.session.query(cls).filter(
+                    cls.status == status,
+                )
+                query = query.order_by(cls.id)
+                return query.all()
+        except:
+            pass

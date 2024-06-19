@@ -7,6 +7,14 @@ import os
 import sys
 import traceback
 
+try:
+    import platform
+    cmd = 'export'
+    if platform.system() == 'Windows':
+        cmd = 'set'
+    os.system(f"{cmd} CELERYD_HIJACK_ROOT_LOGGER=false")
+except:pass
+
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib'))
 
 try:

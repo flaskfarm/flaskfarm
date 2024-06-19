@@ -85,6 +85,8 @@ def default_route(P):
     @P.blueprint.route('/<sub>/<sub2>', methods=['GET', 'POST'])
     @login_required
     def second_menu(sub, sub2):
+        if sub2 == 'null':
+            return
         if P.ModelSetting is not None:
             P.ModelSetting.set('recent_menu_plugin', '{}|{}'.format(sub, sub2))
         try:

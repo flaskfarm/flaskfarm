@@ -42,6 +42,7 @@ class Framework:
 
         self.__level_unset_logger_list = []
         self.__logger_list = []
+        self.all_log_filehandler = None
         self.__exit_code = -1
         self.login_manager = None
         #self.plugin_instance_list = {}
@@ -432,7 +433,7 @@ class Framework:
                 return converted.timetuple()
 
             if from_command == False:
-                file_formatter = logging.Formatter(u'[%(asctime)s|%(levelname)s|%(filename)s:%(lineno)s] %(message)s')
+                file_formatter = logging.Formatter(u'[%(asctime)s|%(levelname)s|%(name)s|%(filename)s:%(lineno)s] %(message)s')
             else:
                 file_formatter = logging.Formatter(u'[%(asctime)s] %(message)s')
 
@@ -441,10 +442,18 @@ class Framework:
             fileHandler = logging.handlers.RotatingFileHandler(filename=os.path.join(self.path_data, 'log', f'{name}.log'), maxBytes=file_max_bytes, backupCount=5, encoding='utf8', delay=True)
             fileHandler.setFormatter(file_formatter) 
             logger.addHandler(fileHandler)
+            if name == 'framework' and self.all_log_filehandler == None:
+                self.all_log_filehandler = logging.handlers.RotatingFileHandler(filename=os.path.join(self.path_data, 'log', f'all.log'), maxBytes=5*1024*1024, backupCount=5, encoding='utf8', delay=True)
+                self.all_log_filehandler.setFormatter(file_formatter) 
+            
             if from_command == False:
                 streamHandler = logging.StreamHandler() 
                 streamHandler.setFormatter(CustomFormatter()) 
                 logger.addHandler(streamHandler)
+            
+            if self.all_log_filehandler != None:
+                logger.addHandler(self.all_log_filehandler)
+            
         return logger 
 
 

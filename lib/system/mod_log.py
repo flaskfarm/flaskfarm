@@ -22,7 +22,7 @@ class ModuleLog(PluginModuleBase):
                     log_list.append(x)
             arg['log_list'] = '|'.join(log_list)
             arg['all_list'] = '|'.join(log_files)
-            arg['filename'] = 'framework.log'
+            arg['filename'] = 'all.log'
            
             if 'filename' in request.form:
                 arg['filename'] = request.form['filename']
