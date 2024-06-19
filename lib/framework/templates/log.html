@@ -34,14 +34,15 @@ socket.on('on_start', function(data){
     html += logline(lines[i]);
   }
   $('#log_div').html(html)
-  $('#log_div').scrollTop = $('#log_div').scrollHeight;
+  document.getElementById("log_div").scrollTop = document.getElementById("log_div").scrollHeight;
   $('#loading').hide();
 });
 
 socket.on('add', function(data){
+  console.log(data.data)
   if (data.package == "{{package}}") {
-    $('#log_div').append(logline(data.data));
-    $('#log_div').scrollTop = $('#log_div').scrollHeight;
+    $('#log_div').append(logline(data.data.trim()));
+    document.getElementById("log_div").scrollTop = document.getElementById("log_div").scrollHeight;
   }
 });
 
@@ -55,7 +56,5 @@ $("#auto_scroll").click(function(){
 });
   
 </script>    
-
-
 
 {% endblock %}

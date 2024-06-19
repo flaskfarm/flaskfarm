@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+  <div id="plugin_list_div"></div>
+</div>
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+  globalSendCommand('get_plugin_list_all', null, null, null, function(data){
+    make_plugin_list(data.data);
+  });
+});
+
+$("body").on('click', '#plugin_install_btn', function(e){ 
+  e.preventDefault();
+  globalSendCommand('plugin_install', $('#_plugin_git').val());
+});
+
+function make_plugin_list(data) {
+  current_data = data;
+  str = ''
+  count = 0;
+  for (i in data) {
+    console.log(data[i])
+    str += j_row_start();
+    str += j_col(12, '<b><span style="font-size:150%; font-style:italic; margin=0px;">' + data[i].name + '</span></b>', 'left');
+    //str += '<hr style="width: 100%; margin:0px; margin-bottom:10px; margin-top:2px; margin-left:15px; margin-right:15px; background-color:black; height:2px" />'
+    //str += '<div class="d-inline-block"></div><hr style="width: 100%; margin:0px; margin-left:15px; margin-right:15px;background-color:#808080;">';
+    
+    str += j_row_end();
+    //str += j_hr_black(0);
+
+    str += head();
+    for (j in data[i].list) {
+      console.log(data[i].list[j]);
+      str += j_row_start();
+      count += 1
+      str += j_col_wide(1, (parseInt(count)), 'center')
+      tmp = text_color_bootstrap(data[i].list[j].title, 'text-info');
+      str += j_col_wide(2, tmp);
+      tmp = data[i].list[j].package_name;
+      str += j_col_wide(2, tmp);
+      str += j_col_wide(1, data[i].list[j].developer);
+      if (data[i].list[j].version == null) {
+        str += j_col_wide(1, "미설치");
+      } else {
+        str += j_col_wide(1, text_color_bootstrap(data[i].list[j].version, 'text-danger'));
+      }
+      if (data[i].list[j].loading == false) {
+        tmp = data[i].list[j].description + '<br>' + text_color('[로딩 실패] ') + data[i].list[j].status;
+        str += j_col_wide(3, tmp);
+
+      } else {
+        str += j_col_wide(3, data[i].list[j].description);
+      }
+      tmp = ''
+      tmp += j_button_small('globalOpenBtn', '홈페이지', {'url':data[i].list[j].home}, 'primary', false, true);
+      if (data[i].list[j].version == null) { 
+        tmp += j_button_small('install_btn', '설치', {'package_name':data[i].list[j].package_name, 'title':data[i].list[j].title, 'home':data[i].list[j].home}, 'info', false, true);
+      } else {
+        tmp += j_button_small('uninstall_btn', '삭제', {'package_name':data[i].list[j].package_name, 'title':data[i].list[j].title}, 'danger', false, true);
+      }
+      tmp = j_button_group(tmp)
+      str += j_col_wide(2, tmp, 'right')
+      str += j_row_end();
+      if (i != current_data.length -1) str += j_hr(0);
+    }
+    str += j_row_start();
+    str += j_row_end();
+  }
+  $("#plugin_list_div").html(str);
+}
+
+$("body").on('click', '#json_btn', function(e){
+  e.preventDefault();
+  item_id = $(this).data('idx');
+  showModal(current_data[item_id]);
+});
+
+$("body").on('click', '#install_btn', function(e){ 
+  e.preventDefault();
+  $("#confirm_title").html("설치 확인");
+  $("#confirm_body").html($(this).data('title') + " 플러그인을 설치 하시겠습니까?");
+  home = $(this).data('home');
+  $('#confirm_button').attr('onclick', "javascript:install(home);");
+  $("#confirm_modal").modal();
+});
+
+function install(git) {
+  globalSendCommand('plugin_install', git);
+}
+
+
+
+$("body").on('click', '#uninstall_btn', function(e){ 
+  e.preventDefault();
+  $("#confirm_title").html("삭제 확인");
+  $("#confirm_body").html($(this).data('title') + " 플러그인을 삭제 하시겠습니까?");
+  package_name = $(this).data('package_name');
+  $('#confirm_button').attr('onclick', "javascript:uninstall(package_name);");
+  $("#confirm_modal").modal();
+});
+
+
+function uninstall(package_name) {
+  globalSendCommand('uninstall', package_name, null, null, function(ret) {
+  });
+}
+
+
+$("body").on('click', '#plugin_uninstall_btn', function(e){ 
+  e.preventDefault();
+  plugin_name = $(this).data('plugin_name')
+  $.ajax({
+    url: '/' + package_name + '/ajax/plugin_uninstall',
+    type: "POST", 
+    cache: false,
+    data:{plugin_name:plugin_name},
+    success: function (data) {
+      if (data == 'success') {
+        $.notify('<strong>재시작시 적용됩니다.</strong>', {
+          type: 'success'
+        });
+      } else {
+        $.notify('<strong>실패하였습니다.</strong>', {
+          type: 'warning'
+        });
+      }
+    }
+  });  
+});
+
+
+function head(str) {
+
+  tmp = '<hr style="width: 100%; margin:0px; background-color:#808080;"> \
+<div class="row chover" style="padding:0px; align-items:center;"> \
+<div class="col-sm-1" style="padding:0px; margin:0px; text-align:center; word-break:break-all;"><strong>Idx</strong></div> \
+<div class="col-sm-2" style="padding:0px; margin:0px; text-align:left; word-break:break-all;"><strong>Title</strong></div> \
+<div class="col-sm-2" style="padding:0px; margin:0px; text-align:left; word-break:break-all;"><strong>Package Name</strong></div> \
+<div class="col-sm-1" style="padding:0px; margin:0px; text-align:left; word-break:break-all;"><strong>Dev.</strong></div> \
+<div class="col-sm-1" style="padding:0px; margin:0px; text-align:left; word-break:break-all;"><strong>Version</strong></div> \
+<div class="col-sm-5" style="padding:0px; margin:0px; text-align:left; word-break:break-all;"><strong>Description</strong></div> \
+</div> \
+<hr style="width: 100%; margin:0px; margin-bottom:10px; margin-top:2px; background-color:#808080; height:2px" />';
+
+  return tmp;
+}
+
+</script>    
+{% endblock %}

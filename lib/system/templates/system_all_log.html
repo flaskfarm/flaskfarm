@@ -60,14 +60,14 @@ socket.on('on_start', function(data){
     html += logline(lines[i]);
   }
   $('#log_div').html(html)
-  $('#log_div').scrollTop = $('#log_div').scrollHeight;
+  document.getElementById("log_div").scrollTop = document.getElementById("log_div").scrollHeight;
   $('#loading').hide();
 });
 
 socket.on('add', function(data){
   if (data.filename == current_filename) {
     $('#log_div').append(logline(data.data));
-    $('#log_div').scrollTop = $('#log_div').scrollHeight;
+    document.getElementById("log_div").scrollTop = document.getElementById("log_div").scrollHeight;
   }
 });
 

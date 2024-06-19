@@ -23,7 +23,7 @@ __menu = {
             'list': [
                 #{'uri': 'setting', 'name': '설정'},
                 {'uri': 'list', 'name': '로딩 플러그인'},
-                #{'uri': 'all', 'name': '플러그인 목록'},
+                {'uri': 'all', 'name': '전체 플러그인 목록'},
             ],
         },
         {
