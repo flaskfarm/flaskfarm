@@ -1,5 +1,5 @@
 # Changelog
-- 4.1.14 (2024.06.19)   
+- 4.1.15 (2024.06.19)   
   * main.py 에서 CELERYD_HIJACK_ROOT_LOGGER=false export(set)   
   * 로그 UI 변경.
   * framework, plugin 전체 로그를 all.log 에 기록.   
