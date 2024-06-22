@@ -58,7 +58,7 @@ class PluginManager:
                         tmps = os.listdir(__)
                         add_plugin_list = []
                         for t in tmps:
-                            if t.startswith('_') == False and t.startswith('.') == False and os.path.isdir(os.path.join(plugin_path, t)) and t != 'false' and t != 'tmp':
+                            if t.startswith('_') == False and t.startswith('.') == False and os.path.isdir(os.path.join(__, t)) and t != 'false' and t != 'tmp':
                                 add_plugin_list.append(t)
                                 cls.all_package_list[t] = {'pos':'dev', 'path':os.path.join(__, t), 'loading':True}
                         plugins = plugins + add_plugin_list

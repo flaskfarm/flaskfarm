@@ -13,7 +13,13 @@ try:
     if platform.system() == 'Windows':
         cmd = 'set'
     os.system(f"{cmd} CELERYD_HIJACK_ROOT_LOGGER=false")
-except:pass
+    os.system(f"{cmd} C_FORCE_ROOT=true")
+except: pass
+
+try:
+    if platform.system() == 'Windows':
+        del os.environ['SSLKEYLOGFILE']
+except: pass
 
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib'))
 
