@@ -95,6 +95,14 @@ class PluginBase(object):
             if __['uri'] == 'manual' and len(__['list']) > 0:
                 return __['list'][0]['uri']
 
+    def get_module(self, sub):
+        try:
+            for module in self.module_list:
+                if module.name == sub:
+                    return module
+        except Exception as e:
+            self.logger.error(f'Exception:{str(e)}')
+            #self.P.logger.error(traceback.format_exc())
 
 def create_plugin_instance(config):
     ins = PluginBase(config)

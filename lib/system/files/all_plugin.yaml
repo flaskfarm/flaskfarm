@@ -32,7 +32,7 @@
     developer: "orial"
     home: "https://github.com/byorial/libgdrive"
     description: "구글드라이브 API 라이브러리"
-- name: "외부 프로그램 연결"
+- name: "외부 연결"
   list:
   - title: "Rclone"
     package_name: "rclone"
@@ -49,6 +49,11 @@
     developer: "by275"
     home: "https://github.com/by275/vnStat"
     description: "vnStat 정보를 보여주는 플러그인"
+  - title: "115 TOOL"
+    package_name: "tool_115"
+    developer: "soju6jan"
+    home: "https://github.com/soju6jan/tool_115"
+    description: "115 TOOL"
 - name: "도구"
   list:
   - title: "디스코드 봇"
