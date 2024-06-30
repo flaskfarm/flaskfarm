@@ -107,6 +107,8 @@ def get_model_setting(package_name, logger, table_name=None):
                     if ModelSetting.get(key) != value:
                         change_list.append(key)
                         entity = F.db.session.query(ModelSetting).filter_by(key=key).with_for_update().first()
+                        if entity == None:
+                            logger.warning(f"NOT exist setting key: {key}")
                         entity.value = value
                 F.db.session.commit()
                 return True, change_list 
