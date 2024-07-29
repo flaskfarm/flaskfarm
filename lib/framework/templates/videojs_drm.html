@@ -1,0 +1,70 @@
+<title>{{data['play_title']}}</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-contrib-eme@5.5.0/dist/videojs-contrib-eme.js"></script>
+<link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
+
+<style type="text/css">
+  .vjs-matrix.video-js {
+    color: #fcca50;
+  }
+  
+  /* Change the border of the big play button. */
+  .vjs-matrix .vjs-big-play-button {
+    border-color: #fcca50;
+  }
+  
+  /* Change the color of various "bars". */
+  .vjs-matrix .vjs-volume-level,
+  .vjs-matrix .vjs-play-progress,
+  .vjs-matrix .vjs-slider-bar {
+    background: #fcca50;
+  }
+</style>
+
+<body style="background-color: black;">
+  <video
+    id="player"
+    class="video-js vjs-matrix vjs-default-skin vjs-big-play-centered"
+    style="height: 100%; width: 100%"
+    controls
+    preload="auto"
+  ></video>
+</body>
+
+<script>
+var src="{{data['play_source_src']}}";
+src = src.replaceAll('&amp;', '&');
+
+let options = {
+    html5: {
+      nativeTextTracks: false
+    },
+    playbackRates: [.5, .75, 1, 1.5, 2],
+    controls: true,
+    preload: "auto",
+    controlBar: {
+        playToggle: false,
+        pictureInPictureToggle: false,
+        remainingTimeDisplay: true,
+        qualitySelector: true,
+    }
+};
+ 
+var player = videojs("player", options);
+player.eme();
+
+player.ready(function(){
+  $.ajax({
+    url: src,
+    type: "GET",
+    success: function(result) {
+      console.log(result)
+      player.src(result);
+    },
+    error:function(error) {
+    }
+  });
+});
+
+</script>
