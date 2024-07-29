@@ -24,6 +24,15 @@
       name: "설정"
     - uri: "setting"
       name: "확장 설정"
+      list:
+        - plugin: "flaskcode"
+        - plugin: "terminal"
+        - plugin: "flaskfilemanager"
+        - uri: "-"
+        #- plugin: "trans"
+        #- uri: "-"
+        - plugin: "support_site"
+        - uri: "-"
     - uri: "system/plugin"
       name: "플러그인 관리"
     - uri: "system/tool/command"
@@ -37,4 +46,6 @@
       #uri: "javascript:shutdown_confirm();"
       name: "종료"
 
-  
+
+#- name: "이미지 업로드"
+#  uri: "support_site/site/imgur_paste"  
