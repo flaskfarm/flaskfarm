@@ -100,7 +100,7 @@ class Framework:
             DROPZONE_ALLOWED_FILE_TYPE = "image/*, audio/*, video/*, text/*, application/*, *.*",
         )
         self.dropzone = Dropzone(self.app)
-        self.config['loading_completed'] = True
+        
 
 
     def __init_db(self):
@@ -236,6 +236,7 @@ class Framework:
 
         self.__make_default_logger()
         self.__config_initialize("last")
+        self.config['loading_completed'] = True
         self.logger.info('### LAST')
         self.logger.info(f"### PORT: {self.config.get('port')}")
         self.logger.info('### Now you can access App by webbrowser!!')
