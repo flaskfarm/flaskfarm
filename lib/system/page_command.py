@@ -196,6 +196,9 @@ class PageCommand(PluginPageBase):
     def plugin_load(self):
         def plugin_load_thread():
             try:
+                while F.config['loading_completed'] == False:
+                    time.sleep(1)
+
                 db_items = ModelCommand.get_list()
                 for db_item in db_items:
                     if db_item.schedule_mode == 'startup':

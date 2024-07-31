@@ -1,4 +1,8 @@
 # Changelog
+- 4.1.26 (2024.07.31)     
+  FF 로딩 완료 체크 config 추가.    
+  F.config['loading_completed']   
+
 - 4.1.25 (2024.07.31)     
   FrameWork에 redis db 기본 생성.   
   플러그인에서 F.rd 로 접근.   
@@ -16,7 +20,7 @@
     # get
     self.rd.get(key)
   ```
-  
+
 - 4.1.24 (2024.07.29)     
   videojs_drm 페이지 추가.   
 

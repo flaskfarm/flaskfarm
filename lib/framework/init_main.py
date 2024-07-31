@@ -100,6 +100,7 @@ class Framework:
             DROPZONE_ALLOWED_FILE_TYPE = "image/*, audio/*, video/*, text/*, application/*, *.*",
         )
         self.dropzone = Dropzone(self.app)
+        self.config['loading_completed'] = True
 
 
     def __init_db(self):
@@ -251,6 +252,7 @@ class Framework:
     def __config_initialize(self, mode):
         if mode == "first":
             self.config = {}
+            self.config['loading_completed'] = False
             self.config['os'] = platform.system()
             self.config['flag_system_loading'] = False
             #self.config['run_flask'] = True if sys.argv[0].endswith('main.py') else False
