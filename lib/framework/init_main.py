@@ -8,6 +8,7 @@ import time
 import traceback
 from datetime import datetime
 
+import redis
 import yaml
 from flask import Flask
 from flask_cors import CORS
@@ -36,6 +37,7 @@ class Framework:
         self.db = None
         self.scheduler = None
         self.socketio = None
+        self.rd = None
         self.path_app_root = None
         self.path_data = None
         self.users = {}
@@ -133,17 +135,15 @@ class Framework:
     def __init_celery(self):
         try:
             from celery import Celery
-
-            #if frame.config['use_celery'] == False or platform.system() == 'Windows':
-            if self.config['use_celery'] == False:
-                raise Exception('no celery')
-            
             redis_port = os.environ.get('REDIS_PORT', None)
             if redis_port == None:
                 redis_port = self.config.get('redis_port', None)
             if redis_port == None:
                 redis_port = '6379'
-  
+            self.config['redis_port'] = redis_port
+            self.rd = redis.StrictRedis(host='localhost', port=redis_port, db=0)
+            if self.config['use_celery'] == False:
+                raise Exception('no celery')
 
             self.app.config['CELERY_BROKER_URL'] = 'redis://localhost:%s/0' % redis_port
             self.app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:%s/0' % redis_port
@@ -166,6 +166,7 @@ class Framework:
                     F.logger.info(f"celery running_type: {running_type}")
                     #F.logger.info(f"celery running_type: {options}")
             celery.steps['worker'].add(CustomArgs)
+            
         except Exception as e:
             if self.config['use_celery']:
                 self.logger.error('CELERY!!!')

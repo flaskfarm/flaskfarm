@@ -1,4 +1,22 @@
 # Changelog
+- 4.1.25 (2024.07.31)     
+  FrameWork에 redis db 기본 생성.   
+  플러그인에서 F.rd 로 접근.   
+  ```
+    # 플러그인 개별 DB 생성하여 활용 코드
+    # 생성
+    self.rd = redis.StrictRedis(host='localhost', port=F.config['redis_port'], db=self.db_item.id)
+
+    # DB 초기화
+    self.rd.flushdb()
+
+    # set
+    self.rd.set(key, json.dumps(data))
+
+    # get
+    self.rd.get(key)
+  ```
+  
 - 4.1.24 (2024.07.29)     
   videojs_drm 페이지 추가.   
 

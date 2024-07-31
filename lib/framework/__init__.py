@@ -13,6 +13,7 @@ celery = None
 db = None
 scheduler = None
 socketio = None
+rd = None
 path_app_root = None
 path_data = None
 get_logger = None
@@ -40,6 +41,7 @@ def initiaize():
     db = frame.db
     scheduler = frame.scheduler
     socketio = frame.socketio
+    rd = frame.rd
     path_app_root = frame.path_app_root
     path_data = frame.path_data
     get_logger = frame.get_logger
