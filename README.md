@@ -1,4 +1,7 @@
 # Changelog
+- 4.1.27 (2024.08.10)     
+  WEB_DIRECT_URL 삭제.   
+  
 - 4.1.26 (2024.07.31)     
   FF 로딩 완료 체크 config 추가.    
   F.config['loading_completed']   
