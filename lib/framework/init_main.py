@@ -66,6 +66,7 @@ class Framework:
         self.__make_default_dir()
         
         self.logger = self.get_logger(__package__)
+        self.get_logger('support')
         import support
 
         self.__prepare_starting()
