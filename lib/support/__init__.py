@@ -10,7 +10,9 @@ def d(data):
 
 from .logger import get_logger
 
-logger = get_logger()
+#logger = get_logger()
+import logging
+logger = logging.getLogger('support')
 
 from .base.aes import SupportAES
 from .base.discord import SupportDiscord
