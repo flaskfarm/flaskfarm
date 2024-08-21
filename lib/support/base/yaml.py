@@ -47,9 +47,9 @@ class SupportYaml(object):
                 return 'not_include_section'
             
             data = '\n'.join(section[section_name])
-            source_data = SupportFile.read_file.read(target_file)
+            source_data = SupportFile.read_file(target_file)
             source_data = source_data + f"\n{data}\n"
-            SupportFile.write_file(source_data, target_file)
+            SupportFile.write_file(target_file, source_data)
             return 'success'
         except Exception as e: 
             logger.error(f"Exception:{str(e)}")

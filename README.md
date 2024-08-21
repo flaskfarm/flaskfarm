@@ -1,4 +1,7 @@
 # Changelog
+- 4.1.31 (2024.08.21)   
+  yaml copy_section 버그 수정   
+
 - 4.1.30 (2024.08.15)   
   support 패키지 로거 설정 수정   
 
