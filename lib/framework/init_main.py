@@ -136,6 +136,8 @@ class Framework:
         
     def __init_celery(self):
         try:
+            if self.config['use_celery'] == False:
+                raise Exception('use_celery=False')
             from celery import Celery
             redis_port = os.environ.get('REDIS_PORT', None)
             if redis_port == None:
