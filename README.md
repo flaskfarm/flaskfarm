@@ -1,4 +1,7 @@
 # Changelog
+- 4.1.33 (2024.09.01)   
+  termux 32bit & python 3.11 용 libsc.so 파일 추가.   
+
 - 4.1.32 (2024.08.30)   
   termux & python 3.11 용 libsc.so 파일 추가.   
 
