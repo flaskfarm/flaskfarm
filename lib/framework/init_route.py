@@ -92,6 +92,7 @@ def file2(path):
 
 
 @F.app.route("/upload", methods=['GET', 'POST'])
+@login_required
 def upload():
     try:
         if request.method == 'POST':
@@ -108,6 +109,7 @@ def upload():
 
 
 @F.app.route("/videojs", methods=['GET', 'POST'])
+@login_required
 def videojs():
     data = {}
     data['play_title'] = request.form['play_title']
@@ -118,6 +120,7 @@ def videojs():
     return render_template('videojs.html', data=data)
 
 @F.app.route("/videojs_drm", methods=['GET', 'POST'])
+@login_required
 def videojs_drm():
     data = {}
     data['play_title'] = request.form['play_title']
@@ -128,6 +131,7 @@ def videojs_drm():
     return render_template('videojs_drm.html', data=data)
 
 @F.app.route("/videojs_discord", methods=['GET', 'POST'])
+@login_required
 def videojs_og():
     data = {}
     """
@@ -141,6 +145,7 @@ def videojs_og():
 
 
 @F.app.route("/headers", methods=['GET', 'POST'])
+@login_required
 def headers():
     from support import d
     F.logger.info(d(request.headers))
@@ -149,6 +154,7 @@ def headers():
 
 # 3.10에서 이거 필수
 @F.socketio.on('connect', namespace=f'/framework')
+@login_required
 def connect():
     pass
 

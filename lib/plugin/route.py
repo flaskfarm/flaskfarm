@@ -369,6 +369,7 @@ def default_route_socketio_module(module, attach=''):
         module.socketio_list = []
 
     @F.socketio.on('connect', namespace=f'/{P.package_name}/{module.name}{attach}')
+    @F.login_required
     def connect():
         try:
             P.logger.debug(f'socket_connect : {P.package_name} - {module.name}{attach}')
@@ -431,6 +432,7 @@ def default_route_socketio_page(page):
         page.socketio_list = []
 
     @F.socketio.on('connect', namespace=f'/{P.package_name}/{module.name}/{page.name}')
+    @F.login_required
     def page_socketio_connect():
         try:
             #P.logger.debug(f'socket_connect : {P.package_name}/{module.name}/{page.name}')

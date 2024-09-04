@@ -10,10 +10,12 @@ from support import SingletonClass
 namespace = 'log'
 
 @F.socketio.on('connect', namespace='/%s' % namespace)
+@F.login_required
 def socket_connect(): 
     F.logger.debug('log connect')
 
 @F.socketio.on('start', namespace='/%s' % namespace)
+@F.login_required
 def socket_file(data):
     try:
         package = filename = None

@@ -1,4 +1,7 @@
 # Changelog
+- 4.1.34 (2024.09.04)   
+  socketio connect시 login_required 추가.   
+
 - 4.1.33 (2024.09.01)   
   termux 32bit & python 3.11 용 libsc.so 파일 추가.   
 
