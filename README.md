@@ -1,4 +1,7 @@
 # Changelog
+- 4.1.36 (2024.09.15)   
+  python-socketio 최신 버전 사용하도록 수정.   
+  
 - 4.1.34 (2024.09.04)   
   socketio connect시 login_required 추가.   
 

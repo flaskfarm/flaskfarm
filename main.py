@@ -24,6 +24,16 @@ except: pass
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lib'))
 
 try:
+    import importlib.metadata
+    package_name = 'python-socketio'
+    version = importlib.metadata.version(package_name)
+    if int(version.replace('.', '')) < 580:
+        os.system(f"pip install --upgrade {package_name}")
+except:
+    pass
+
+
+try:
     # 2024.06.13 
     from framework import initiaize
     frame = initiaize()
