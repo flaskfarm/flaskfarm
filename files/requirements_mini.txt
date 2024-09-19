@@ -6,8 +6,8 @@ Flask-Cors
 #Flask-Markdown
 Flask-SocketIO
 python-engineio
-python-socketio<5.8.0
-Werkzeug<3.0
+python-socketio
+Werkzeug
 Jinja2
 
 # common util
