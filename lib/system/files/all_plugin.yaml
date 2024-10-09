@@ -239,6 +239,11 @@
     developer: "ssagajikorea"
     home: "https://github.com/ssagajikorea/ff_lifetv365"
     description: "LIFETV365 방송 FF플러그인"
+  - title: "KLive+"
+    package_name: "klive_plus"
+    developer: "soju6jan"
+    home: "https://github.com/soju6jan/klive_plus"
+    description: "KLive+"
 - name: "SJVA"
   list:
   - title: "SJVA"
