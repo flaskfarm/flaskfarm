@@ -181,10 +181,27 @@ class EntityKtv(object):
         # 방송일에 맞는 에피 번호 찾기
         #logger.warning(f"에피소드 목록")
 
+        '''
+        2024-01-14 halfaider
+        Daum TV 정보 페이지가 개편되면서 프로그램 정보 페이지에서 모든 에피소드 번호와 방송일을 가져올 수 없음.
+        방송일을 가져오려면 에피소드 정보 페이지에 한번 접속해야 함.
+        '''
+
+        try:
+            from support_site import SiteDaumTv
+        except:
+            SiteDaumTv = None
+
         for epi_no, value in self.data['meta']['info']['extra_info']['episodes'].items():
             if 'daum' in value:
                 site_info = value['daum']
                 tmp2 = site_info['premiered']
+                if tmp2 == 'unknown' or not tmp2:
+                    #logger.debug(f'No permiered date: premiered="{site_info["premiered"]}" episode_code="{site_info["code"]}"')
+                    if SiteDaumTv:
+                        ret = SiteDaumTv.episode_info(site_info['code'])
+                        if ret['ret'] == 'success':
+                            tmp2 = ret['data']['premiered']
                 if self.data['filename']['date'] == tmp2.replace('-', '')[2:]:
                     self.data['process_info']['status'] = 'number_and_date_match'
                     self.data['process_info']['rebuild'] += 'change_epi_number'
