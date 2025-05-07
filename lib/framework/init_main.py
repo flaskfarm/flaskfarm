@@ -16,6 +16,7 @@ from flask_login import LoginManager, login_required
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone, utc
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .init_declare import CustomFormatter, check_api
 
@@ -71,6 +72,7 @@ class Framework:
 
         self.__prepare_starting()
         self.app = Flask(__name__)
+        self.app.wsgi_app = ProxyFix(self.app.wsgi_app, x_proto=1)
         self.__config_initialize('flask')
 
         self.__init_db()
