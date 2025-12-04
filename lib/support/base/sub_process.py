@@ -115,6 +115,8 @@ class SupportSubprocess(object):
                     process.stdout.close()
                 if process.stdin:
                     process.stdin.close()
+                if process.stderr:
+                    process.stderr.close()
             except Exception as e:
                 pass
 
@@ -170,10 +172,8 @@ class SupportSubprocess(object):
             if self.process is not None:
                 if self.timeout != None:
                     self.process.wait(timeout=self.timeout)
-                    self.process_close()
                 else:
                     self.process.wait()
-            self.remove_instance(self)
             logger.info(f"{self.command} END")
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')
@@ -181,11 +181,39 @@ class SupportSubprocess(object):
             logger.warning(self.command)
             self.send_stdout_callback(self.call_id, 'ERROR', str(e))
             self.send_stdout_callback(self.call_id, 'ERROR', str(traceback.format_exc()))
+            self.process_close()
         finally:
+            '''
+            2025.12.05. halfaider
+
+            communicate() 혹은 with 문을 사용하지 않을 경우 파이프를 명시적으로 닫아줘야 함
+            
+            별개로 process_close()애서 kill() 대신 terminate() 하면 FF 재시작시 main 프로세스의 usage가 100% 찍으면서 종료되지 않음
+                마지막 추적 지점: rclone 플러그인 > mod_mount 모듈 > plugin_unload() > 쓰레드 실행
+            '''
             if self.stdout_callback != None:
                 #self.stdout_callback(self.call_id, 'thread_end', None)
                 pass
-    
+            self.__close_pipes()
+            self.remove_instance(self)
+            self.process = None
+
+    def __close_pipes(self):
+        if self.process is not None:
+            if self.process.poll() is not None:
+                # 정상 종료되지 않은 프로세스의 파이프를 닫으면 dead lock 위험이 있음
+                logger.debug(f"Close pipes of the process: {self.command}")
+                try:
+                    if self.process.stdin: self.process.stdin.close()
+                except Exception: pass
+                try:
+                    if self.process.stdout: self.process.stdout.close()
+                except Exception: pass
+                try:
+                    if self.process.stderr: self.process.stderr.close()
+                except Exception: pass
+            else:
+                logger.error(f"The process is not terminated: {self.command}")    
 
     def __start_communicate(self):
         self.stdout_queue = queue.Queue()
