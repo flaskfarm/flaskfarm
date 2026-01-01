@@ -158,6 +158,7 @@ class Framework:
             celery = Celery(self.app.name, broker=self.app.config['CELERY_BROKER_URL'], backend=self.app.config['CELERY_RESULT_BACKEND'])
             celery.conf['CELERY_ENABLE_UTC'] = False
             celery.conf.update(
+                result_backend_thread_safe=True,
                 task_serializer='pickle',
                 result_serializer='pickle',
                 accept_content=['pickle'],
