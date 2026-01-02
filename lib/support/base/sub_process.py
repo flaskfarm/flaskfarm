@@ -59,8 +59,8 @@ class SupportSubprocess(object):
                             ret.append(line.strip())
                             if log:
                                 logger.debug(ret[-1])
-                    except:
-                        pass
+                    except Exception:
+                        logger.exception(command)
             
             result = []
             thread = threading.Thread(target=func, args=(result,))
@@ -71,7 +71,8 @@ class SupportSubprocess(object):
             try:
                 #process.communicate()
                 process_ret = process.wait(timeout=timeout) # wait for the subprocess to exit
-            except:
+            except Exception:
+                logger.exception(command)
                 import psutil
                 process = psutil.Process(process.pid)
                 for proc in process.children(recursive=True):
@@ -100,7 +101,8 @@ class SupportSubprocess(object):
                             index = idx
                             break
                     ret2 = json.loads(''.join(ret[index:]))
-                except:
+                except Exception:
+                    logger.exception(command)
                     ret2 = ret
 
             new_ret['log'] = ret2
@@ -115,6 +117,8 @@ class SupportSubprocess(object):
                     process.stdout.close()
                 if process.stdin:
                     process.stdin.close()
+                if process.stderr:
+                    process.stderr.close()
             except Exception as e:
                 pass
 
@@ -170,10 +174,8 @@ class SupportSubprocess(object):
             if self.process is not None:
                 if self.timeout != None:
                     self.process.wait(timeout=self.timeout)
-                    self.process_close()
                 else:
                     self.process.wait()
-            self.remove_instance(self)
             logger.info(f"{self.command} END")
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')
@@ -181,11 +183,26 @@ class SupportSubprocess(object):
             logger.warning(self.command)
             self.send_stdout_callback(self.call_id, 'ERROR', str(e))
             self.send_stdout_callback(self.call_id, 'ERROR', str(traceback.format_exc()))
+            self.process_close()
         finally:
             if self.stdout_callback != None:
                 #self.stdout_callback(self.call_id, 'thread_end', None)
                 pass
-    
+            self.remove_instance(self)
+            self.process = None
+
+    def __close_pipes(self):
+        if self.process is not None:
+            logger.debug(f"Close pipes of the process: {self.command}")
+            try:
+                if self.process.stdin: self.process.stdin.close()
+            except Exception: pass
+            try:
+                if self.process.stdout: self.process.stdout.close()
+            except Exception: pass
+            try:
+                if self.process.stderr: self.process.stderr.close()
+            except Exception: pass
 
     def __start_communicate(self):
         self.stdout_queue = queue.Queue()
@@ -196,9 +213,12 @@ class SupportSubprocess(object):
             
             def rdr():
                 while True:
+                    if self.process is None or self.process.stdout is None:
+                        break
                     try:
                         buf = self.process.stdout.read(1)
-                    except:
+                    except Exception:
+                        logger.exception(self.command)
                         continue
                     #print(buf)
                     if buf:
@@ -207,6 +227,14 @@ class SupportSubprocess(object):
                         _queue.put( None )
                         break
                 _queue.put( None )
+                '''
+                2025.12.07. halfaider
+
+                communicate() 혹은 with 문을 사용하지 않을 경우 파이프를 명시적으로 닫아줘야 함
+                __execute_thread_function()에서 파이프를 닫아버리면 남은 버퍼를 처리하느라 여기서 오류가 발생할 수 있음
+                그래서 파이프는 소비하는 이곳에서 닫는 걸로...
+                '''
+                self.__close_pipes()
                 time.sleep(1)
 
             def clct():
@@ -223,8 +251,10 @@ class SupportSubprocess(object):
                                 break
                             else:
                                 r += r1
-                    except:
+                    except queue.Empty:
                         pass
+                    except Exception:
+                        logger.exception(self.command)
                     if r is not None:
                         #print(f"{r=}")
                         self.stdout_queue.put(r)
@@ -278,23 +308,23 @@ class SupportSubprocess(object):
 
 
     def process_close(self):
+        if self.process is None:
+            return
         try:
-            if self.process is not None and self.process.poll() is None:
-                #import psutil
-                #process = psutil.Process(instance.process.pid)
-                #for proc in instance.process.children(recursive=True):
-                #    proc.kill()
-                self.process.kill()
-        except Exception as e: 
-            logger.error(f'Exception:{str(e)}')
-            logger.error(traceback.format_exc())           
-        finally:
+            #self.process.terminate()
+            #self.process.wait(self.timeout or 5)
+            # terminate()하면 재시작시 기존과 다르게 동작, 일관성 위해 기존처럼 kill()
+            self.process.kill()
+        except Exception:
             try:
-                #self.stdout_queue = None 
                 self.process.kill()
-            except: pass
-        
-        self.remove_instance(self)
+                self.process.wait(self.timeout or 5)
+            except Exception:
+                logger.exception(f"Failed to kill process: {self.command}")
+        finally:
+            #self.stdout_queue = None
+            self.remove_instance(self)
+            self.process = None
 
     def input_command(self, cmd):
         if self.process != None:
