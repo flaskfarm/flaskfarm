@@ -1,4 +1,3 @@
-import io
 import json
 import locale
 import os
@@ -121,6 +120,7 @@ class SupportSubprocess(object):
     
 
     __instance_list = []
+    __instance_lock = threading.RLock()
 
 
     def __init__(self, command,  print_log=False, shell=False, env=None, timeout=None, uid=None, gid=None, stdout_callback=None, call_id=None, callback_line=True):
@@ -137,10 +137,18 @@ class SupportSubprocess(object):
         self.call_id = call_id
         self.timestamp = time.time()
         self.callback_line = callback_line
+        self.__output_threads = []
+        self.__callback_thread = None
+        self.__output_error = None
+        self.__process_lock = threading.Lock()
+        self.__stop_requested = False
         
 
     def start(self, join=True):
         try:
+            # Register before spawning so stop-all also includes starting jobs.
+            with self.__instance_lock:
+                self.__instance_list.append(self)
             self.thread = threading.Thread(target=self.__execute_thread_function, args=())
             self.thread.setDaemon(True)
             self.thread.start()
@@ -149,152 +157,159 @@ class SupportSubprocess(object):
         except Exception as e: 
             logger.error(f'Exception:{str(e)}')
             logger.error(traceback.format_exc())
+            self.remove_instance(self)
+            self.send_stdout_callback(self.call_id, 'ERROR', traceback.format_exc())
 
 
     def __execute_thread_function(self):
+        process = None
+        error = None
         try:
             self.command = self.command_for_windows(self.command)
             logger.debug(f"{self.command=}")
-            if platform.system() == 'Windows':
-                self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
-
-            else:
-                if self.uid == None:
-                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, encoding='utf8', bufsize=0)
-                else:
-                    self.process = subprocess.Popen(self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, shell=self.shell, env=self.env, preexec_fn=demote(self.uid, self.gid), encoding='utf8', bufsize=0)
-            SupportSubprocess.__instance_list.append(self)
+            preexec = (demote(self.uid, self.gid)
+                       if platform.system() != 'Windows' and self.uid is not None
+                       else None)
+            process = subprocess.Popen(
+                self.command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT, universal_newlines=True,
+                shell=self.shell, env=self.env, encoding='utf8', bufsize=0,
+                preexec_fn=preexec)
+            with self.__process_lock:
+                self.process = process
+                stop_requested = self.__stop_requested
+            if stop_requested:
+                self.process_close()
             self.send_stdout_callback(self.call_id, 'START', None)
             self.__start_communicate()
             self.__start_send_callback()
-            if self.process is not None:
-                if self.timeout != None:
-                    self.process.wait(timeout=self.timeout)
-                    self.process_close()
-                else:
-                    self.process.wait()
-            self.remove_instance(self)
+            process.wait(timeout=self.timeout)
             logger.info(f"{self.command} END")
-        except Exception as e: 
-            logger.error(f'Exception:{str(e)}')
-            logger.error(traceback.format_exc())
+        except Exception:
+            error = traceback.format_exc()
+            logger.error(error)
             logger.warning(self.command)
-            self.send_stdout_callback(self.call_id, 'ERROR', str(e))
-            self.send_stdout_callback(self.call_id, 'ERROR', str(traceback.format_exc()))
         finally:
-            if self.stdout_callback != None:
-                #self.stdout_callback(self.call_id, 'thread_end', None)
-                pass
-    
+            try:
+                if process is not None:
+                    if process.poll() is None:
+                        self.process_close()
+                    process.wait()
+                    # Do not close pipes or clear the process while buffered
+                    # output is still being consumed.
+                    for thread in self.__output_threads:
+                        if thread.ident is not None:
+                            thread.join()
+            except Exception:
+                error = error or traceback.format_exc()
+                logger.error(traceback.format_exc())
+            finally:
+                self.__close_pipes(process)
+                if (self.__callback_thread is not None
+                        and self.__callback_thread.ident is not None):
+                    self.__callback_thread.join()
+                try:
+                    error = error or self.__output_error
+                    if error is not None:
+                        self.send_stdout_callback(self.call_id, 'ERROR', error)
+                    elif process is not None:
+                        self.send_stdout_callback(self.call_id, 'END', None)
+                finally:
+                    self.remove_instance(self)
+                    with self.__process_lock:
+                        self.process = None
+
+    def __close_pipes(self, process):
+        if process is not None:
+            for stream in (process.stdin, process.stdout, process.stderr):
+                if stream is not None:
+                    try:
+                        stream.close()
+                    except Exception:
+                        logger.error(traceback.format_exc())
 
     def __start_communicate(self):
-        self.stdout_queue = queue.Queue()
-        sout = io.open(self.process.stdout.fileno(), 'rb', closefd=False)
-       
-        def Pump(stream):
-            _queue = queue.Queue()
-            
-            def rdr():
-                while True:
-                    try:
-                        buf = self.process.stdout.read(1)
-                    except:
-                        continue
-                    #print(buf)
-                    if buf:
-                        _queue.put( buf )
-                    else: 
-                        _queue.put( None )
-                        break
-                _queue.put( None )
-                time.sleep(1)
+        self.stdout_queue = stdout_queue = queue.Queue()
+        process = self.process
+        assert process is not None and process.stdout is not None
+        stdout = process.stdout
+        output = queue.Queue()
 
-            def clct():
-                active = True
-                while active:
-                    r = _queue.get()
-                    if r is None:
-                        break
-                    try:
-                        while True:
-                            r1 = _queue.get(timeout=0.005)
-                            if r1 is None:
-                                active = False
-                                break
-                            else:
-                                r += r1
-                    except:
-                        pass
-                    if r is not None:
-                        #print(f"{r=}")
-                        self.stdout_queue.put(r)
-                self.stdout_queue.put('\n')
-                self.stdout_queue.put('<END>')
-                self.stdout_queue.put('\n')
-            for tgt in [rdr, clct]:
-                th = threading.Thread(target=tgt)
-                th.setDaemon(True)
-                th.start()
-        Pump(sout)
+        def rdr():
+            try:
+                for buf in iter(lambda: stdout.read(1), ''):
+                    output.put(buf)
+            except Exception:
+                self.__output_error = traceback.format_exc()
+                logger.error(self.__output_error)
+                self.process_close()
+            finally:
+                output.put(None)
 
+        def clct():
+            active = True
+            while active:
+                chunk = output.get()
+                if chunk is None:
+                    break
+                try:
+                    while True:
+                        following = output.get(timeout=0.005)
+                        if following is None:
+                            active = False
+                            break
+                        chunk += following
+                except queue.Empty:
+                    pass
+                stdout_queue.put(chunk)
+            stdout_queue.put('\n')
+            stdout_queue.put(None)
+
+        for target in (rdr, clct):
+            thread = threading.Thread(target=target)
+            thread.daemon = True
+            self.__output_threads.append(thread)
+            thread.start()
 
     def __start_send_callback(self):
+        stdout_queue = self.stdout_queue
+        assert stdout_queue is not None
+
         def func():
-            while self.stdout_queue:
-                line = self.stdout_queue.get()
-                #logger.error(line)
-                if line == '<END>':
-                    self.send_stdout_callback(self.call_id, 'END', None)
+            while True:
+                chunk = stdout_queue.get()
+                if chunk is None:
                     break
-                else:
-                    self.send_stdout_callback(self.call_id, 'LOG', line)
-            self.remove_instance(self)
+                self.send_stdout_callback(self.call_id, 'LOG', chunk)
 
         def func_callback_line():
             previous = ''
-            while self.stdout_queue:
-                receive = previous + self.stdout_queue.get()
+            while True:
+                chunk = stdout_queue.get()
+                if chunk is None:
+                    break
+                receive = previous + chunk
                 lines = receive.split('\n')
                 previous = lines[-1]
-
                 for line in lines[:-1]:
                     line = line.strip()
-                    # TODO
-                    #logger.error(line)
-                    if line == '<END>':
-                        self.send_stdout_callback(self.call_id, 'END', None)
-                        break
-                    else:
-                        self.send_stdout_callback(self.call_id, 'LOG', line)
-            self.remove_instance(self)
+                    self.send_stdout_callback(self.call_id, 'LOG', line)
 
-        if self.callback_line:
-            th = threading.Thread(target=func_callback_line, args=())
-        else:
-            th = threading.Thread(target=func, args=())
-        th.setDaemon(True)
-        th.start()
-
-
+        target = func_callback_line if self.callback_line else func
+        self.__callback_thread = threading.Thread(target=target)
+        self.__callback_thread.daemon = True
+        self.__callback_thread.start()
 
     def process_close(self):
+        with self.__process_lock:
+            self.__stop_requested = True
+            process = self.process
         try:
-            if self.process is not None and self.process.poll() is None:
-                #import psutil
-                #process = psutil.Process(instance.process.pid)
-                #for proc in instance.process.children(recursive=True):
-                #    proc.kill()
-                self.process.kill()
-        except Exception as e: 
-            logger.error(f'Exception:{str(e)}')
-            logger.error(traceback.format_exc())           
-        finally:
-            try:
-                #self.stdout_queue = None 
-                self.process.kill()
-            except: pass
-        
-        self.remove_instance(self)
+            if process is not None and process.poll() is None:
+                process.kill()
+        except Exception:
+            logger.error(traceback.format_exc())
+        # The execution worker reaps the child, drains output, and closes pipes.
 
     def input_command(self, cmd):
         if self.process != None:
@@ -313,32 +328,30 @@ class SupportSubprocess(object):
 
     @classmethod
     def all_process_close(cls):
-        for instance in cls.__instance_list:
+        # Stop the current snapshot; jobs started after it remain independent.
+        for instance in cls.get_list():
             instance.process_close()
-        cls.__instance_list = []
 
 
     @classmethod
     def remove_instance(cls, remove_instance):
-        new = []
-        for instance in cls.__instance_list:
-            if remove_instance.timestamp == instance.timestamp:
-                continue
-            new.append(instance)
-        cls.__instance_list = new
+        with cls.__instance_lock:
+            cls.__instance_list[:] = [instance for instance in cls.__instance_list
+                                      if instance is not remove_instance]
     
     @classmethod
     def print(cls):
-        for instance in cls.__instance_list:
+        for instance in cls.get_list():
             logger.info(instance.command)
 
 
     @classmethod
     def get_instance_by_call_id(cls, call_id):
-        for instance in cls.__instance_list:
+        for instance in cls.get_list():
             if instance.call_id == call_id:
                 return instance
     
     @classmethod
     def get_list(cls):
-        return cls.__instance_list
+        with cls.__instance_lock:
+            return list(cls.__instance_list)
